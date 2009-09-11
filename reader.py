@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Tools for reading a nexus file
 """
@@ -194,19 +193,3 @@ class Nexus(object):
         self.raw_blocks = store
         self._do_blocks()
         return
-
-
-if __name__ == '__main__':
-    n = Nexus('examples/example.nex')
-    for k, v in n.nexus.iteritems():
-        print k
-        print v
-        print
-    
-    # n = Nexus('examples/example.nex.trees')
-    # for k, v in n.nexus.iteritems():
-    #     print k
-    #     print v
-    #     print
-    
-    
