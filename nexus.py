@@ -69,5 +69,40 @@ are initialised in Nexus.known_blocks:
     n.known_blocks['r8s'] = R8sBlockHandler
     n.read_file('myfile.nex')
     print n.blocks['r8s']
+
+
+
+
+
+Writing a Nexus File
+--------------------
+>>> from writer import NexusWriter
+>>> n = NexusWriter()
+
+Add a comment to appear in the header of the file
+>>> n.add_comment("I am a comment")
+
+data are added by using the "add" function - 
+which takes 3 arguments, a taxon, a character name, and a value
+
+>>> n.add('taxon1', 'Character1', 'A')
+>>> n.data
+{'Character1': {'taxon1': 'A'}}
+>>> n.add('taxon2', 'Character1', 'C')
+>>> n.add('taxon3', 'Character1', 'A')
+
+Characters and values can be strings or integers
+>>> n.add('taxon1', 2, 1)
+>>> n.add('taxon2', 2, 2)
+>>> n.add('taxon3', 2, 3)
+
+NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
+>>> n.add('taxon1', "Char3", '4')
+>>> n.add('taxon3', "Char3", '4')
+
+... when you're ready, you can generate the nexus using `make_nexus` or `write_to_file`:
+make_nexus(interleave=True, charblock=True):
+write_to_file(filename="output.nex", interleave=True, charblock=True):
+
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
