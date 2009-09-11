@@ -7,13 +7,12 @@ class Test_DataHandler_SimpleStandardNexus:
         self.nex = Nexus('examples/example.nex')
         
     def test_block_find(self):
-        assert self.nex.blocks.keys() == ['data']
+        assert 'data' in self.nex.blocks.keys()
         
     def test_format_string(self):
-        #assert self.nex.blocks['data'].format['datatype'] == 'standard'
-        #assert self.nex.blocks['data'].format['gap'] == '-'
-        #assert self.nex.blocks['data'].format['symbols'] == '01'
-        pass
+        assert self.nex.blocks['data'].format['datatype'] == 'standard'
+        assert self.nex.blocks['data'].format['gap'] == '-'
+        assert self.nex.blocks['data'].format['symbols'] == '01'
         
     def test_taxa(self):
         assert 'Simon' in self.nex.blocks['data'].matrix.keys()
@@ -30,5 +29,15 @@ class Test_DataHandler_SimpleStandardNexus:
         assert self.nex.blocks['data'].matrix['Simon'] == ['01']
         assert self.nex.blocks['data'].matrix['Betty'] == ['10']
         assert self.nex.blocks['data'].matrix['Louise'] == ['11']
-        
+
+
+class Test_TreeHandler_SimpleTreefile:
+    def setup(self):
+        self.nex = Nexus('examples/example.trees')
     
+    def test_block_find(self):
+        assert 'trees' in self.nex.blocks
+        
+    def test_treecount(self):
+        assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
+        
