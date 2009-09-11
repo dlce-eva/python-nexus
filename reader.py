@@ -35,10 +35,27 @@ class GenericHandler(object):
         return COMMENT_PATTERN.sub('', line)
     
     
+    
+    
+    
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
+    is_tree = re.compile(r"""tree ([\w\d\.]+)\s\=\s(.*);""")
+    
+    def __init__(self):
+        self.ntrees = 0
+        self.trees = []
+        
     def parse(self, data):
-        self.storage.append(data)
+        for line in data:
+            if self.is_tree.search(line):
+                self.trees.append(line)
+                self.ntrees += 1
+                
+    def __repr__(self):
+        return "<NexusTreeBlock: %d trees>" % self.ntrees
+         
+        
         
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
@@ -83,6 +100,7 @@ class DataHandler(GenericHandler):
     def parse(self, data):
         for line in data:
             lline = line.lower()
+            lline = self.remove_comments(lline)
             # Dimensions line
             if lline.startswith('dimensions '):
                 # try for nchar/ntax
@@ -146,7 +164,7 @@ class Nexus(object):
         try:
             handle = open(filename, 'rU')
         except IOError:
-            raise IOError, "Unable To Read File %s" % input
+            raise IOError, "Unable To Read File %s" % filename
         
         store = {}
         block = None
