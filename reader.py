@@ -2,9 +2,6 @@
 """
 Tools for reading a nexus file
 """
-
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import re
 
 DEBUG = False
@@ -54,16 +51,16 @@ class DataHandler(GenericHandler):
         self.missing = None
         self.matrix = {}
     
-    def _parse_format_line(self, line):
+    def parse_format_line(self, line):
         """
         Parses a format line, and returns a dictionary of tokens
         
-        >>> d = DataHandler()._parse_format_line('Format datatype=standard symbols="01" gap=-;')
+        >>> d = DataHandler().parse_format_line('Format datatype=standard symbols="01" gap=-;')
         >>> assert d['datatype'] == 'standard', "Expected 'standard', but got '%s'" % d['datatype']
         >>> assert d['symbols'] == '01', "Expected '01', but got '%s'" % d['symbols']
         >>> assert d['gap'] == '-', "Expected 'gap', but got '%s'" % d['gap']
         
-        >>> d = DataHandler()._parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
+        >>> d = DataHandler().parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
         >>> assert d['datatype'] == 'rna', "Expected 'rna', but got '%s'" % d['datatype']
         >>> assert d['missing'] == '?', "Expected '?', but got '%s'" % d['missing']
         >>> assert d['gap'] == '-', "Expected '-', but got '%s'" % d['gap']
@@ -83,7 +80,6 @@ class DataHandler(GenericHandler):
             out[k] = v
         return out
         
-        
     def parse(self, data):
         for line in data:
             lline = line.lower()
@@ -95,7 +91,7 @@ class DataHandler(GenericHandler):
             
             # handle format line
             elif lline.startswith('format '):
-                self.format = self._parse_format_line(line)
+                self.format = self.parse_format_line(line)
             elif lline.startswith('matrix'):
                 seen_matrix = True
                 continue
@@ -132,7 +128,7 @@ class Nexus(object):
         'data': DataHandler,
     }
     
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         if filename:
             return self.read_file(filename)
         

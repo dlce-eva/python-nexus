@@ -1,6 +1,6 @@
 """Tests for nexus reading"""
 import nose
-from nexus import *
+from reader import Nexus
 
 class Test_DataHandler_SimpleStandardNexus:
     def setup(self):
