@@ -1,3 +1,4 @@
 include readme.txt 
 include LICENSE
-recursive-include *.py *.nex *.trees
+recursive-include examples *.nex *.trees
+recursive-include test *.py
