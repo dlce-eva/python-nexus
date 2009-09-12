@@ -28,6 +28,7 @@ class NexusWriter:
         self.clean_characters = {}
         self.symbols = []
         self.data = {}
+        self.is_binary = False
         
     def clean(self, s):
         replacements = {' ': '', '\\': '', '.':'', '(':'_', ')':'', ':': '', '/':''}
@@ -78,6 +79,7 @@ class NexusWriter:
         self.comments.append(comment)
         
     def add(self, taxon, character, value):
+        assert self.is_binary == False, "Unable to add data to a binarised nexus form"
         character = self._add_char(character)
         taxon = self._add_taxa(taxon)
         assert self.data[character].has_key(taxon) == False, "Duplicate entry for %s-%s" % (taxon, character)
@@ -88,19 +90,21 @@ class NexusWriter:
             self.symbols.append(value)
         
     def recode_to_binary(self):
+        newdata = {}
         for char, block in self.data.iteritems():
+            newdata[char] = {}
             states = list(set(block.values())) # get uniques
             states = sorted(states)
             num_states = len(states)
             for taxon, value in block.iteritems():
                 b = ['0' for x in range(num_states)]
-                
-                print taxon, states, b
-                
-            # for s in states:
-            #     print s,
-            # print
-        
+                b[states.index(value)] = '1'
+                newdata[char][taxon] = "".join(b)
+                assert len(newdata[char][taxon]) == num_states
+        # overwrite data & symbols
+        self.symbols = ['1', '0']
+        self.data = newdata.copy()
+        self.is_binary = True
         
     def make_nexus(self, interleave=True, charblock=True):
         return TEMPLATE.strip() % {
