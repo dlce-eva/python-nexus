@@ -1,6 +1,6 @@
 """
-python-nexus - Generic nexus (.nex) reader for python
-=====================================================
+python-nexus - Generic nexus (.nex, .trees) reader for python
+=============================================================
 
 Reading a Nexus
 ---------------
