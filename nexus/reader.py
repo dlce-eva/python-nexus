@@ -8,8 +8,8 @@ DEBUG = False
 BEGIN_PATTERN = re.compile(r"""begin (\w+);""", re.IGNORECASE)
 END_PATTERN1 = re.compile(r"""end;""", re.IGNORECASE)
 END_PATTERN2 = re.compile(r"""^;$""")
-NTAX_PATTERN = re.compile(r"""NTAX=(\d+)""", re.IGNORECASE)
-NCHAR_PATTERN = re.compile(r"""NCHAR=(\d+)""", re.IGNORECASE)
+NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
+NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 
 class GenericHandler(object):
@@ -98,7 +98,7 @@ class DataHandler(GenericHandler):
         
     def parse(self, data):
         for line in data:
-            lline = line.lower()
+            lline = line.lower().strip()
             lline = self.remove_comments(lline)
             # Dimensions line
             if lline.startswith('dimensions '):
@@ -136,7 +136,7 @@ class DataHandler(GenericHandler):
         return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)
         
 
-class Nexus(object):
+class NexusReader(object):
     blocks = {}
     rawblocks = {}
     log = []
