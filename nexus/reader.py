@@ -2,6 +2,7 @@
 Tools for reading a nexus file
 """
 import re
+import StringIO
 
 DEBUG = False
 
@@ -11,6 +12,7 @@ END_PATTERN2 = re.compile(r"""^;$""")
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
+WHITESPACE_PATTERN = re.compile(r"""\s+""")
 
 class GenericHandler(object):
     def __init__(self):
@@ -118,11 +120,11 @@ class DataHandler(GenericHandler):
             elif 'charstatelabels' in lline:
                 raise NotImplementedError, 'Character block parsing is not implemented yet'
             elif seen_matrix == True:
+                # NORMALISE WHITESPACE
                 try:
-                    taxon, sites = line.split(' ', 1)
+                    taxon, sites = WHITESPACE_PATTERN.split(line, 1)
                 except ValueError:
                     continue
-                
                 taxon = taxon.strip()
                 sites = sites.strip()
                 
@@ -142,9 +144,10 @@ class NexusReader(object):
         'data': DataHandler,
     }
     
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, debug=False):
         self.blocks = {}
         self.rawblocks = {}
+        self.debug = debug
         
         if filename:
             return self.read_file(filename)
@@ -163,10 +166,21 @@ class NexusReader(object):
             handle = open(filename, 'rU')
         except IOError:
             raise IOError, "Unable To Read File %s" % filename
+        self._read(handle)
+        handle.close()
         
+    def read_string(self, contents):
+        """
+        Loads and Parses a Nexus from a string
+        """
+        self._read(StringIO.StringIO(contents))
+        
+        
+    def _read(self, handle):
+        """Reads from a iterable object"""
         store = {}
         block = None
-        for line in handle.xreadlines():
+        for line in handle.readlines():
             line = line.strip()
             if len(line) == 0:
                 continue
@@ -187,8 +201,5 @@ class NexusReader(object):
                 
             if block is not None:
                 store[block].append(line)
-        handle.close()
-        
         self.raw_blocks = store
         self._do_blocks()
-        return
