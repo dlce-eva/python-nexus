@@ -19,7 +19,9 @@ setup(
     url="http://simon.net.nz/python-nexus",
     license="BSD",
     packages=['nexus'],
-    package_data={'nexus': ['examples/*.*']},
+    package_data={'nexus': ['nexus/examples/*.*']},
     test_suite='nose.collector',
 )
+
+
 

@@ -1,10 +1,12 @@
 """Tests for nexus reading"""
-import nose
-from reader import Nexus
+from nexus import NexusReader
+import os
+
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
 
 class Test_DataHandler_SimpleStandardNexus:
     def setup(self):
-        self.nex = Nexus('examples/example.nex')
+        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         
     def test_block_find(self):
         assert 'data' in self.nex.blocks.keys()
@@ -33,7 +35,7 @@ class Test_DataHandler_SimpleStandardNexus:
 
 class Test_TreeHandler_SimpleTreefile:
     def setup(self):
-        self.nex = Nexus('examples/example.trees')
+        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
     
     def test_block_find(self):
         assert 'trees' in self.nex.blocks

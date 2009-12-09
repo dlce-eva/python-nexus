@@ -1,7 +1,7 @@
 import re
 import copy
 import nose
-from writer import NexusWriter
+from nexus import NexusWriter
 
 data = {
     'char1': {'French': 1, 'English': 2, 'Latin': 3},
