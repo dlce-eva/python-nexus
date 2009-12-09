@@ -137,22 +137,21 @@ class DataHandler(GenericHandler):
         
 
 class NexusReader(object):
-    blocks = {}
-    rawblocks = {}
-    log = []
     known_blocks = {
         'trees': TreeHandler,
         'data': DataHandler,
     }
     
     def __init__(self, filename=None):
+        self.blocks = {}
+        self.rawblocks = {}
+        
         if filename:
             return self.read_file(filename)
         
     def _do_blocks(self):
         for block, data in self.raw_blocks.iteritems():
             self.blocks[block] = self.known_blocks.get(block, GenericHandler)()
-            self.log.append('Read block: %s with %d lines, parsing with %s' % (block, len(data), self.blocks[block])) 
             self.blocks[block].parse(data)
     
     def read_file(self, filename):
