@@ -105,8 +105,8 @@ NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
 >>> n.add('taxon3', "Char3", '4')
 
 ... when you're ready, you can generate the nexus using `make_nexus` or `write_to_file`:
-make_nexus(interleave=True, charblock=True):
-write_to_file(filename="output.nex", interleave=True, charblock=True):
+n.make_nexus(interleave=True, charblock=True)
+n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
