@@ -7,7 +7,7 @@ TEMPLATE = """
 %(comments)s
 BEGIN DATA;
     DIMENSIONS NTAX=%(ntax)d NCHAR=%(nchar)d;
-    FORMAT MISSING=%(missing)s GAP=%(gap)s DATATYPE=%(datatype)s %(interleave)s SYMBOLS=%(symbols)s;
+    FORMAT DATATYPE=%(datatype)s MISSING=%(missing)s GAP=%(gap)s %(interleave)s SYMBOLS=%(symbols)s;
     %(charblock)s
 MATRIX
 %(matrix)s
@@ -31,7 +31,7 @@ class NexusWriter:
         self.is_binary = False
         
     def clean(self, s):
-        replacements = {' ': '', '\\': '', '.':'', '(':'_', ')':'', ':': '', '/':''}
+        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':''}
         for f,t in replacements.iteritems():
             s = s.replace(f, t)
         return s
