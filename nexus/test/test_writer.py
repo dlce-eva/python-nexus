@@ -52,7 +52,7 @@ class Test_NexusWriter_2:
         assert re.search("English\s+25", n)
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
         assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
-        assert re.search("FORMAT.*SYMBOLS\=(\d+);", n).groups()[0] == '123456'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
         
     def test_nexus_interleave(self):
         """Test Nexus Generation - Interleaved"""
@@ -75,8 +75,8 @@ class Test_NexusWriter_2:
         
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
         assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
-        assert re.search("FORMAT.*SYMBOLS\=(\d+);", n).groups()[0] == '123456'
         assert re.search("FORMAT.*(INTERLEAVE)", n).groups()[0] == 'INTERLEAVE'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
 
 
 class Test_NexusWriter_Binary:
@@ -138,4 +138,25 @@ class Test_NexusWriter_Binary:
         n.recode_to_binary()
         n.add('French', 4, 'A') # should raise AssertionError
         
-        
+
+
+def test_regression_format_string_has_datatype_first():
+    """Regression: Format string should contain 'datatype' as the first element"""
+    # SplitsTree complains otherwise.
+    nex = NexusWriter()
+    for char, b in data.iteritems():
+        for taxon, value in b.iteritems():
+            nex.add(taxon, char, value)
+    out = nex.make_nexus()
+    assert "FORMAT DATATYPE=STANDARD" in out
+    
+def test_regression_format_string_has_quoted_symbols():
+    """Regression: Symbols in the format string should be quoted"""
+    nex = NexusWriter()
+    for char, b in data.iteritems():
+        for taxon, value in b.iteritems():
+            nex.add(taxon, char, value)
+    out = nex.make_nexus()
+    assert 'SYMBOLS="123456"' in out
+
+    

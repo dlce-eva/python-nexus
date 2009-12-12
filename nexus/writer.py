@@ -7,7 +7,7 @@ TEMPLATE = """
 %(comments)s
 BEGIN DATA;
     DIMENSIONS NTAX=%(ntax)d NCHAR=%(nchar)d;
-    FORMAT DATATYPE=%(datatype)s MISSING=%(missing)s GAP=%(gap)s %(interleave)s SYMBOLS=%(symbols)s;
+    FORMAT DATATYPE=%(datatype)s MISSING=%(missing)s GAP=%(gap)s %(interleave)s SYMBOLS="%(symbols)s";
     %(charblock)s
 MATRIX
 %(matrix)s
