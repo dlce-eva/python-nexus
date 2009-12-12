@@ -61,7 +61,7 @@ class Test_TreeHandler_SimpleTreefile:
     
 
 
-def test_whitespace_in_matrix_regression():
+def test_regression_whitespace_in_matrix():
     """Regression: Test that leading whitespace in a data matrix is parsed ok"""
     nex = NexusReader()
     nex.read_string("""
