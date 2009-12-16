@@ -8,8 +8,8 @@ class Test_NexusReader_Core:
     """Test the Core functionality of NexusReader"""
     def test_read_file(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
-        assert 'data' in nex.blocks.keys()
-        assert 'Simon' in nex.blocks['data'].matrix.keys()
+        assert 'data' in nex.blocks
+        assert 'Simon' in nex.blocks['data'].matrix
         
     def test_read_string(self):
         handle = open(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -17,8 +17,8 @@ class Test_NexusReader_Core:
         handle.close()
         nex = NexusReader()
         nex.read_string(data)
-        assert 'data' in nex.blocks.keys()
-        assert 'Simon' in nex.blocks['data'].matrix.keys()
+        assert 'data' in nex.blocks
+        assert 'Simon' in nex.blocks['data'].matrix
     
     
 class Test_DataHandler_SimpleStandardNexus:
@@ -26,7 +26,7 @@ class Test_DataHandler_SimpleStandardNexus:
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         
     def test_block_find(self):
-        assert 'data' in self.nex.blocks.keys()
+        assert 'data' in self.nex.blocks
         
     def test_format_string(self):
         assert self.nex.blocks['data'].format['datatype'] == 'standard'
@@ -34,10 +34,10 @@ class Test_DataHandler_SimpleStandardNexus:
         assert self.nex.blocks['data'].format['symbols'] == '01'
         
     def test_taxa(self):
-        assert 'Simon' in self.nex.blocks['data'].matrix.keys()
-        assert 'Harry' in self.nex.blocks['data'].matrix.keys()
-        assert 'Betty' in self.nex.blocks['data'].matrix.keys()
-        assert 'Louise' in self.nex.blocks['data'].matrix.keys()
+        assert 'Simon' in self.nex.blocks['data'].matrix
+        assert 'Harry' in self.nex.blocks['data'].matrix
+        assert 'Betty' in self.nex.blocks['data'].matrix
+        assert 'Louise' in self.nex.blocks['data'].matrix
         assert self.nex.blocks['data'].taxa == ['Harry', 'Simon', 'Betty', 'Louise']
         assert self.nex.blocks['data'].ntaxa == 4 == len(self.nex.blocks['data'].taxa)
         
@@ -48,6 +48,15 @@ class Test_DataHandler_SimpleStandardNexus:
         assert self.nex.blocks['data'].matrix['Betty'] == ['10']
         assert self.nex.blocks['data'].matrix['Louise'] == ['11']
 
+
+# class Test_Taxa_Handler_SimpleStandardNexus:
+#     def setUp(self):
+#         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
+#     
+#     def test_block_find(self):
+#         assert 'taxa' in self.nex.blocks
+        
+        
 
 class Test_TreeHandler_SimpleTreefile:
     def setUp(self):
