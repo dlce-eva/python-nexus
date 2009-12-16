@@ -7,12 +7,12 @@ import StringIO
 DEBUG = False
 
 BEGIN_PATTERN = re.compile(r"""begin (\w+);""", re.IGNORECASE)
-END_PATTERN1 = re.compile(r"""end;""", re.IGNORECASE)
-END_PATTERN2 = re.compile(r"""^;$""")
+END_PATTERN = re.compile(r"""end;""", re.IGNORECASE)
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
+QUOTED_PATTERN = re.compile(r"""^"(.*)"$""")
 
 class GenericHandler(object):
     def __init__(self):
@@ -36,9 +36,30 @@ class GenericHandler(object):
         return COMMENT_PATTERN.sub('', line)
     
     
+class TaxaHandler(GenericHandler):
+    """Handler for `taxa` blocks"""
+    is_dimensions = re.compile(r"""dimensions ntax=(\d+)""", re.IGNORECASE)
+    is_taxlabel = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
     
+    def __init__(self):
+        self.taxa = []
     
-    
+    def parse(self, data):
+        in_taxlabel_block = False
+        for line in data:
+            line = self.remove_comments(line)
+            line = line.replace("'", "").strip()
+            if self.is_dimensions.match(line):
+                self.ntaxa = int(self.is_dimensions.findall(line)[0])
+            elif line == ';':
+                continue
+            elif self.is_taxlabel.match(line):
+                in_taxlabel_block = True
+            elif in_taxlabel_block:
+                self.taxa.append(line)
+        assert self.ntaxa == len(self.taxa)
+
+
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
     is_tree = re.compile(r"""tree ([\w\d\.]+)\s\=\s(.*);""")
@@ -69,7 +90,7 @@ class DataHandler(GenericHandler):
         self.missing = None
         self.matrix = {}
     
-    def parse_format_line(self, line):
+    def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
         
@@ -87,30 +108,44 @@ class DataHandler(GenericHandler):
         >>> assert d['interleave'] == True, "Expected <True>, but got '%s'" % d['interleave']
         """
         out = {}
+        
+        try:
+            line = re.findall(r'format\b(.*?);', data, re.IGNORECASE | re.DOTALL | re.MULTILINE)[0]
+        except IndexError:
+            return None
+        
+        line = line.strip(';')
         line = line.lower()
-        # cleanup
-        line = line.lstrip('format').strip(';').strip().replace('"', '')
-        for chunk in line.split():
+        
+        for chunk in WHITESPACE_PATTERN.split(line):
             try:
                 k, v = chunk.split("=")
+                v = QUOTED_PATTERN.sub('\\1', v)
             except ValueError:
                 k, v = chunk, True
             out[k] = v
         return out
         
     def parse(self, data):
+        seen_matrix = False
+        self.format = self.parse_format_line("\n".join(data))
+        
         for line in data:
             lline = line.lower().strip()
             lline = self.remove_comments(lline)
             # Dimensions line
             if lline.startswith('dimensions '):
                 # try for nchar/ntax
-                self.ntaxa = int(NTAX_PATTERN.findall(line)[0])
+                try:
+                    self.ntaxa = int(NTAX_PATTERN.findall(line)[0])
+                except IndexError:
+                    self.ntaxa = None
+                
                 self.nchar = int(NCHAR_PATTERN.findall(line)[0])
-            
+                
             # handle format line
-            elif lline.startswith('format '):
-                self.format = self.parse_format_line(line)
+            elif lline.startswith('format'):
+                continue
             elif lline.startswith('matrix'):
                 seen_matrix = True
                 continue
@@ -133,6 +168,9 @@ class DataHandler(GenericHandler):
                 
                 self.matrix[taxon] = self.matrix.get(taxon, [])
                 self.matrix[taxon].append(sites)
+            
+        if self.ntaxa is None:
+            self.ntaxa = len(self.taxa)
         
     def __repr__(self):
         return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)
@@ -140,27 +178,30 @@ class DataHandler(GenericHandler):
 
 class NexusReader(object):
     known_blocks = {
-        'trees': TreeHandler,
         'data': DataHandler,
+        'characters': DataHandler,
+        'trees': TreeHandler,
+        'taxa': TaxaHandler,
     }
     
     def __init__(self, filename=None, debug=False):
+        self.debug = debug
         self.blocks = {}
         self.rawblocks = {}
-        self.debug = debug
         
         if filename:
             return self.read_file(filename)
         
     def _do_blocks(self):
         for block, data in self.raw_blocks.iteritems():
+            if block == 'characters':
+                block = 'data' # override
             self.blocks[block] = self.known_blocks.get(block, GenericHandler)()
             self.blocks[block].parse(data)
-    
+            
+        
     def read_file(self, filename):
-        """
-        Loads and Parses a Nexus File
-        """
+        """Loads and Parses a Nexus File"""
         self.filename = filename
         try:
             handle = open(filename, 'rU')
@@ -170,11 +211,8 @@ class NexusReader(object):
         handle.close()
         
     def read_string(self, contents):
-        """
-        Loads and Parses a Nexus from a string
-        """
+        """Loads and Parses a Nexus from a string"""
         self._read(StringIO.StringIO(contents))
-        
         
     def _read(self, handle):
         """Reads from a iterable object"""
@@ -196,7 +234,7 @@ class NexusReader(object):
                 store[block] = []
                 
             # check if we're ending a block
-            if END_PATTERN1.search(line) or END_PATTERN2.search(line):
+            if END_PATTERN.search(line):
                 block = None
                 
             if block is not None:
