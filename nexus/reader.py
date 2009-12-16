@@ -208,7 +208,7 @@ class NexusReader(object):
                 block = 'data' # override
             self.blocks[block] = self.known_blocks.get(block, GenericHandler)()
             self.blocks[block].parse(data)
-            
+            setattr(self, block, self.blocks[block])
         
     def read_file(self, filename):
         """Loads and Parses a Nexus File"""
