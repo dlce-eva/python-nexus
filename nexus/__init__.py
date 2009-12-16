@@ -22,34 +22,40 @@ Reading a Nexus
 `data` blocks
 -------------
 
->>> n.blocks['data'].nchar
+>>> n.data.nchar
 2
 
->>> n.blocks['data'].ntaxa
+>>> n.data.ntaxa
 4
 
->>> n.blocks['data'].matrix
+>>> n.data.format
+{'datatype': 'standard', 'symbols': '01', 'gap': '-'}
+
+>>> n.data.matrix
 {'Simon': ['01'], 'Louise': ['11'], 'Betty': ['10'], 'Harry': ['00']}
 
->>> n.blocks['data'].matrix['Simon']
+>>> n.data.matrix['Simon']
 ['01']
 
->>> sorted(n.blocks['data'].taxa)
+>>> sorted(n.data.taxa)
 ['Betty', 'Harry', 'Louise', 'Simon']
 
->>> sorted(n.blocks['data'].matrix.keys())
+>>> sorted(n.data.matrix.keys())
 ['Betty', 'Harry', 'Louise', 'Simon']
+
+>>> for taxon, characters in n.data: #doctest: +SKIP
 
 
 `tree` blocks
 -------------
 
 >>> n = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
->>> n.blocks['trees'].ntrees
+>>> n.trees.ntrees
 3
->>> n.blocks['trees'].trees[0]
+>>> n.trees.trees[0]
 'tree tree.0.1065.603220 = (((((((Chris:0.0668822155,Bruce:0.0173144449):0.0062091603,Tom:0.0523825242):0.0206190840,(Henry:0.0482653647,Timothy:0.0744964092):0.0183093750):0.0401805957,(Mark:0.0066961591,Simon:0.0755275882):0.0264078188):0.0536464636,((Fred:0.0428499135,Kevin:0.0734738565):0.0937536292,Roger:0.0538708492):0.0438297939):0.0453008384,(Michael:0.0953237112,Andrew:0.0654710419):0.0803079594):0.0630363263,David:0.0855948485);'
 
+>>> for tree in n.trees: #doctest: +SKIP
 
 
 
