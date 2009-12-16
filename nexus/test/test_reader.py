@@ -21,7 +21,13 @@ class Test_NexusReader_Core:
         assert 'Simon' in nex.blocks['data'].matrix
     
     
-class Test_DataHandler_SimpleStandardNexus:
+class Test_DataHandler_SimpleNexusFormat:
+    expected = {
+        'Harry': '00',
+        'Simon': '01',
+        'Betty': '10',
+        'Louise': '11',
+    }
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         
@@ -29,20 +35,23 @@ class Test_DataHandler_SimpleStandardNexus:
         assert 'data' in self.nex.blocks
         
     def test_format_string(self):
-        assert self.nex.blocks['data'].format['datatype'] == 'standard'
-        print self.nex.blocks['data'].format
-        assert self.nex.blocks['data'].format['gap'] == '-'
-        assert self.nex.blocks['data'].format['symbols'] == '01'
+        # did we get the expected tokens in the format string?
+        expected = {'datatype': 'standard', 'gap': '-', 'symbols': '01'}
+        for k, v in expected.iteritems():
+            assert self.nex.blocks['data'].format[k] == v, \
+                "%s should equal %s and not %s" % (k, v, self.nex.blocks['data'].format[k])
+        # did we get the right number of tokens?
+        assert len(self.nex.blocks['data'].format) == len(expected)
         
     def test_taxa(self):
-        assert 'Simon' in self.nex.blocks['data'].matrix
-        assert 'Harry' in self.nex.blocks['data'].matrix
-        assert 'Betty' in self.nex.blocks['data'].matrix
-        assert 'Louise' in self.nex.blocks['data'].matrix
-        assert self.nex.blocks['data'].taxa == ['Harry', 'Simon', 'Betty', 'Louise']
-        assert self.nex.blocks['data'].ntaxa == 4 == len(self.nex.blocks['data'].taxa)
+        # did we get the right taxa in the matrix?
+        for taxon in self.expected:
+            assert taxon in self.nex.blocks['data'].matrix
+        # did we get the right number of taxa in the matrix?
+        assert self.nex.blocks['data'].ntaxa == len(self.expected) == len(self.nex.blocks['data'].taxa)
         
     def test_characters(self):
+        # did we parse the characters properly? 
         assert self.nex.blocks['data'].nchar == 2
         assert self.nex.blocks['data'].matrix['Harry'] == ['00']
         assert self.nex.blocks['data'].matrix['Simon'] == ['01']
@@ -63,7 +72,6 @@ class Test_DataHandler_AlternateNexusFormat:
         assert self.nex.blocks['data'].ntaxa == 4
         
     def test_format_string(self):
-        
         expected = {
             'datatype': 'dna',
             'missing': '?',
@@ -73,41 +81,45 @@ class Test_DataHandler_AlternateNexusFormat:
             'transpose': 'no',
             'interleave': 'yes',
         }
+        # did we manage to extract some format string at all?
         assert self.nex.blocks['data'].format is not None
+        # did we get the expected tokens?
         for k, v in expected.iteritems():
             assert self.nex.blocks['data'].format[k] == v, \
                 "%s should equal %s and not %s" % (k, v, self.nex.blocks['data'].format[k])
+        # did we get the right number of tokens?
+        assert len(self.nex.blocks['data'].format) == len(expected)
+        
+    def test_taxa(self):
+        expected = ['John', 'Paul', 'George', 'Ringo']
+        # did we get the taxa right?
+        for e in expected:
+            assert e in self.nex.blocks['data'].taxa, "%s should be in taxa" % e
+        # did we get the number of taxa right?
+        assert self.nex.blocks['data'].ntaxa == len(expected) == len(self.nex.blocks['data'].taxa)
+    
+    def test_data(self):
+        # did we get the right amount of data?
+        assert self.nex.blocks['data'].nchar == 4
+        # are all the characters parsed correctly?
+        for k in self.nex.blocks['data'].matrix:
+            assert self.nex.blocks['data'].matrix[k] == ['actg']
 
 
-
-
-#     def test_taxa(self):
-#         assert 'John' in self.nex.blocks['data'].matrix
-#         assert 'Paul' in self.nex.blocks['data'].matrix
-#         assert 'George' in self.nex.blocks['data'].matrix
-#         assert 'Ringo' in self.nex.blocks['data'].matrix
-#         assert self.nex.blocks['data'].taxa == ['John', 'Paul', 'George', 'Ringo']
-#         assert self.nex.blocks['data'].ntaxa == 4 == len(self.nex.blocks['data'].taxa)
-# 
-#     def test_characters(self):
-#         assert self.nex.blocks['data'].nchar == 2
-#         assert self.nex.blocks['data'].matrix['John'] == ['actg']
-#         assert self.nex.blocks['data'].matrix['Paul'] == ['actg']
-#         assert self.nex.blocks['data'].matrix['George'] == ['actg']
-#         assert self.nex.blocks['data'].matrix['Ringo'] == ['actg']
-
-
-class Test_TaxaHandler_SimpleStandardNexus:
+class Test_TaxaHandler_AlternateNexusFormat:
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
     
     def test_block_find(self):
         assert 'taxa' in self.nex.blocks
-        assert self.nex.blocks['taxa'].ntaxa == 4
-        assert 'John' in self.nex.blocks['taxa'].taxa
-        assert 'Paul' in self.nex.blocks['taxa'].taxa
-        assert 'George' in self.nex.blocks['taxa'].taxa
-        assert 'Ringo' in self.nex.blocks['taxa'].taxa
+    
+    def test_taxa(self):
+        expected = ['John', 'Paul', 'George', 'Ringo']
+        print self.nex.blocks['taxa'].taxa
+        for taxon in expected:
+            assert taxon in self.nex.blocks['data'].matrix
+            assert taxon in self.nex.blocks['taxa'].taxa
+        assert self.nex.blocks['taxa'].ntaxa == len(expected)
 
 
 class Test_TreeHandler_SimpleTreefile:
@@ -115,11 +127,12 @@ class Test_TreeHandler_SimpleTreefile:
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
     
     def test_block_find(self):
+        # did we get a tree block?
         assert 'trees' in self.nex.blocks
         
     def test_treecount(self):
+        # did we find 3 trees?
         assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
-    
 
 
 def test_regression_whitespace_in_matrix():
