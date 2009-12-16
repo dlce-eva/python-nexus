@@ -58,6 +58,11 @@ class Test_DataHandler_SimpleNexusFormat:
         assert self.nex.blocks['data'].matrix['Betty'] == ['10']
         assert self.nex.blocks['data'].matrix['Louise'] == ['11']
 
+    def test_iterable(self):
+        for taxon, block in self.nex.blocks['data']:
+            assert block[0] == self.expected[taxon]
+            
+        
 
 class Test_DataHandler_AlternateNexusFormat:
     def setUp(self):
@@ -107,6 +112,7 @@ class Test_DataHandler_AlternateNexusFormat:
 
 
 class Test_TaxaHandler_AlternateNexusFormat:
+    expected = ['John', 'Paul', 'George', 'Ringo']
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
     
@@ -114,12 +120,15 @@ class Test_TaxaHandler_AlternateNexusFormat:
         assert 'taxa' in self.nex.blocks
     
     def test_taxa(self):
-        expected = ['John', 'Paul', 'George', 'Ringo']
-        print self.nex.blocks['taxa'].taxa
-        for taxon in expected:
+        for taxon in self.expected:
             assert taxon in self.nex.blocks['data'].matrix
             assert taxon in self.nex.blocks['taxa'].taxa
-        assert self.nex.blocks['taxa'].ntaxa == len(expected)
+        assert self.nex.blocks['taxa'].ntaxa == len(self.expected)
+    
+    def test_iterable(self):
+        for idx, taxa in enumerate(self.nex.blocks['taxa']):
+            assert taxa == self.expected[idx]
+
 
 
 class Test_TreeHandler_SimpleTreefile:
@@ -133,6 +142,10 @@ class Test_TreeHandler_SimpleTreefile:
     def test_treecount(self):
         # did we find 3 trees?
         assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
+        
+    def test_iterable(self):
+        for tree in self.nex.blocks['trees']:
+            pass
 
 
 def test_regression_whitespace_in_matrix():
