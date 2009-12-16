@@ -44,6 +44,9 @@ class TaxaHandler(GenericHandler):
     def __init__(self):
         self.taxa = []
     
+    def __getitem__(self, index):
+        return self.taxa[index]
+        
     def parse(self, data):
         in_taxlabel_block = False
         for line in data:
@@ -67,6 +70,9 @@ class TreeHandler(GenericHandler):
         self.ntrees = 0
         self.trees = []
         
+    def __getitem__(self, index):
+        return self.trees[index]
+        
     def parse(self, data):
         for line in data:
             if self.is_tree.search(line):
@@ -88,6 +94,9 @@ class DataHandler(GenericHandler):
         self.gaps = None
         self.missing = None
         self.matrix = {}
+    
+    def __getitem__(self, index):
+        return (self.taxa[index], self.matrix[self.taxa[index]])
     
     def parse_format_line(self, data):
         """
