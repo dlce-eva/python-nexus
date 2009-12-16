@@ -12,7 +12,7 @@ NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
-QUOTED_PATTERN = re.compile(r"""^"(.*)"$""")
+QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
 
 class GenericHandler(object):
     def __init__(self):
@@ -39,7 +39,7 @@ class GenericHandler(object):
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
     is_dimensions = re.compile(r"""dimensions ntax=(\d+)""", re.IGNORECASE)
-    is_taxlabel = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
+    is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
     
     def __init__(self):
         self.taxa = []
@@ -47,18 +47,17 @@ class TaxaHandler(GenericHandler):
     def parse(self, data):
         in_taxlabel_block = False
         for line in data:
-            line = self.remove_comments(line)
-            line = line.replace("'", "").strip()
+            line = self.remove_comments(line).strip()
+            line = QUOTED_PATTERN.sub('\\1', line)
             if self.is_dimensions.match(line):
                 self.ntaxa = int(self.is_dimensions.findall(line)[0])
             elif line == ';':
                 continue
-            elif self.is_taxlabel.match(line):
+            elif self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
             elif in_taxlabel_block:
                 self.taxa.append(line)
         assert self.ntaxa == len(self.taxa)
-
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
@@ -123,7 +122,8 @@ class DataHandler(GenericHandler):
                 v = QUOTED_PATTERN.sub('\\1', v)
             except ValueError:
                 k, v = chunk, True
-            out[k] = v
+            if len(k):
+                out[k] = v
         return out
         
     def parse(self, data):
@@ -161,6 +161,7 @@ class DataHandler(GenericHandler):
                 except ValueError:
                     continue
                 taxon = taxon.strip()
+                taxon = QUOTED_PATTERN.sub('\\1', taxon)
                 sites = sites.strip()
                 
                 if taxon not in self.taxa:
