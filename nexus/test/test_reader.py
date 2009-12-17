@@ -39,7 +39,7 @@ class Test_DataHandler_SimpleNexusFormat:
     def test_format_string(self):
         # did we get the expected tokens in the format string?
         expected = {'datatype': 'standard', 'gap': '-', 'symbols': '01'}
-        for k, v in expected.iteritems():
+        for k, v in expected.items():
             assert self.nex.data.format[k] == v, \
                 "%s should equal %s and not %s" % (k, v, self.nex.data.format[k])
         # did we get the right number of tokens?
@@ -90,7 +90,7 @@ class Test_DataHandler_AlternateNexusFormat:
         # did we manage to extract some format string at all?
         assert self.nex.data.format is not None
         # did we get the expected tokens?
-        for k, v in expected.iteritems():
+        for k, v in expected.items():
             assert self.nex.data.format[k] == v, \
                 "%s should equal %s and not %s" % (k, v, self.nex.data.format[k])
         # did we get the right number of tokens?

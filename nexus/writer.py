@@ -32,7 +32,7 @@ class NexusWriter:
         
     def clean(self, s):
         replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':''}
-        for f,t in replacements.iteritems():
+        for f,t in replacements.items():
             s = s.replace(f, t)
         return s
         
@@ -82,7 +82,7 @@ class NexusWriter:
         assert self.is_binary == False, "Unable to add data to a binarised nexus form"
         character = self._add_char(character)
         taxon = self._add_taxa(taxon)
-        assert self.data[character].has_key(taxon) == False, "Duplicate entry for %s-%s" % (taxon, character)
+        assert (taxon in self.data[character]) == False, "Duplicate entry for %s-%s" % (taxon, character)
         value = str(value)
         self.data[character][taxon] = value
         # add to symbols
@@ -91,12 +91,12 @@ class NexusWriter:
         
     def recode_to_binary(self):
         newdata = {}
-        for char, block in self.data.iteritems():
+        for char, block in self.data.items():
             newdata[char] = {}
             states = list(set(block.values())) # get uniques
             states = sorted(states)
             num_states = len(states)
-            for taxon, value in block.iteritems():
+            for taxon, value in block.items():
                 b = ['0' for x in range(num_states)]
                 b[states.index(value)] = '1'
                 newdata[char][taxon] = "".join(b)
