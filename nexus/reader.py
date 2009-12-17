@@ -2,7 +2,7 @@
 Tools for reading a nexus file
 """
 import re
-import StringIO
+import io
 
 DEBUG = False
 
@@ -162,7 +162,7 @@ class DataHandler(GenericHandler):
             elif BEGIN_PATTERN.match(line):
                 continue
             elif 'charstatelabels' in lline:
-                raise NotImplementedError, 'Character block parsing is not implemented yet'
+                raise NotImplementedError('Character block parsing is not implemented yet')
             elif seen_matrix == True:
                 # NORMALISE WHITESPACE
                 try:
@@ -203,7 +203,7 @@ class NexusReader(object):
             return self.read_file(filename)
         
     def _do_blocks(self):
-        for block, data in self.raw_blocks.iteritems():
+        for block, data in self.raw_blocks.items():
             if block == 'characters':
                 block = 'data' # override
             self.blocks[block] = self.known_blocks.get(block, GenericHandler)()
@@ -216,13 +216,13 @@ class NexusReader(object):
         try:
             handle = open(filename, 'rU')
         except IOError:
-            raise IOError, "Unable To Read File %s" % filename
+            raise IOError("Unable To Read File %s" % filename)
         self._read(handle)
         handle.close()
         
     def read_string(self, contents):
         """Loads and Parses a Nexus from a string"""
-        self._read(StringIO.StringIO(contents))
+        self._read(io.StringIO(contents))
         
     def _read(self, handle):
         """Reads from a iterable object"""
@@ -239,8 +239,8 @@ class NexusReader(object):
             found = BEGIN_PATTERN.findall(line)
             if found:
                 block = found[0].lower()
-                if store.has_key(block):
-                    raise Exception, "Duplicate Block %s" % block
+                if block in store:
+                    raise Exception("Duplicate Block %s" % block)
                 store[block] = []
                 
             # check if we're ending a block
