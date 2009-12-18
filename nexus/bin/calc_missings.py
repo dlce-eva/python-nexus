@@ -2,7 +2,6 @@
 """calc_missings - python-nexus tools 
 Calculates the number of missing entries in each site in a nexus file
 """
-
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
 import sys
@@ -45,6 +44,7 @@ if __name__ == '__main__':
         nexusname = args[0]
     except IndexError:
         print __doc__
+        print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
         
