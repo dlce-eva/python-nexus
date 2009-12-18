@@ -1,17 +1,30 @@
 #!/usr/bin/env python
-"""Calculates the number of missing entries in each site in a nexus file"""
+"""calc_missings - python-nexus tools 
+Calculates the number of missing entries in each site in a nexus file
+"""
+
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
 import sys
 import os
-from nexus.reader import NexusReader
+from nexus.reader import NexusReader, NexusFormatException
 
 def count_missings(nexus_obj):
     """
     Counts the number of missing/gap sites in a nexus
+    Converts a (latitude, longitude) pair to an address. Interesting bits:
     
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :return: A dictionary of taxa and missing counts
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'data') == False:
+        raise NexusFormatException("Nexus has no `data` block")
+    
     missing = {}
     for taxon, characters in nexus_obj.data:
         missing[taxon] = missing.get(taxon, 0)
@@ -31,6 +44,7 @@ if __name__ == '__main__':
     try:
         nexusname = args[0]
     except IndexError:
+        print __doc__
         parser.print_help()
         sys.exit()
         
