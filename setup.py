@@ -19,7 +19,12 @@ setup(
     url="http://simon.net.nz/python-nexus",
     license="BSD",
     packages=['nexus'],
-    package_data={'nexus': ['nexus/examples/*.*']},
+    package_dir={'nexus': 'nexus'},
+    package_data={'nexus/examples': ['*.nex', '*.trees']},
+    scripts=[
+        'nexus/bin/calc_missings.py', 
+        'nexus/bin/remove_constantchars.py',
+    ],
     test_suite='nose.collector',
 )
 

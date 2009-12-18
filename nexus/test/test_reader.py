@@ -24,10 +24,10 @@ class Test_NexusReader_Core:
     
 class Test_DataHandler_SimpleNexusFormat:
     expected = {
-        'Harry': '00',
-        'Simon': '01',
-        'Betty': '10',
-        'Louise': '11',
+        'Harry': ['0', '0'],
+        'Simon': ['0', '1'],
+        'Betty': ['1', '0'],
+        'Louise': ['1', '1'],
     }
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -56,14 +56,12 @@ class Test_DataHandler_SimpleNexusFormat:
     def test_characters(self):
         # did we parse the characters properly? 
         assert self.nex.data.nchar == 2
-        assert self.nex.data.matrix['Harry'] == ['00']
-        assert self.nex.data.matrix['Simon'] == ['01']
-        assert self.nex.data.matrix['Betty'] == ['10']
-        assert self.nex.data.matrix['Louise'] == ['11']
+        for taxon, expected in self.expected.items():
+            assert self.nex.data.matrix[taxon] == expected
 
     def test_iterable(self):
         for taxon, block in self.nex.data:
-            assert block[0] == self.expected[taxon]
+            assert block == self.expected[taxon]
             
     def test_parse_format_line(self):
         d = DataHandler()
@@ -126,7 +124,7 @@ class Test_DataHandler_AlternateNexusFormat:
         assert self.nex.data.nchar == 4
         # are all the characters parsed correctly?
         for k in self.nex.data.matrix:
-            assert self.nex.data.matrix[k] == ['actg']
+            assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
 
 
 class Test_TaxaHandler_AlternateNexusFormat:
@@ -184,9 +182,9 @@ def test_regression_whitespace_in_matrix():
     End;
     """)
     assert nex.blocks['data'].nchar == 2
-    assert nex.blocks['data'].matrix['Harry'] == ['00']
-    assert nex.blocks['data'].matrix['Simon'] == ['01']
-    assert nex.blocks['data'].matrix['Betty'] == ['10']
-    assert nex.blocks['data'].matrix['Louise'] == ['11']
+    assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
+    assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
+    assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
+    assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
         
     

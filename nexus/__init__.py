@@ -32,10 +32,10 @@ Reading a Nexus
 {'datatype': 'standard', 'symbols': '01', 'gap': '-'}
 
 >>> n.data.matrix
-{'Simon': ['01'], 'Louise': ['11'], 'Betty': ['10'], 'Harry': ['00']}
+{'Simon': ['0', '1'], 'Louise': ['1', '1'], 'Betty': ['1', '0'], 'Harry': ['0', '0']}
 
 >>> n.data.matrix['Simon']
-['01']
+['0', '1']
 
 >>> sorted(n.data.taxa)
 ['Betty', 'Harry', 'Louise', 'Simon']
