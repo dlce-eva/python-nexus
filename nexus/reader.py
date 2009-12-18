@@ -32,6 +32,11 @@ class GenericHandler(object):
         'Hello '
         >>> g.remove_comments("He[bite]ll[me]o")
         'Hello'
+        
+        :param line: string
+        :type line: string
+        
+        :return: Returns a cleaned string.
         """
         return COMMENT_PATTERN.sub('', line)
     
@@ -114,6 +119,11 @@ class DataHandler(GenericHandler):
         >>> assert d['symbols'] == 'acgu', "Expected 'acgu', but got '%s'" % d['symbols']
         >>> assert d['labels'] == True, "Expected <True>, but got '%s'" % d['labels']
         >>> assert d['interleave'] == True, "Expected <True>, but got '%s'" % d['interleave']
+        
+        :param data: string
+        :type data: string
+        
+        :return: Returns a dictionary of tokens in the format line.
         """
         out = {}
         
