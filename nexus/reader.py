@@ -14,6 +14,14 @@ COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
 QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
 
+
+class NexusFormatException(Exception):
+    def __init__(self, arg):
+        self.value = arg
+    def __str__(self):
+        return repr(self.value)
+
+
 class GenericHandler(object):
     def __init__(self):
         """Initialise datastore in <storage> under <keyname>"""
@@ -108,17 +116,9 @@ class DataHandler(GenericHandler):
         Parses a format line, and returns a dictionary of tokens
         
         >>> d = DataHandler().parse_format_line('Format datatype=standard symbols="01" gap=-;')
-        >>> assert d['datatype'] == 'standard', "Expected 'standard', but got '%s'" % d['datatype']
-        >>> assert d['symbols'] == '01', "Expected '01', but got '%s'" % d['symbols']
-        >>> assert d['gap'] == '-', "Expected 'gap', but got '%s'" % d['gap']
-        
+        ...
         >>> d = DataHandler().parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
-        >>> assert d['datatype'] == 'rna', "Expected 'rna', but got '%s'" % d['datatype']
-        >>> assert d['missing'] == '?', "Expected '?', but got '%s'" % d['missing']
-        >>> assert d['gap'] == '-', "Expected '-', but got '%s'" % d['gap']
-        >>> assert d['symbols'] == 'acgu', "Expected 'acgu', but got '%s'" % d['symbols']
-        >>> assert d['labels'] == True, "Expected <True>, but got '%s'" % d['labels']
-        >>> assert d['interleave'] == True, "Expected <True>, but got '%s'" % d['interleave']
+        ...
         
         :param data: string
         :type data: string
