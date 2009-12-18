@@ -145,7 +145,56 @@ class DataHandler(GenericHandler):
                 out[k] = v
         return out
         
+    def _parse_sites(self, sites):
+        """
+        Parses a string of sites and returns a list of site values
+        
+        >>> DataHandler()._parse_sites('123')
+        ['1', '2', '3']
+        >>> DataHandler()._parse_sites('1(12)')
+        ['1', '12']
+        >>> DataHandler()._parse_sites('123(4,5)56')
+        ['1', '2', '3', '4,5', '5', '6']
+        
+        :param sites: string
+        :type sites: string
+        
+        :return: Returns a list of site values
+        :raises NexusFormatException: If data matrix contains incomplete multistate values
+        """
+        out = []
+        multistate = False
+        sites = [s for s in sites]
+        while len(sites) > 0:
+            s = sites.pop(0)
+            if s == '(':
+                # read-ahead
+                s = '' # discard open bracket
+                multistate = True
+                while multistate:
+                    t = sites.pop(0)
+                    if t == ')':
+                        multistate = False
+                    else:
+                        s += t
+            out.append(s)
+        # check we're not in hanging multistate chunk
+        if multistate:
+            raise NexusFormatException("Data Matrix contains incomplete multistate values")
+        return out
+        
+        
     def parse(self, data):
+        """
+        Parses a `data` block
+        
+        :param data: data block 
+        :type data: string
+        
+        :return: None
+        :raises NexusFormatException: If parsing fails
+        :raises NotImplementedError: If parsing encounters a not implemented section
+        """        
         seen_matrix = False
         self.format = self.parse_format_line("\n".join(data))
         
@@ -187,7 +236,7 @@ class DataHandler(GenericHandler):
                     self.taxa.append(taxon)
                 
                 self.matrix[taxon] = self.matrix.get(taxon, [])
-                self.matrix[taxon].append(sites)
+                self.matrix[taxon].extend(self._parse_sites(sites))
             
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)

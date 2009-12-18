@@ -4,7 +4,7 @@ import nose
 
 from nexus import NexusReader
 from nexus.bin.calc_missings import count_missings
-from nexus.bin.remove_constant_chars import find_constant_sites
+from nexus.bin.remove_constantchars import find_constant_sites
 
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
@@ -61,7 +61,7 @@ class Test_find_constant_sites:
         assert len(find_constant_sites(nexus)) == 0
     
     def test_find_constant_sites2(self):
-        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
         const = find_constant_sites(nexus)
         assert len(const) == 4
         assert 0 in const
