@@ -1,5 +1,6 @@
 """Tests for nexus reading"""
 from nexus import NexusReader
+from nexus.reader import DataHandler
 import os
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
@@ -64,6 +65,22 @@ class Test_DataHandler_SimpleNexusFormat:
         for taxon, block in self.nex.data:
             assert block[0] == self.expected[taxon]
             
+    def test_parse_format_line(self):
+        d = DataHandler()
+        f = d.parse_format_line('Format datatype=standard symbols="01" gap=-;')
+        assert f['datatype'] == 'standard', "Expected 'standard', but got '%s'" % f['datatype']
+        assert f['symbols'] == '01', "Expected '01', but got '%s'" % f['symbols']
+        assert f['gap'] == '-', "Expected 'gap', but got '%s'" % f['gap']
+        
+        f = d.parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
+        assert f['datatype'] == 'rna', "Expected 'rna', but got '%s'" % f['datatype']
+        assert f['missing'] == '?', "Expected '?', but got '%s'" % f['missing']
+        assert f['gap'] == '-', "Expected '-', but got '%s'" % f['gap']
+        assert f['symbols'] == 'acgu', "Expected 'acgu', but got '%s'" % f['symbols']
+        assert f['labels'] == True, "Expected <True>, but got '%s'" % f['labels']
+        assert f['interleave'] == True, "Expected <True>, but got '%s'" % f['interleave']
+    
+
 
 class Test_DataHandler_AlternateNexusFormat:
     def setUp(self):
