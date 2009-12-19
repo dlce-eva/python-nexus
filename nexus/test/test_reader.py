@@ -1,6 +1,6 @@
 """Tests for nexus reading"""
 from nexus import NexusReader
-from nexus.reader import DataHandler
+from nexus.reader import DataHandler, GenericHandler
 import os
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
@@ -21,6 +21,31 @@ class Test_NexusReader_Core:
         assert 'data' in nex.blocks
         assert 'Simon' in nex.blocks['data'].matrix
     
+    def test_generic_readwrite(self):
+        expected = """Begin data;
+        Dimensions ntax=4 nchar=2;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        Harry              00
+        Simon              01
+        Betty              10
+        Louise             11
+        ;
+        """.split("\n")
+        nex = NexusReader()
+        nex.handlers['data'] = GenericHandler
+        nex.read_file(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        for line in nex.data.write().split("\n"):
+            e = expected.pop(0).strip()
+            assert line.strip() == e
+        
+    def test_write(self):
+        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
+        text = open(os.path.join(EXAMPLE_DIR, 'example.trees')).read()
+        written = nex.write()
+        print text
+        print written
+        assert text == written
     
 class Test_DataHandler_SimpleNexusFormat:
     expected = {
@@ -36,6 +61,19 @@ class Test_DataHandler_SimpleNexusFormat:
         assert 'data' in self.nex.blocks
         assert hasattr(self.nex, 'data')
         assert self.nex.data == self.nex.data
+        
+    def test_raw(self):
+        assert self.nex.data.block == [
+            'Begin data;', 
+            'Dimensions ntax=4 nchar=2;', 
+            'Format datatype=standard symbols="01" gap=-;', 
+            'Matrix', 
+            'Harry              00', 
+            'Simon              01', 
+            'Betty              10', 
+            'Louise             11', 
+            ';'
+        ]
         
     def test_format_string(self):
         # did we get the expected tokens in the format string?
@@ -78,8 +116,10 @@ class Test_DataHandler_SimpleNexusFormat:
         assert f['labels'] == True, "Expected <True>, but got '%s'" % f['labels']
         assert f['interleave'] == True, "Expected <True>, but got '%s'" % f['interleave']
     
-
-
+    def test_write(self):
+        assert False
+        
+        
 class Test_DataHandler_AlternateNexusFormat:
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
@@ -144,8 +184,7 @@ class Test_TaxaHandler_AlternateNexusFormat:
     def test_iterable(self):
         for idx, taxa in enumerate(self.nex.blocks['taxa']):
             assert taxa == self.expected[idx]
-
-
+    
 
 class Test_TreeHandler_SimpleTreefile:
     def setUp(self):
@@ -158,10 +197,23 @@ class Test_TreeHandler_SimpleTreefile:
     def test_treecount(self):
         # did we find 3 trees?
         assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
+        assert len(self.nex.trees.trees) == 3 == self.nex.trees.ntrees
         
     def test_iterable(self):
         for tree in self.nex.blocks['trees']:
             pass
+        for tree in self.nex.trees:
+            pass
+            
+    def test_write(self):
+        written = self.nex.trees.write().split("\n")
+        handle = open(os.path.join(EXAMPLE_DIR, 'example.trees'), 'rU')
+        for line in handle.readlines():
+            if line.startswith("#NEXUS") or len(line) == 0:
+                continue
+            expected = written.pop(0)
+            assert line.strip() == expected.strip(), "Expected '%s' but got '%s'" % (expected, line)
+        handle.close()
 
 
 def test_regression_whitespace_in_matrix():

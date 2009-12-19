@@ -59,31 +59,6 @@ Reading a Nexus
 
 
 
-Parsing specific blocks
------------------------
-
-Class Nexus is a generic object for loading nexus information.
-
-The Handlers are objects to store specialised blocks found in nexus files, and 
-are initialised in Nexus.known_blocks: 
-
-    Nexus.known_blocks = {
-        'trees': TreeHandler,
-        'data': DataHandler,
-    }
-    
-    ...adding a specialised handler for a certain block type is as easy as subclassing GenericHandler,
-    and attaching it into the Nexus known_blocks dictionary under the block label, e.g.
-    
-    n = Nexus()
-    n.known_blocks['r8s'] = R8sBlockHandler
-    n.read_file('myfile.nex')
-    print n.blocks['r8s']
-
-
-
-
-
 Writing a Nexus File
 --------------------
 >>> from nexus import NexusWriter

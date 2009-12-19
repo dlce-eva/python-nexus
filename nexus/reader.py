@@ -21,15 +21,26 @@ class NexusFormatException(Exception):
     def __str__(self):
         return repr(self.value)
 
-
 class GenericHandler(object):
+    """
+    Handlers are objects to store specialised blocks found in nexus files.
+    
+    Nexus Block->Handler mapping is initialised in Nexus.handlers
+    
+    Handlers have (at least) the following attributes:
+    
+        1. parse(self, data) - the function for parsing the block
+        2. write(self, data) - a function for returning the block to a text 
+            representation (used to regenerate a nexus file).
+        3. block - a list of raw strings in this block
+    """
     def __init__(self):
-        """Initialise datastore in <storage> under <keyname>"""
-        self.storage = []
+        """Initialise datastore in <block> under <keyname>"""
+        self.block = []
         
     def parse(self, data):
         for line in data:
-            self.storage.append(line)
+            self.block.append(line)
             
     def remove_comments(self, line):
         """
@@ -48,6 +59,10 @@ class GenericHandler(object):
         """
         return COMMENT_PATTERN.sub('', line)
     
+    def write(self):
+        """Returns the block for writing to file"""
+        return "\n".join(self.block)
+        
     
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
@@ -56,11 +71,13 @@ class TaxaHandler(GenericHandler):
     
     def __init__(self):
         self.taxa = []
+        super(TaxaHandler, self).__init__()
     
     def __getitem__(self, index):
         return self.taxa[index]
         
     def parse(self, data):
+        super(TaxaHandler, self).parse(data)
         in_taxlabel_block = False
         for line in data:
             line = self.remove_comments(line).strip()
@@ -74,6 +91,12 @@ class TaxaHandler(GenericHandler):
             elif in_taxlabel_block:
                 self.taxa.append(line)
         assert self.ntaxa == len(self.taxa)
+    
+    def write(self):
+        raise NotImplemented("Taxa block writing is not implemented yet")
+        
+        
+        
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
@@ -82,16 +105,25 @@ class TreeHandler(GenericHandler):
     def __init__(self):
         self.ntrees = 0
         self.trees = []
+        super(TreeHandler, self).__init__()
         
     def __getitem__(self, index):
         return self.trees[index]
         
     def parse(self, data):
+        super(TreeHandler, self).parse(data)
         for line in data:
             if self.is_tree.search(line):
                 self.trees.append(line)
                 self.ntrees += 1
-                
+        
+    def write(self):
+        out = ['begin trees;']
+        for tree in self.trees:
+            out.append("\t"+tree)
+        out.append('end;')
+        return "\n".join(out)
+        
     def __repr__(self):
         return "<NexusTreeBlock: %d trees>" % self.ntrees
          
@@ -107,6 +139,7 @@ class DataHandler(GenericHandler):
         self.gaps = None
         self.missing = None
         self.matrix = {}
+        super(DataHandler, self).__init__()
     
     def __getitem__(self, index):
         return (self.taxa[index], self.matrix[self.taxa[index]])
@@ -194,7 +227,8 @@ class DataHandler(GenericHandler):
         :return: None
         :raises NexusFormatException: If parsing fails
         :raises NotImplementedError: If parsing encounters a not implemented section
-        """        
+        """
+        super(DataHandler, self).parse(data)
         seen_matrix = False
         self.format = self.parse_format_line("\n".join(data))
         
@@ -241,23 +275,26 @@ class DataHandler(GenericHandler):
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)
         
+    def write(self):
+        pass
+        
+        
     def __repr__(self):
         return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)
         
 
 class NexusReader(object):
-    known_blocks = {
-        'data': DataHandler,
-        'characters': DataHandler,
-        'trees': TreeHandler,
-        'taxa': TaxaHandler,
-    }
     
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
         self.rawblocks = {}
-        
+        self.handlers = {
+            'data': DataHandler,
+            'characters': DataHandler,
+            'trees': TreeHandler,
+            'taxa': TaxaHandler,
+        }
         if filename:
             return self.read_file(filename)
         
@@ -265,7 +302,7 @@ class NexusReader(object):
         for block, data in self.raw_blocks.items():
             if block == 'characters':
                 block = 'data' # override
-            self.blocks[block] = self.known_blocks.get(block, GenericHandler)()
+            self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
         
@@ -310,3 +347,9 @@ class NexusReader(object):
                 store[block].append(line)
         self.raw_blocks = store
         self._do_blocks()
+        
+    def write(self):
+        out = ["#NEXUS\n"]
+        for block, data in self.raw_blocks.items():
+            out.append(self.blocks[block].write())
+        return "\n".join(out)        

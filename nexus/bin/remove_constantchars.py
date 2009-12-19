@@ -68,4 +68,5 @@ if __name__ == '__main__':
     nexout.add_comment("%d constant sites removed from %s" % (len(const), nexusname))
     nexout.add_comment("Removed sites: %s" % ",".join(["%s" % s for s in const]))
     
-    
+    for taxon in nexus.data:
+        print taxon
