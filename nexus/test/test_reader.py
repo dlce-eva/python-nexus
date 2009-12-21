@@ -181,7 +181,7 @@ class Test_DataHandler_AlternateNexusFormat:
 
     def test_write(self):
         print self.nex.write()
-        assert False
+        raise NotImplemented, "Not yet implemented."
 
 
 class Test_TaxaHandler_AlternateNexusFormat:
