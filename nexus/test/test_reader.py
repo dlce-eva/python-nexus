@@ -180,7 +180,7 @@ class Test_DataHandler_AlternateNexusFormat:
             assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
 
     def test_write(self):
-        print self.nex.write()
+        ###print self.nex.write()
         raise NotImplemented, "Not yet implemented."
 
 
