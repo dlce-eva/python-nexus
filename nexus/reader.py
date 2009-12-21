@@ -121,7 +121,7 @@ class TreeHandler(GenericHandler):
         out = ['begin trees;']
         for tree in self.trees:
             out.append("\t"+tree)
-        out.append('end;')
+        out.append('end;\n')
         return "\n".join(out)
         
     def __repr__(self):
