@@ -93,10 +93,12 @@ class TaxaHandler(GenericHandler):
         assert self.ntaxa == len(self.taxa)
     
     def write(self):
-        raise NotImplemented("Taxa block writing is not implemented yet")
-        
-        
-        
+        out = ['begin taxa;', 'dimensions ntax=%d' % self.ntaxa, 'taxlabels']
+        for idx, taxon in enumerate(self.taxa, 1):
+            out.append("\t[%d] '%s'" % (idx, taxon))
+        out.append(';')
+        out.append('end;')
+
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
@@ -276,8 +278,30 @@ class DataHandler(GenericHandler):
             self.ntaxa = len(self.taxa)
         
     def write(self):
-        pass
         
+        def _make_format_line(self):
+            f = ['\tformat']
+            for k, v in self.format.items():
+                if k == 'datatype': # Datatype must come first
+                    f.insert(1, "%s=%s" % (k, v))
+                else:
+                    if k == 'symbols':
+                        v = '"%s"' % v
+                    f.append("%s=%s" % (k, v))
+            return " ".join(f) + ";"
+            
+        out = []
+        out.append('begin data;')
+        out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
+        out.append(_make_format_line(self))
+        out.append("matrix")
+        for taxon, sites in self.matrix.items():
+            assert len(sites) == self.nchar, \
+                "Number of characters is wrong - expecting %d, got %d" % (self.nchar, len(sites))
+            out.append("%s %s" % (taxon.ljust(20), ''.join(sites)))
+        out.append(" ;")
+        out.append("end;")
+        return "\n".join(out)
         
     def __repr__(self):
         return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)

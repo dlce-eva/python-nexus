@@ -1,7 +1,8 @@
 """Tests for nexus reading"""
+import os
+import re
 from nexus import NexusReader
 from nexus.reader import DataHandler, GenericHandler
-import os
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
 
@@ -114,9 +115,24 @@ class Test_DataHandler_SimpleNexusFormat:
         assert f['interleave'] == True, "Expected <True>, but got '%s'" % f['interleave']
     
     def test_write(self):
-        raise NotImplemented, "Not yet implemented."
-        
-        
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+dimensions ntax=4 nchar=2;$',
+            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^matrix$',
+            '^Simon\s+01$',
+            '^Louise\s+11$',
+            '^Betty\s+10$',
+            '^Harry\s+00$',
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        print written
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE)
+
+
 class Test_DataHandler_AlternateNexusFormat:
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
@@ -162,6 +178,10 @@ class Test_DataHandler_AlternateNexusFormat:
         # are all the characters parsed correctly?
         for k in self.nex.data.matrix:
             assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
+
+    def test_write(self):
+        print self.nex.write()
+        assert False
 
 
 class Test_TaxaHandler_AlternateNexusFormat:
