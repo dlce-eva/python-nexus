@@ -175,12 +175,12 @@ class TreeHandler(GenericHandler):
         return "<NexusTreeBlock: %d trees>" % self.ntrees
 
 
-
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
     def __init__(self):
         self.taxa = []
         self.ntaxa = 0
+        self.characters = {}
         self.nchar = 0
         self.format = {}
         self.gaps = None
@@ -263,7 +263,6 @@ class DataHandler(GenericHandler):
             raise NexusFormatException("Data Matrix contains incomplete multistate values")
         return out
 
-
     def parse(self, data):
         """
         Parses a `data` block
@@ -318,10 +317,22 @@ class DataHandler(GenericHandler):
 
                 self.matrix[taxon] = self.matrix.get(taxon, [])
                 self.matrix[taxon].extend(self._parse_sites(sites))
-
+                
+        self._load_characters()
+                
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)
-
+    
+    def get_character(self, taxon, site):
+        return self.matrix[taxon][site]
+    
+    def _load_characters(self):
+        """Loads characters into self.characters section"""
+        for taxon in self.taxa:
+            for index, char in enumerate(self.matrix[taxon]):
+                self.characters[index] = self.characters.get(index, {})
+                self.characters[index][taxon] = self.matrix[taxon][index]
+    
     def write(self):
         """
         Generates a string containing a nexus data block.
