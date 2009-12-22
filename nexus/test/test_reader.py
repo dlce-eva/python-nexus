@@ -44,7 +44,8 @@ class Test_NexusReader_Core:
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         text = open(os.path.join(EXAMPLE_DIR, 'example.trees')).read()
         assert text == nex.write()
-    
+
+
 class Test_DataHandler_SimpleNexusFormat:
     expected = {
         'Harry': ['0', '0'],
@@ -131,6 +132,11 @@ class Test_DataHandler_SimpleNexusFormat:
         print written
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE)
+
+    def test__load_characters(self):
+        for site, data in self.nex.data.characters.items():
+            for taxon, value in data.items():
+                assert value == self.expected[taxon][site]
 
 
 class Test_DataHandler_InterleavedNexusFormat:
