@@ -337,8 +337,12 @@ class DataHandler(GenericHandler):
             """
             fstring = ['\tformat']
             for key, value in self.format.items():
-                if key == 'datatype': # Datatype must come first
+                if key == 'datatype':
+                    # Datatype must come first!
                     fstring.insert(1, "%s=%s" % (key, value))
+                elif key in ('interleave', ):
+                    # IGNORE the interleaving
+                    continue 
                 else:
                     if key == 'symbols':
                         value = '"%s"' % value
@@ -455,3 +459,16 @@ class NexusReader(object):
         for block in self.raw_blocks:
             out.append(self.blocks[block].write())
         return "\n".join(out)
+        
+    def write_to_file(self, filename):
+        """
+        Writes the nexus to a file.
+        
+        :return: None
+        
+        :raises IOError: If file writing fails.
+        """
+        handle = open(filename, 'w')
+        handle.writelines(self.write())
+        handle.close()
+        
