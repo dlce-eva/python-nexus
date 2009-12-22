@@ -16,67 +16,90 @@ QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
 
 
 class NexusFormatException(Exception):
+    """Generic Exception for Nexus Format Errors"""
     def __init__(self, arg):
         self.value = arg
     def __str__(self):
         return repr(self.value)
 
+
 class GenericHandler(object):
     """
     Handlers are objects to store specialised blocks found in nexus files.
-    
+
     Nexus Block->Handler mapping is initialised in Nexus.handlers
-    
+
     Handlers have (at least) the following attributes:
-    
+
         1. parse(self, data) - the function for parsing the block
-        2. write(self, data) - a function for returning the block to a text 
+        2. write(self, data) - a function for returning the block to a text
             representation (used to regenerate a nexus file).
         3. block - a list of raw strings in this block
     """
     def __init__(self):
         """Initialise datastore in <block> under <keyname>"""
         self.block = []
-        
+
     def parse(self, data):
+        """
+        Parses a generic nexus block from `data`.
+
+        :param data: nexus block data
+        :type data: string
+
+        :return: None
+        """
         for line in data:
             self.block.append(line)
-            
+
     def remove_comments(self, line):
         """
         Removes comments from lines
-        
+
         >>> g = GenericHandler()
         >>> g.remove_comments("Hello [world]")
         'Hello '
         >>> g.remove_comments("He[bite]ll[me]o")
         'Hello'
-        
+
         :param line: string
         :type line: string
-        
+
         :return: Returns a cleaned string.
         """
         return COMMENT_PATTERN.sub('', line)
-    
+
     def write(self):
-        """Returns the block for writing to file"""
+        """
+        Generates a string containing a generic nexus block for this data.
+
+        :return: String
+        """
         return "\n".join(self.block)
-        
-    
+
+
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
     is_dimensions = re.compile(r"""dimensions ntax=(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
-    
+
     def __init__(self):
         self.taxa = []
+        self.ntaxa = 0
         super(TaxaHandler, self).__init__()
-    
+
     def __getitem__(self, index):
         return self.taxa[index]
-        
+
     def parse(self, data):
+        """
+        Parses a `taxa` nexus block from `data`.
+
+        :param data: nexus block data
+        :type data: string
+
+        :return: None
+        """
         super(TaxaHandler, self).parse(data)
         in_taxlabel_block = False
         for line in data:
@@ -91,46 +114,65 @@ class TaxaHandler(GenericHandler):
             elif in_taxlabel_block:
                 self.taxa.append(line)
         assert self.ntaxa == len(self.taxa)
-    
+
     def write(self):
+        """
+        Generates a string containing a taxa block for this data.
+
+        :return: String
+        """
         out = ['begin taxa;', 'dimensions ntax=%d' % self.ntaxa, 'taxlabels']
         for idx, taxon in enumerate(self.taxa, 1):
             out.append("\t[%d] '%s'" % (idx, taxon))
         out.append(';')
         out.append('end;')
+        return "\n".join(out)
 
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
     is_tree = re.compile(r"""tree ([\w\d\.]+)\s\=\s(.*);""")
-    
+
     def __init__(self):
         self.ntrees = 0
         self.trees = []
         super(TreeHandler, self).__init__()
-        
+
     def __getitem__(self, index):
         return self.trees[index]
-        
+
     def parse(self, data):
+        """
+        Parses a `tree` nexus block from `data`.
+
+        :param data: nexus block data
+        :type data: string
+
+        :return: None
+        """
         super(TreeHandler, self).parse(data)
         for line in data:
             if self.is_tree.search(line):
                 self.trees.append(line)
                 self.ntrees += 1
-        
+
     def write(self):
+        """
+        Generates a string containing a trees block.
+
+        :return: String
+        """
         out = ['begin trees;']
         for tree in self.trees:
             out.append("\t"+tree)
         out.append('end;\n')
         return "\n".join(out)
-        
+
     def __repr__(self):
         return "<NexusTreeBlock: %d trees>" % self.ntrees
-         
-        
-        
+
+
+
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
     def __init__(self):
@@ -142,90 +184,90 @@ class DataHandler(GenericHandler):
         self.missing = None
         self.matrix = {}
         super(DataHandler, self).__init__()
-    
+
     def __getitem__(self, index):
         return (self.taxa[index], self.matrix[self.taxa[index]])
-    
+
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
-        
+
         >>> d = DataHandler().parse_format_line('Format datatype=standard symbols="01" gap=-;')
         ...
         >>> d = DataHandler().parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
         ...
-        
+
         :param data: string
         :type data: string
-        
+
         :return: Returns a dictionary of tokens in the format line.
         """
         out = {}
-        
+
         try:
             line = re.findall(r'format\b(.*?);', data, re.IGNORECASE | re.DOTALL | re.MULTILINE)[0]
         except IndexError:
             return None
-        
+
         line = line.strip(';')
         line = line.lower()
-        
+
         for chunk in WHITESPACE_PATTERN.split(line):
             try:
-                k, v = chunk.split("=")
-                v = QUOTED_PATTERN.sub('\\1', v)
+                key, value = chunk.split("=")
+                value = QUOTED_PATTERN.sub('\\1', value)
             except ValueError:
-                k, v = chunk, True
-            if len(k):
-                out[k] = v
+                key, value = chunk, True
+            if len(key):
+                out[key] = value
         return out
-        
+
     def _parse_sites(self, sites):
         """
         Parses a string of sites and returns a list of site values
-        
+
         >>> DataHandler()._parse_sites('123')
         ['1', '2', '3']
         >>> DataHandler()._parse_sites('1(12)')
         ['1', '12']
         >>> DataHandler()._parse_sites('123(4,5)56')
         ['1', '2', '3', '4,5', '5', '6']
-        
+
         :param sites: string
         :type sites: string
-        
+
         :return: Returns a list of site values
         :raises NexusFormatException: If data matrix contains incomplete multistate values
         """
         out = []
         multistate = False
-        sites = [s for s in sites]
+        sites = [site for site in sites]
         while len(sites) > 0:
-            s = sites.pop(0)
-            if s == '(':
+            site = sites.pop(0)
+            if site == '(':
                 # read-ahead
-                s = '' # discard open bracket
+                site = '' # discard open bracket
                 multistate = True
                 while multistate:
-                    t = sites.pop(0)
-                    if t == ')':
+                    nextchar = sites.pop(0)
+                    if nextchar == ')':
                         multistate = False
                     else:
-                        s += t
-            out.append(s)
+                        site += nextchar
+            out.append(site)
         # check we're not in hanging multistate chunk
         if multistate:
             raise NexusFormatException("Data Matrix contains incomplete multistate values")
         return out
-        
-        
+
+
     def parse(self, data):
         """
         Parses a `data` block
-        
-        :param data: data block 
+
+        :param data: data block
         :type data: string
-        
+
         :return: None
         :raises NexusFormatException: If parsing fails
         :raises NotImplementedError: If parsing encounters a not implemented section
@@ -233,7 +275,7 @@ class DataHandler(GenericHandler):
         super(DataHandler, self).parse(data)
         seen_matrix = False
         self.format = self.parse_format_line("\n".join(data))
-        
+
         for line in data:
             lline = line.lower().strip()
             lline = self.remove_comments(lline)
@@ -244,9 +286,9 @@ class DataHandler(GenericHandler):
                     self.ntaxa = int(NTAX_PATTERN.findall(line)[0])
                 except IndexError:
                     self.ntaxa = None
-                
+
                 self.nchar = int(NCHAR_PATTERN.findall(line)[0])
-                
+
             # handle format line
             elif lline.startswith('format'):
                 continue
@@ -267,29 +309,39 @@ class DataHandler(GenericHandler):
                 taxon = taxon.strip()
                 taxon = QUOTED_PATTERN.sub('\\1', taxon)
                 sites = sites.strip()
-                
+
                 if taxon not in self.taxa:
                     self.taxa.append(taxon)
-                
+
                 self.matrix[taxon] = self.matrix.get(taxon, [])
                 self.matrix[taxon].extend(self._parse_sites(sites))
-            
+
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)
-        
+
     def write(self):
-        
+        """
+        Generates a string containing a nexus data block.
+
+        :return: String
+        """
+
         def _make_format_line(self):
-            f = ['\tformat']
-            for k, v in self.format.items():
-                if k == 'datatype': # Datatype must come first
-                    f.insert(1, "%s=%s" % (k, v))
+            """
+            Generates a format string.
+
+            :return: String
+            """
+            fstring = ['\tformat']
+            for key, value in self.format.items():
+                if key == 'datatype': # Datatype must come first
+                    fstring.insert(1, "%s=%s" % (key, value))
                 else:
-                    if k == 'symbols':
-                        v = '"%s"' % v
-                    f.append("%s=%s" % (k, v))
-            return " ".join(f) + ";"
-            
+                    if key == 'symbols':
+                        value = '"%s"' % value
+                    fstring.append("%s=%s" % (key, value))
+            return " ".join(fstring) + ";"
+
         out = []
         out.append('begin data;')
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
@@ -302,13 +354,13 @@ class DataHandler(GenericHandler):
         out.append(" ;")
         out.append("end;")
         return "\n".join(out)
-        
+
     def __repr__(self):
         return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)
-        
+
 
 class NexusReader(object):
-    
+
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
@@ -321,17 +373,27 @@ class NexusReader(object):
         }
         if filename:
             return self.read_file(filename)
-        
+
     def _do_blocks(self):
+        """Iterates over all nexus blocks and parses them appropriately"""
         for block, data in self.raw_blocks.items():
             if block == 'characters':
                 block = 'data' # override
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
-        
+
     def read_file(self, filename):
-        """Loads and Parses a Nexus File"""
+        """
+        Loads and Parses a Nexus File
+
+        :param filename: filename of a nexus file
+        :type filename: string
+
+        :raises IOError: If file reading fails.
+
+        :return: None
+        """
         self.filename = filename
         try:
             handle = open(filename, 'rU')
@@ -339,9 +401,16 @@ class NexusReader(object):
             raise IOError("Unable To Read File %s" % filename)
         self._read(handle)
         handle.close()
-        
+
     def read_string(self, contents):
-        """Loads and Parses a Nexus from a string"""
+        """
+        Loads and Parses a Nexus from a string
+
+        :param contents: string or string-like object containing a nexus to parse
+        :type contents: string
+
+        :return: None
+        """
         self._read(io.StringIO(contents))
         
     def _read(self, handle):
@@ -354,7 +423,7 @@ class NexusReader(object):
                 continue
             elif line.startswith('[') and line.endswith(']'):
                 continue
-            
+
             # check if we're in a block and initialise
             found = BEGIN_PATTERN.findall(line)
             if found:
@@ -362,18 +431,24 @@ class NexusReader(object):
                 if block in store:
                     raise Exception("Duplicate Block %s" % block)
                 store[block] = []
-                
+
             # check if we're ending a block
             if END_PATTERN.search(line):
                 block = None
-                
+
             if block is not None:
                 store[block].append(line)
         self.raw_blocks = store
         self._do_blocks()
-        
+
     def write(self):
+        """
+        Generates a string containing a complete nexus from
+        all the data.
+
+        :return: String
+        """
         out = ["#NEXUS\n"]
-        for block, data in self.raw_blocks.items():
+        for block in self.raw_blocks:
             out.append(self.blocks[block].write())
-        return "\n".join(out)        
+        return "\n".join(out)
