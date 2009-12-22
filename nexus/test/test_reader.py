@@ -133,6 +133,17 @@ class Test_DataHandler_SimpleNexusFormat:
             assert re.search(expected, written, re.MULTILINE)
 
 
+class Test_DataHandler_InterleavedNexusFormat:
+    def test_interleave_matrix_parsing(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example3.nex'))
+        assert nexus.data.ntaxa == 2 == len(nexus.data.taxa)
+        assert nexus.data.nchar == 6
+        for taxon, blocks in nexus.data:
+            for i in range(0, nexus.data.nchar):
+                assert blocks[i] == str(i)
+    
+    
+
 class Test_DataHandler_AlternateNexusFormat:
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
