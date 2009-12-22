@@ -2,7 +2,10 @@
 Tools for reading a nexus file
 """
 import re
-import io
+try:
+    import io
+except ImportError:
+    import StringIO as io
 
 DEBUG = False
 
