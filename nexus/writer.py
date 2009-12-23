@@ -31,12 +31,14 @@ class NexusWriter:
         self.is_binary = False
         
     def clean(self, s):
+        """Removes unsafe characters"""
         replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':''}
         for f,t in replacements.items():
             s = s.replace(f, t)
         return s
         
     def _add_char(self, charlabel):
+        """Adds a character"""
         charlabel = str(charlabel)
         if charlabel not in self.characters:
             self.characters.append(charlabel)
@@ -45,11 +47,13 @@ class NexusWriter:
         return charlabel
         
     def _add_taxa(self, taxon):
+        """Adds a taxa"""
         if taxon not in self.taxalist:
             self.taxalist.append(taxon)
         return taxon
         
     def _make_charlabel_block(self):
+        """Generates a character label block"""
         out = ["CHARSTATELABELS"]
         for i, c in enumerate(self.characters, 1):
             out.append("\t\t%d %s," % (i, self.clean_characters[c]))
@@ -58,6 +62,7 @@ class NexusWriter:
         return "\n".join(out)
         
     def _make_matrix_block(self, interleave):
+        """Generates a matrix block"""
         out = []
         if interleave:
             for c in self.characters:
@@ -73,12 +78,15 @@ class NexusWriter:
         return "\n".join(out)
         
     def _make_comments(self):
+        """Generates a comments block"""
         return "\n".join(["[%s]" % c.ljust(70) for c in self.comments])
         
     def add_comment(self, comment):
+        """Adds a `comment` into the nexus file"""
         self.comments.append(comment)
         
     def add(self, taxon, character, value):
+        """Adds a `character` for the given `taxon` and sets it to `value`"""
         assert self.is_binary == False, "Unable to add data to a binarised nexus form"
         character = self._add_char(character)
         taxon = self._add_taxa(taxon)
@@ -90,6 +98,7 @@ class NexusWriter:
             self.symbols.append(value)
         
     def recode_to_binary(self):
+        """Recodes the matrix to binary form"""
         newdata = {}
         for char, block in self.data.items():
             newdata[char] = {}
@@ -106,7 +115,21 @@ class NexusWriter:
         self.data = newdata.copy()
         self.is_binary = True
         
-    def make_nexus(self, interleave=True, charblock=True):
+    def write(self):
+        """Generates a string representation of the nexus (basically a wrapper around make_nexus)"""
+        return self.make_nexus()
+        
+    def make_nexus(self, interleave=False, charblock=False):
+        """
+        Generates a string representation of the nexus
+        
+        :param interleave: Generate interleaved matrix or not
+        :type interleave: Boolean 
+        :param charblock: Include a characters block or not 
+        :type charblock: Boolean 
+        
+        :return: String
+        """
         return TEMPLATE.strip() % {
             'ntax': len(self.taxalist),
             'nchar': len(self.characters),
@@ -120,7 +143,20 @@ class NexusWriter:
             'datatype': self.DATATYPE,
         }
     
-    def write_to_file(self, filename="output.nex", interleave=True, charblock=True):
+    def write_to_file(self, filename="output.nex", interleave=False, charblock=False):
+        """
+        Generates a string representation of the nexus
+        
+        :param filename: Filename to store nexus as
+        :type filename: String 
+        :param interleave: Generate interleaved matrix or not
+        :type interleave: Boolean 
+        :param charblock: Include a characters block or not 
+        :type charblock: Boolean 
+        
+        :return: None
+        """
+        
         handle = open(filename, 'w+')
         handle.write(self.make_nexus(interleave, charblock))
         handle.close()
