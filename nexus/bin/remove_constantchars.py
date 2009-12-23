@@ -7,8 +7,7 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 import sys
 import os
 
-from nexus.reader import NexusReader, NexusFormatException
-from nexus.writer import NexusWriter
+from nexus import NexusReader, NexusWriter, NexusFormatException
 
 def find_constant_sites(nexus_obj):
     """

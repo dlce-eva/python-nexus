@@ -6,7 +6,7 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
 import sys
 import os
-from nexus.reader import NexusReader, NexusFormatException
+from nexus import NexusReader, NexusFormatException
 
 if __name__ == '__main__':
     #set up command-line options
