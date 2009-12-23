@@ -92,7 +92,7 @@ n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
-from reader import NexusReader
+from reader import *
 from writer import NexusWriter
 
 
