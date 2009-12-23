@@ -202,10 +202,6 @@ class Test_DataHandler_AlternateNexusFormat:
         for k in self.nex.data.matrix:
             assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
 
-    def test_write(self):
-        ###print self.nex.write()
-        raise NotImplemented, "Not yet implemented."
-
 
 class Test_TaxaHandler_AlternateNexusFormat:
     expected = ['John', 'Paul', 'George', 'Ringo']
