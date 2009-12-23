@@ -2,9 +2,10 @@
 import os
 import nose
 
-from nexus import NexusReader
+from nexus import NexusReader, NexusWriter
 from nexus.bin.calc_missings import count_missings
 from nexus.bin.remove_constantchars import find_constant_sites
+from nexus.bin.randomise import shufflenexus
 
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
@@ -45,6 +46,30 @@ class Test_count_missings:
         for taxon in missing:
             assert missing[taxon] == expected[taxon]
 
+
+class Test_shufflenexus:
+    
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus1(self):
+        shufflenexus({})
+    
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus2(self):
+        shufflenexus("I AM NOT A NEXUS")
+    
+    def test_constant(self):
+        # shuffling a constant character is not going to do anything...
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
+        nexus = shufflenexus(nexus)
+        for char, expected_value in {'0': 'a', '1': 'c', '2':'t', '3':'g'}.items():
+            for taxon, shuffled_value in nexus.data[char].items():
+                assert shuffled_value == expected_value
+    
+    def test_output(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
+        nexus = shufflenexus(nexus)
+        assert isinstance(nexus, NexusWriter)
+        
 
 class Test_find_constant_sites:
     
