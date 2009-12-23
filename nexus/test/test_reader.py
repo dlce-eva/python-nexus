@@ -138,6 +138,12 @@ class Test_DataHandler_SimpleNexusFormat:
             for taxon, value in data.items():
                 assert value == self.expected[taxon][site]
 
+    def test_get_site(self):
+        site0 = self.nex.data.characters[0]
+        site1 = self.nex.data.characters[1]
+        assert False
+        
+        
 
 class Test_DataHandler_InterleavedNexusFormat:
     def test_interleave_matrix_parsing(self):
