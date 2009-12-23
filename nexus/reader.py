@@ -262,7 +262,7 @@ class DataHandler(GenericHandler):
         if multistate:
             raise NexusFormatException("Data Matrix contains incomplete multistate values")
         return out
-
+    
     def parse(self, data):
         """
         Parses a `data` block
@@ -322,9 +322,6 @@ class DataHandler(GenericHandler):
                 
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)
-    
-    def get_character(self, taxon, site):
-        return self.matrix[taxon][site]
     
     def _load_characters(self):
         """Loads characters into self.characters section"""
