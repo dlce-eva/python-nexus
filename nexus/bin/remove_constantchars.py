@@ -28,8 +28,7 @@ def find_constant_sites(nexus_obj):
     for i in range(0, nexus_obj.data.nchar):
         states = []
         for taxa, data in nexus_obj.data:
-            characters = "".join(data)
-            c = characters[i]
+            c = data[i]
             if c in ('?', '-'):
                 continue
             elif c not in states:
@@ -43,7 +42,7 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     # make new nexus
     nexout = NexusWriter()
     nexout.add_comment(
-        "Removed %d constant sites: %s" %
+        "Removed %d sites: %s" %
         (len(sites_to_remove), ",".join(["%s" % s for s in sites_to_remove]))
     )
     new_sitepos = 0
