@@ -144,6 +144,29 @@ class Test_DataHandler_SimpleNexusFormat:
             for taxon, value in site_data.items():
                 assert self.expected[taxon][i] == value
 
+    def test_numcharacters_checking(self):
+        nex = NexusReader()
+        nex.read_string(
+            """Begin data;
+            Dimensions ntax=1 nchar=2;
+            Format datatype=standard symbols="01" gap=-;
+            Matrix
+            Harry              1
+            ;""")
+        assert nex.data.nchar == 1
+        
+        nex = NexusReader()
+        nex.read_string(
+            """Begin data;
+            Dimensions ntax=4 nchar=1;
+            Format datatype=standard symbols="01" gap=-;
+            Matrix
+            Harry              11111
+            ;""")
+        assert nex.data.nchar == 5
+
+
+            
 
 class Test_DataHandler_InterleavedNexusFormat:
     def test_interleave_matrix_parsing(self):

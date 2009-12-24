@@ -322,6 +322,11 @@ class DataHandler(GenericHandler):
                 
         if self.ntaxa is None:
             self.ntaxa = len(self.taxa)
+        
+        if self.nchar != len(self.characters):
+            # WARNING: nchar in format string does not give us the right answer!
+            # Should we raise an error instead?
+            self.nchar = len(self.characters)
     
     def _load_characters(self):
         """Loads characters into self.characters section"""
