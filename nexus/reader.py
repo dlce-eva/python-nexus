@@ -2,6 +2,8 @@
 Tools for reading a nexus file
 """
 import re
+import logging
+
 try:
     import io
 except ImportError:
@@ -42,7 +44,7 @@ class GenericHandler(object):
     def __init__(self):
         """Initialise datastore in <block> under <keyname>"""
         self.block = []
-
+        
     def parse(self, data):
         """
         Parses a generic nexus block from `data`.
@@ -384,6 +386,20 @@ class NexusReader(object):
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
+        
+        # set up logging
+        self.log = logging.getLogger("NexusReader")
+        # create console handler and set level to debug
+        ch = logging.StreamHandler()
+        
+        if debug:
+            ch.setLevel(logging.DEBUG)
+        else:
+            ch.setLevel(logging.ERROR)
+        
+        ch.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+        self.log.addHandler(ch)
+        self.log.debug("Initialised")
         self.rawblocks = {}
         self.handlers = {
             'data': DataHandler,
@@ -399,6 +415,8 @@ class NexusReader(object):
         for block, data in self.raw_blocks.items():
             if block == 'characters':
                 block = 'data' # override
+                self.log.debug("_do_blocks encountered characters block, overriding to data block")
+            self.log.debug("_do_blocks encountered %s block" % block)
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
@@ -415,6 +433,7 @@ class NexusReader(object):
         :return: None
         """
         self.filename = filename
+        self.log.debug("read_file attempting to read a file %s" % filename)
         try:
             handle = open(filename, 'rU')
         except IOError:
@@ -431,6 +450,7 @@ class NexusReader(object):
 
         :return: None
         """
+        self.log.debug("read_string attempting to read a string")
         self._read(io.StringIO(contents))
         
     def _read(self, handle):
