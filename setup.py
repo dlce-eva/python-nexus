@@ -23,7 +23,11 @@ setup(
     package_data={'nexus/examples': ['*.nex', '*.trees']},
     scripts=[
         'nexus/bin/calc_missings.py', 
+        'nexus/bin/deinterleave.py',
+        'nexus/bin/detranslate.py',
+        'nexus/bin/randomise.py',
         'nexus/bin/remove_constantchars.py',
+        'nexus/bin/remove_uniquechars.py', 
     ],
     test_suite='nose.collector',
 )
