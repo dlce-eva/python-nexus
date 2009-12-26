@@ -31,11 +31,11 @@ class NexusFormatException(Exception):
 class GenericHandler(object):
     """
     Handlers are objects to store specialised blocks found in nexus files.
-
+    
     Nexus Block->Handler mapping is initialised in Nexus.handlers
-
+    
     Handlers have (at least) the following attributes:
-
+        
         1. parse(self, data) - the function for parsing the block
         2. write(self, data) - a function for returning the block to a text
             representation (used to regenerate a nexus file).
@@ -48,61 +48,61 @@ class GenericHandler(object):
     def parse(self, data):
         """
         Parses a generic nexus block from `data`.
-
+        
         :param data: nexus block data
         :type data: string
-
+        
         :return: None
         """
         for line in data:
             self.block.append(line)
-
+            
     def remove_comments(self, line):
         """
         Removes comments from lines
-
+        
         >>> g = GenericHandler()
         >>> g.remove_comments("Hello [world]")
         'Hello '
         >>> g.remove_comments("He[bite]ll[me]o")
         'Hello'
-
+        
         :param line: string
         :type line: string
-
+        
         :return: Returns a cleaned string.
         """
         return COMMENT_PATTERN.sub('', line)
-
+        
     def write(self):
         """
         Generates a string containing a generic nexus block for this data.
-
+        
         :return: String
         """
         return "\n".join(self.block)
-
+    
 
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
     is_dimensions = re.compile(r"""dimensions ntax=(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
-
+    
     def __init__(self):
         self.taxa = []
         self.ntaxa = 0
         super(TaxaHandler, self).__init__()
-
+        
     def __getitem__(self, index):
         return self.taxa[index]
-
+        
     def parse(self, data):
         """
         Parses a `taxa` nexus block from `data`.
-
+        
         :param data: nexus block data
         :type data: string
-
+        
         :return: None
         """
         super(TaxaHandler, self).parse(data)
@@ -119,11 +119,11 @@ class TaxaHandler(GenericHandler):
             elif in_taxlabel_block:
                 self.taxa.append(line)
         assert self.ntaxa == len(self.taxa)
-
+        
     def write(self):
         """
         Generates a string containing a taxa block for this data.
-
+        
         :return: String
         """
         out = ['begin taxa;', 'dimensions ntax=%d' % self.ntaxa, 'taxlabels']
@@ -132,34 +132,96 @@ class TaxaHandler(GenericHandler):
         out.append(';')
         out.append('end;')
         return "\n".join(out)
-
+    
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
     is_tree = re.compile(r"""tree ([\w\d\.]+)\s\=\s(.*);""")
-
+    
     def __init__(self):
         self.ntrees = 0
+        self.was_translated = False
+        self.translators = {}
         self.trees = []
         super(TreeHandler, self).__init__()
-
+    
     def __getitem__(self, index):
         return self.trees[index]
-
+    
     def parse(self, data):
         """
         Parses a `tree` nexus block from `data`.
-
+        
         :param data: nexus block data
         :type data: string
-
+        
         :return: None
         """
         super(TreeHandler, self).parse(data)
+        
+        translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
+        translation_pattern = re.compile(r"""(\d+)\s(\w+)[,;]""")
+        
+        lost_in_translation = False
+        translators = {}
         for line in data:
-            if self.is_tree.search(line):
+            
+            # look for translation start, and turn on lost_in_translation
+            if translate_start.match(line):
+                lost_in_translation = True
+                self.was_translated = True
+                
+            # if we're in a translate block
+            elif lost_in_translation:
+                if translation_pattern.match(line):
+                    taxon_id, taxon = translation_pattern.findall(line)[0]
+                    assert taxon_id not in self.translators, \
+                         "Duplicate Taxa ID %s in translate block" % taxon_id
+                    self.translators[taxon_id] = taxon
+                if line.endswith(';'):
+                    lost_in_translation = False
+                    translators = translators
+                    
+            elif self.is_tree.search(line):
+                if lost_in_translation == True:
+                    # can't find a tree if we're still in the translate block!
+                    raise NexusFormatException("Tree block has incomplete translate table")
+                
+                if self.was_translated:
+                    line = self.detranslate(self.translators, line)
+                
                 self.trees.append(line)
                 self.ntrees += 1
+            
+    def detranslate(self, translatetable, tree):
+        """
+        Takes a `tree` and expands the short format tree with translated
+        taxa labels from `translatetable` into a full format tree.
+        
+        :param translatetable: Mapping of taxa id -> taxa names
+        :type translatetable: Dict
+        
+        :param tree: String containing newick tree
+        :type tree: String
+        
+        :return: String of detranslated tree
+        """
+        def _does_tree_have_branchlengths(tree):
+            "Helper function - returns true if tree has branchlengths"
+            if ':' in tree:
+                return True
+            return False
+        head, tree = tree.split("=")
+        for taxon_id, taxon in translatetable.items():
+            if _does_tree_have_branchlengths(tree):
+                search = r"""\b(%s)(\[.*\])?(:\d+\.\d+)\b""" % taxon_id
+                tree, count = re.subn(search, r"%s\3" % taxon, tree, 1)
+            else:
+                search = r"""\b(%s)\b""" % taxon_id
+                tree, count = re.subn(search, r"%s" % taxon, tree, 1)
+            
+        return "%s=%s" % (head, tree)
+        
 
     def write(self):
         """
@@ -382,7 +444,7 @@ class DataHandler(GenericHandler):
 
 
 class NexusReader(object):
-
+    """A nexus reader"""
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
@@ -409,7 +471,7 @@ class NexusReader(object):
         }
         if filename:
             return self.read_file(filename)
-
+    
     def _do_blocks(self):
         """Iterates over all nexus blocks and parses them appropriately"""
         for block, data in self.raw_blocks.items():
@@ -420,7 +482,7 @@ class NexusReader(object):
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
-
+    
     def read_file(self, filename):
         """
         Loads and Parses a Nexus File
@@ -440,7 +502,7 @@ class NexusReader(object):
             raise IOError("Unable To Read File %s" % filename)
         self._read(handle)
         handle.close()
-
+    
     def read_string(self, contents):
         """
         Loads and Parses a Nexus from a string
@@ -452,7 +514,7 @@ class NexusReader(object):
         """
         self.log.debug("read_string attempting to read a string")
         self._read(io.StringIO(contents))
-        
+    
     def _read(self, handle):
         """Reads from a iterable object"""
         store = {}
@@ -463,7 +525,7 @@ class NexusReader(object):
                 continue
             elif line.startswith('[') and line.endswith(']'):
                 continue
-
+            
             # check if we're in a block and initialise
             found = BEGIN_PATTERN.findall(line)
             if found:
@@ -471,28 +533,28 @@ class NexusReader(object):
                 if block in store:
                     raise Exception("Duplicate Block %s" % block)
                 store[block] = []
-
+            
             # check if we're ending a block
             if END_PATTERN.search(line):
                 block = None
-
+            
             if block is not None:
                 store[block].append(line)
         self.raw_blocks = store
         self._do_blocks()
-
+    
     def write(self):
         """
         Generates a string containing a complete nexus from
         all the data.
-
+        
         :return: String
         """
         out = ["#NEXUS\n"]
         for block in self.raw_blocks:
             out.append(self.blocks[block].write())
         return "\n".join(out)
-        
+    
     def write_to_file(self, filename):
         """
         Writes the nexus to a file.
@@ -504,4 +566,8 @@ class NexusReader(object):
         handle = open(filename, 'w')
         handle.writelines(self.write())
         handle.close()
-        
+    
+
+
+if __name__ == '__main__':
+    pass
