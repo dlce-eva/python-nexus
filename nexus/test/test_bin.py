@@ -7,27 +7,28 @@ from nexus.bin.calc_missings import count_missings
 from nexus.bin.remove_constantchars import find_constant_sites
 from nexus.bin.randomise import shufflenexus
 from nexus.bin.remove_uniquechars import find_unique_sites
+from nexus.bin.combine_nexus import combine_nexuses
 
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
 
-class Test_count_missings:
+class Test_CountMissings:
     
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus1(self):
+    def test_failure_on_nonnexus_1(self):
         count_missings({})
         
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus2(self):
+    def test_failure_on_nonnexus_2(self):
         count_missings("I AM NOT A NEXUS")
         
-    def test_count_missings_one(self):
+    def test_count_missings_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         missing = count_missings(nexus)
         for taxon in missing:
             assert missing[taxon] == 0
     
-    def test_count_missings_two(self):
+    def test_count_missings_2(self):
         expected = {'Harry': 0, 'Simon': 1, 'Peter': 1, 'Betty': 2, 'Louise': 3}
         nexus = NexusReader()
         nexus.read_string("""#NEXUS 
@@ -48,14 +49,14 @@ class Test_count_missings:
             assert missing[taxon] == expected[taxon]
 
 
-class Test_shufflenexus:
+class Test_ShuffleNexus:
     
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus1(self):
+    def test_failure_on_nonnexus_1(self):
         shufflenexus({})
     
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus2(self):
+    def test_failure_on_nonnexus_2(self):
         shufflenexus("I AM NOT A NEXUS")
     
     def test_constant(self):
@@ -72,21 +73,21 @@ class Test_shufflenexus:
         assert isinstance(nexus, NexusWriter)
         
 
-class Test_find_constant_sites:
+class Test_FindConstantSites:
     
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus1(self):
+    def test_failure_on_nonnexus_1(self):
         find_constant_sites({})
     
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus2(self):
+    def test_failure_on_nonnexus_2(self):
         find_constant_sites("I AM NOT A NEXUS")
     
-    def test_find_constant_sites1(self):
+    def test_find_constant_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_constant_sites(nexus)) == 0
     
-    def test_find_constant_sites2(self):
+    def test_find_constant_sites_2(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
         const = find_constant_sites(nexus)
         assert len(const) == 4
@@ -96,21 +97,21 @@ class Test_find_constant_sites:
         assert 3 in const
     
 
-class Test_find_unique_sites:
+class Test_FindUniqueSites:
 
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus1(self):
+    def test_failure_on_nonnexus_1(self):
         find_unique_sites({})
-
+        
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus2(self):
+    def test_failure_on_nonnexus_2(self):
         find_unique_sites("I AM NOT A NEXUS")
-
-    def test_find_unique_sites1(self):
+        
+    def test_find_unique_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_unique_sites(nexus)) == 0
-
-    def test_find_unique_sites2(self):
+        
+    def test_find_unique_sites_2(self):
         nexus = NexusReader()
         nexus.read_string("""Begin data;
         Dimensions ntax=4 nchar=7;
@@ -136,6 +137,5 @@ class Test_find_unique_sites:
         # - are we handling missing data appropriately?
         assert 5 in unique
         assert 6 in unique
-        
         
         
