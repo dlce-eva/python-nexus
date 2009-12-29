@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-version = "0.6a"
+version = "0.6d"
 
 setup(
     name="python-nexus", 
