@@ -496,7 +496,7 @@ class NexusReader(object):
 
         :return: None
         """
-        self.filename = "<String: %d characters>" % len(contents)
+        self.filename = "<String>"
         self._read(io.StringIO(contents))
     
     def _read(self, handle):
