@@ -22,16 +22,14 @@ setup(
     package_dir={'nexus': 'nexus'},
     package_data={'nexus/examples': ['*.nex', '*.trees']},
     scripts=[
-        'nexus/bin/calc_missings.py', 
-        'nexus/bin/combine_nexus.py',
-        'nexus/bin/deinterleave.py',
-        'nexus/bin/detranslate.py',
-        'nexus/bin/randomise.py',
-        'nexus/bin/remove_constantchars.py',
-        'nexus/bin/remove_uniquechars.py', 
+        'nexus/bin/nexus_calc_missings.py', 
+        'nexus/bin/nexus_combine_nexus.py',
+        'nexus/bin/nexus_deinterleave.py',
+        'nexus/bin/nexus_detranslate.py',
+        'nexus/bin/nexus_randomise.py',
+        'nexus/bin/nexus_remove_constantchars.py',
+        'nexus/bin/nexus_remove_uniquechars.py', 
     ],
     test_suite='nose.collector',
 )
-
-
 

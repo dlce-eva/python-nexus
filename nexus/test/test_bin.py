@@ -5,11 +5,11 @@ import re
 import nose
 
 from nexus import NexusReader, NexusWriter
-from nexus.bin.calc_missings import count_missings
-from nexus.bin.remove_constantchars import find_constant_sites
-from nexus.bin.randomise import shufflenexus
-from nexus.bin.remove_uniquechars import find_unique_sites
-from nexus.bin.combine_nexus import combine_nexuses
+from nexus.bin.nexus_calc_missings import count_missings
+from nexus.bin.nexus_remove_constantchars import find_constant_sites
+from nexus.bin.nexus_randomise import shufflenexus
+from nexus.bin.nexus_remove_uniquechars import find_unique_sites
+from nexus.bin.nexus_combine_nexus import combine_nexuses
 
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
