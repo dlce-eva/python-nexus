@@ -10,7 +10,7 @@ import sys
 import os
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
-from remove_constantchars import new_nexus_without_sites
+from nexus_remove_constantchars import new_nexus_without_sites
 
 def find_unique_sites(nexus_obj):
     """
