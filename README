@@ -278,12 +278,57 @@ binary ones.
 Nexus manipulation scripts included
 ================================================================================
 
+nexus_calc_missings.py
+----------------------
 
+Calculates and displays the number of missing entries per taxon in each site in 
+a nexus file.
 
-<TODO>
+Usage: python nexus_calc_missings.py filename.nex
 
+nexus_combine_nexus.py
+----------------------
 
+Combines a series of nexuses into one nexus ('combined.nex').
 
+Usage: python nexus_combine_nexus.py filename1.nex filename2.nex ... filenameN.nex
+
+nexus_deinterleave.py
+---------------------
+
+Converts an interleaved nexus to a simple nexus.
+
+Usage: python nexus_deinterleave.py oldnexus.nex newnexus.nex
+
+nexus_detranslate.py
+--------------------
+
+Converts a nexus tree file with 'translated' taxa labels to a detranslated form.
+
+Usage: python nexus_detranslate.py oldnexus.trees newnexus.trees
+
+nexus_randomise.py
+------------------
+
+Randomly shuffles the character states between taxa in a nexus file.
+
+Usage: python nexus_randomise.py oldnexus.nex randomised.nex
+
+nexus_remove_constantchars.py
+-----------------------------
+
+Removes the constant sites from a nexus file (i.e. sites that have no character
+state changes).
+
+Usage: python nexus_remove_constantchars.py oldnexus.nex newnexus.nex
+
+nexus_remove_uniquechars.py
+---------------------------
+
+Removes the unique sites from a nexus file (i.e. sites with only one taxon belonging to them - this only really makes sense
+if the data is coded as presence/absence in binary format).
+
+Usage: python nexus_remove_constantchars.py oldnexus.nex newnexus.nex
 
 
 
@@ -293,4 +338,4 @@ To Do
 
 
 1) parse translated trees block (e.g. example-translated.trees).
-
+2) add resample option for character shuffler.
