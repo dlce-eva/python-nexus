@@ -115,9 +115,19 @@ class NexusWriter:
         self.data = newdata.copy()
         self.is_binary = True
         
-    def write(self):
-        """Generates a string representation of the nexus (basically a wrapper around make_nexus)"""
-        return self.make_nexus()
+    def write(self, interleave=False, charblock=False):
+        """
+        Generates a string representation of the nexus 
+        (basically a wrapper around make_nexus)
+        
+        :param interleave: Generate interleaved matrix or not
+        :type interleave: Boolean 
+        :param charblock: Include a characters block or not 
+        :type charblock: Boolean 
+        
+        :return: String
+        """
+        return self.make_nexus(interleave, charblock)
         
     def make_nexus(self, interleave=False, charblock=False):
         """
