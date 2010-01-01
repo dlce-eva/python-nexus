@@ -287,9 +287,9 @@ class Test_TreeHandler_TranslatedTreefile:
     
     def test_iterable(self):
         for tree in self.nex.blocks['trees']:
-            pass
+            tree # will raise something if unable to iterate
         for tree in self.nex.trees:
-            pass
+            tree
     
     def test_flag_set(self):
         assert self.nex.trees.was_translated == True
@@ -302,28 +302,35 @@ class Test_TreeHandler_TranslatedTreefile:
         oldtree = "tree a = ((Chris,Bruce),Tom);"
         newtree = "tree a = ((Chris,Bruce),Tom);"
         trans = TreeHandler().detranslate(translatetable, oldtree) 
-        assert trans == newtree, 'Detranslation Mismatch: %s -> %s' % (trans, newtree)
+        assert trans == newtree,  "Unable to correctly NOT translate a simple tree"
         
     def test_detranslate_no_change_branchlengths(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         trans = TreeHandler().detranslate(translatetable, oldtree) 
-        assert trans == newtree, 'Detranslation Mismatch: %s -> %s' % (trans, newtree)
+        assert trans == newtree, "Unable to correctly NOT translate a tree with branchlengths"
     
     def test_detranslate_change(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((0,1),2);"
         newtree = "tree a = ((Chris,Bruce),Tom);"
         trans = TreeHandler().detranslate(translatetable, oldtree) 
-        assert trans == newtree, 'Detranslation Mismatch: %s -> %s' % (trans, newtree)
+        assert trans == newtree,  "Unable to correctly detranslate a simple tree"
     
     def test_detranslate_change_branchlengths(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((0:0.1,1:0.2):0.3,2:0.4);"
         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         trans = TreeHandler().detranslate(translatetable, oldtree) 
-        assert trans == newtree, 'Detranslation Mismatch: %s -> %s' % (trans, newtree)
+        assert trans == newtree,  "Unable to correctly detranslate a tree with branchlengths"
+        
+    def test_detranslate_BEAST_format(self):
+        translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
+        oldtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
+        newtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
+        trans = TreeHandler().detranslate(translatetable, oldtree) 
+        assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
     
     def test_write(self):
         written = self.nex.trees.write()

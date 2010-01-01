@@ -205,21 +205,39 @@ class TreeHandler(GenericHandler):
         
         :return: String of detranslated tree
         """
-        def _does_tree_have_branchlengths(tree):
-            "Helper function - returns true if tree has branchlengths"
-            if ':' in tree:
-                return True
-            return False
-        head, tree = tree.split("=", 1)
-        for taxon_id, taxon in translatetable.items():
-            if _does_tree_have_branchlengths(tree):
-                search = r"""\b(%s)(\[.*\])?(:\d+\.\d+)\b""" % taxon_id
-                tree, count = re.subn(search, r"%s\3" % taxon, tree, 1)
-            else:
-                search = r"""\b(%s)\b""" % taxon_id
-                tree, count = re.subn(search, r"%s" % taxon, tree, 1)
+        # regex = re.compile(r"""
+        # [,\(]                   # boundary
+        #  (
+        #     (\d+)               # taxa-id
+        #     (\[.+?\])?          # minimally match an optional comment chunk
+        #     (:\d+\.\d+)?        # optional branchlengths
+        #  )
+        # [,\)]                   # end!
+        # """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
+        
+        if '[' in tree:
+            # beast mode comes first - it also has branchlengths
+            MODE = 'beast'
+            regex = re.compile(r"((\d+):)")
+        elif ':' in tree:
+            MODE = 'branchlengths'
+            regex = re.compile(r"((\d+):)")
+        else:
+            MODE = 'simple'
+            regex = re.compile(r"((\d+))")
+        
+        for found in regex.finditer(tree):
+            old, tax_id = found.groups()
             
-        return "%s=%s" % (head, tree)
+            if tax_id in translatetable:
+                taxon = translatetable[tax_id]
+                if MODE == 'branchlengths':
+                    tree = re.sub(r"\b(%s:)\b" % tax_id, "%s:" % taxon, tree)
+                elif MODE == 'beast':
+                    tree = re.sub(r"\b(%s:)\[" % tax_id, "%s:[" % taxon, tree)
+                elif MODE == 'simple':
+                    tree = re.sub(r"\b(%s)\b" % tax_id, taxon, tree)
+        return tree
         
 
     def write(self):
