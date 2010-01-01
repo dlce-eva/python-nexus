@@ -210,7 +210,7 @@ class TreeHandler(GenericHandler):
             if ':' in tree:
                 return True
             return False
-        head, tree = tree.split("=")
+        head, tree = tree.split("=", 1)
         for taxon_id, taxon in translatetable.items():
             if _does_tree_have_branchlengths(tree):
                 search = r"""\b(%s)(\[.*\])?(:\d+\.\d+)\b""" % taxon_id
