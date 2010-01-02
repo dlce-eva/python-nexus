@@ -159,7 +159,7 @@ class TreeHandler(GenericHandler):
         super(TreeHandler, self).parse(data)
         
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
-        translation_pattern = re.compile(r"""(\d+)\s(\w+)[,;]""")
+        translation_pattern = re.compile(r"""(\d+)\s(\w+)[,;]?""")
         
         lost_in_translation = False
         translators = {}
@@ -214,11 +214,10 @@ class TreeHandler(GenericHandler):
         #  )
         # [,\)]                   # end!
         # """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
-        
         if '[' in tree:
             # beast mode comes first - it also has branchlengths
             MODE = 'beast'
-            regex = re.compile(r"((\d+):)")
+            regex = re.compile(r"((\d+)[\[:])")
         elif ':' in tree:
             MODE = 'branchlengths'
             regex = re.compile(r"((\d+):)")
@@ -234,7 +233,7 @@ class TreeHandler(GenericHandler):
                 if MODE == 'branchlengths':
                     tree = re.sub(r"\b(%s:)\b" % tax_id, "%s:" % taxon, tree)
                 elif MODE == 'beast':
-                    tree = re.sub(r"\b(%s:)\[" % tax_id, "%s:[" % taxon, tree)
+                    tree = re.sub(r"\b(%s)([\[:])" % tax_id, "%s:" % taxon, tree)
                 elif MODE == 'simple':
                     tree = re.sub(r"\b(%s)\b" % tax_id, taxon, tree)
         return tree
