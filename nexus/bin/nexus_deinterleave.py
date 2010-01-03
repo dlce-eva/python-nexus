@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-"""deinterleave - python-nexus tools 
-Converts an interleaved nexus to a simple nexus.
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
-from nexus import NexusReader, NexusFormatException
+from nexus import NexusReader, NexusFormatException, VERSION
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """deinterleave - python-nexus tools v%(version)s
+Converts an interleaved nexus to a simple nexus.
+""" % {'version': VERSION,}
 
 if __name__ == '__main__':
     #set up command-line options

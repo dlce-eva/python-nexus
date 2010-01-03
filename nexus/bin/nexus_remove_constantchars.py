@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-"""remove_constantchars - python-nexus tools 
-Removes the constant characters from a nexus
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
+
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """remove_constantchars - python-nexus tools v%(version)s
+Removes the constant characters from a nexus
+""" % {'version': VERSION,}
 
 def find_constant_sites(nexus_obj):
     """

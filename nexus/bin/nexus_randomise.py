@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-"""randomise - python-nexus tools 
-Shuffles the characters between each taxon to create a new nexus
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
 from random import shuffle, randrange
 
-from nexus import NexusReader, NexusWriter
+from nexus import NexusReader, NexusWriter, VERSION
+
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """randomise - python-nexus tools v%(version)s
+Shuffles the characters between each taxon to create a new nexus
+""" % {'version': VERSION,}
+
 
 def shufflenexus(nexus_obj, resample=False):
     """

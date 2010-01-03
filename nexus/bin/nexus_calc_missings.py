@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-"""calc_missings - python-nexus tools 
-Calculates the number of missing entries in each site in a nexus file
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
-from nexus import NexusReader, NexusFormatException
+from nexus import NexusReader, NexusFormatException, VERSION
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """calc_missings - python-nexus tools v%(version)s
+
+Calculates the number of missing entries in each site in a nexus file.
+""" % {'version': VERSION,}
+
 
 def count_missings(nexus_obj):
     """

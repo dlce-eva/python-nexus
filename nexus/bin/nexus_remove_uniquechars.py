@@ -1,16 +1,18 @@
 #!/usr/bin/env python
-"""remove_uniquechars - python-nexus tools 
-Removes the unique characters from a nexus 
-(i.e. sites with only one taxon belonging to them - this only really makes sense
-if the data is coded as presence/absence in binary format)
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
 from nexus_remove_constantchars import new_nexus_without_sites
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """remove_uniquechars - python-nexus tools v%(version)s
+Removes the unique characters from a nexus 
+(i.e. sites with only one taxon belonging to them - this only really makes sense
+if the data is coded as presence/absence in binary format)
+""" % {'version': VERSION,}
+
+
+
 
 def find_unique_sites(nexus_obj):
     """
