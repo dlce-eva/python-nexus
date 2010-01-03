@@ -98,6 +98,7 @@ from writer import NexusWriter
 __version__ = "0.7"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
+VERSION = __version__
 PACKAGE_AUTHOR = "Simon J. Greenhill"
 PACKAGE_COPYRIGHT = "Copyright 2009-2010 Simon J. Greenhill"
 PACKAGE_LICENSE = """

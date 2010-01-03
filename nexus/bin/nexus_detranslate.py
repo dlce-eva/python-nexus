@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-"""detranslate - python-nexus tools 
-Converts an nexus tree file with 'translated' taxa labels to a detranslated form
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
-from nexus import NexusReader
+from nexus import NexusReader, VERSION
+
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """detranslate - python-nexus tools v%(version)s
+Converts an nexus tree file with 'translated' taxa labels to a detranslated form
+""" % {'version': VERSION,}
 
 if __name__ == '__main__':
     #set up command-line options

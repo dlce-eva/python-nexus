@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-"""combine-nexus - python-nexus tools 
-combines a series of nexuses into one nexus.
-"""
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
 import sys
 import os
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader, NexusFormatException, VERSION
+
+__author__ = 'Simon Greenhill <simon@simon.net.nz>'
+__doc__ = """combine-nexus - python-nexus tools v%(version)s
+combines a series of nexuses into one nexus.
+""" % {'version': VERSION,}
+
 
 def combine_nexuses(nexuslist):
     """
@@ -50,6 +51,7 @@ if __name__ == '__main__':
     options, nexuslist = parser.parse_args()
     
     if len(nexuslist) <= 1:
+        print __doc__
         parser.print_help()
         sys.exit()
     
