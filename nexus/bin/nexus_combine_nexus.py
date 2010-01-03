@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-from nexus import NexusReader, NexusFormatException, VERSION
+from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """combine-nexus - python-nexus tools v%(version)s
