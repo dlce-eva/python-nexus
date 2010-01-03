@@ -135,7 +135,7 @@ class TaxaHandler(GenericHandler):
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
-    is_tree = re.compile(r"""tree ([\w\d\.]+)\s\=\s(.*);""")
+    is_tree = re.compile(r"""tree .*=.*;""")
     
     def __init__(self):
         self.ntrees = 0
