@@ -303,6 +303,7 @@ class Test_TreeHandler_BEAST_Format:
     
     def test_detranslate_BEAST_format_extended(self):
         for index, taxon in self.nex.trees.translators.items():
+            # check if the taxon name is present in the tree...
             assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
     
 
