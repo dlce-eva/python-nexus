@@ -24,6 +24,13 @@ if __name__ == '__main__':
         sys.exit()
         
     nexus = NexusReader(nexusname)
-    assert 'trees' in nexus.blocks, "No trees found in file %s" % nexusname
+    if 'trees' not in nexus.blocks:
+        sys.exit("No trees found in file %s!" % nexusname)
+    if nexus.trees.ntrees == 0:
+        sys.exit("No trees found in found %s!" % nexusname)
+    if nexus.trees.was_translated == False:
+        sys.exit("Trees in %s do not appear to be translated!" % nexusname)
+    print "%d trees found with %d translated taxa" % \
+        (nexus.trees.ntrees, len(nexus.trees.translators))
     nexus.write_to_file(newnexus)
     print "New nexus written to %s" % newnexus
