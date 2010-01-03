@@ -12,6 +12,9 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog fudge.nex output.nex")
+    parser.add_option("-r", "--removecomments", dest="removecomments", 
+            action="store_true", default=False, 
+            help="Remove comments inside the tree definition")
     options, args = parser.parse_args()
     
     try:
@@ -32,5 +35,14 @@ if __name__ == '__main__':
         sys.exit("Trees in %s do not appear to be translated!" % nexusname)
     print "%d trees found with %d translated taxa" % \
         (nexus.trees.ntrees, len(nexus.trees.translators))
+        
+    if options.removecomments:
+        print "Removing comments..."
+        new = []
+        for tree in nexus.trees:
+            new.append(nexus.trees.remove_comments(tree))
+        nexus.trees.trees = new
     nexus.write_to_file(newnexus)
+    
+    
     print "New nexus written to %s" % newnexus
