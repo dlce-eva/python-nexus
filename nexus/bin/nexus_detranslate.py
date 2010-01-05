@@ -36,6 +36,8 @@ if __name__ == '__main__':
     print "%d trees found with %d translated taxa" % \
         (nexus.trees.ntrees, len(nexus.trees.translators))
         
+    nexus.detranslate()
+        
     if options.removecomments:
         print "Removing comments..."
         new = []

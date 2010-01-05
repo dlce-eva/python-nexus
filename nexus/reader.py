@@ -139,11 +139,12 @@ class TreeHandler(GenericHandler):
     
     def __init__(self):
         self.ntrees = 0
-        self.was_translated = False
+        self.was_translated = False # does the treefile have a translate block?
+        self._been_detranslated = False # has detranslate been called?
         self.translators = {}
         self.trees = []
         super(TreeHandler, self).__init__()
-    
+        
     def __getitem__(self, index):
         return self.trees[index]
     
@@ -186,22 +187,27 @@ class TreeHandler(GenericHandler):
                     # can't find a tree if we're still in the translate block!
                     raise NexusFormatException("Tree block has incomplete translate table")
                 
-                if self.was_translated:
-                    line = self.detranslate(self.translators, line)
-                
                 self.trees.append(line)
                 self.ntrees += 1
             
-    def detranslate(self, translatetable, tree):
+    def detranslate(self):
+        """Detranslates all trees in the file"""
+        if self._been_detranslated == True:
+            return
+        for idx, tree in enumerate(self.trees):
+            self.trees[idx] = self._detranslate_tree(tree, self.translators)
+        self._been_detranslated = True
+        
+    def _detranslate_tree(self, tree, translatetable):
         """
         Takes a `tree` and expands the short format tree with translated
         taxa labels from `translatetable` into a full format tree.
         
-        :param translatetable: Mapping of taxa id -> taxa names
-        :type translatetable: Dict
-        
         :param tree: String containing newick tree
         :type tree: String
+        
+        :param translatetable: Mapping of taxa id -> taxa names
+        :type translatetable: Dict
         
         :return: String of detranslated tree
         """
@@ -227,7 +233,6 @@ class TreeHandler(GenericHandler):
         
         for found in regex.finditer(tree):
             old, tax_id = found.groups()
-            
             if tax_id in translatetable:
                 taxon = translatetable[tax_id]
                 if MODE == 'branchlengths':
@@ -238,14 +243,18 @@ class TreeHandler(GenericHandler):
                     tree = re.sub(r"\b(%s)\b" % tax_id, taxon, tree)
         return tree
         
-
     def write(self):
         """
         Generates a string containing a trees block.
-
+        
         :return: String
         """
         out = ['begin trees;']
+        if self.was_translated and self._been_detranslated == False:
+            out.append('\ttranslate')
+            for index in sorted([int(k) for k in self.translators.keys()]):
+                out.append("\t%d %s," % (index, self.translators[str(index)]))
+            out[-1] = out[-1].replace(',', ';') # handle last taxa label in translate block
         for tree in self.trees:
             out.append("\t"+tree)
         out.append('end;\n')
@@ -464,7 +473,6 @@ class NexusReader(object):
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
-        
         self.rawblocks = {}
         self.handlers = {
             'data': DataHandler,
