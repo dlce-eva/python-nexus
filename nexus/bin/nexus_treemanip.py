@@ -10,16 +10,16 @@ Performs some functions on trees
 
 __usage__ = """
 Deleting trees:
-    nexus_treemanip.py -d 1 fudge.trees output.nex   - delete tree #1
-    nexus_treemanip.py -d 1-5 fudge.trees output.nex - delete trees #1-5
-    nexus_treemanip.py -d 1,5 fudge.trees output.nex - delete trees #1 and #5
-    nexus_treemanip.py -d 1,4,20-30 fudge.trees output.nex - delete trees #1, #4, #20-30
+    nexus_treemanip.py -d 1 oldnexus.trees newnexus.trees   - delete tree #1
+    nexus_treemanip.py -d 1-5 oldnexus.trees newnexus.trees - delete trees #1-5
+    nexus_treemanip.py -d 1,5 oldnexus.trees newnexus.trees - delete trees #1 and #5
+    nexus_treemanip.py -d 1,4,20-30 oldnexus.trees newnexus.trees - delete trees #1, #4, #20-30
     
 Resampling trees:
-    nexus_treemanip.py -r 10 fudge.trees output.nex   - resample every 10th tree
+    nexus_treemanip.py -r 10 oldnexus.trees newnexus.trees   - resample every 10th tree
     
 Remove comments:
-    nexus_treemanip.py -c fudge.trees output.nex
+    nexus_treemanip.py -c oldnexus.trees newnexus.trees
 """
 
 class TreeListException(Exception):
@@ -177,13 +177,11 @@ def run_removecomments(nexus_obj, do_print=True):
     nexus_obj.trees.trees = new
     return nexus_obj
     
-    
-    
 
 if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog fudge.trees output.nex")
+    parser = OptionParser(usage="usage: %prog oldnexus.trees newnexus.trees")
     parser.add_option("-d", "--deltree", dest="deltree", 
             action="store", default=False, 
             help="Remove the listed trees")

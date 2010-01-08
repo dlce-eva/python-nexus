@@ -337,9 +337,17 @@ Provides a number of functions for manipulating trees.
 
 Usage: python nexus_treemanip.py [option] oldnexus.trees newnexus.trees
 
-
-
-
+Deleting trees:
+    nexus_treemanip.py -d 1 oldnexus.trees newnexus.trees   - delete tree #1
+    nexus_treemanip.py -d 1-5 oldnexus.trees newnexus.trees - delete trees #1-5
+    nexus_treemanip.py -d 1,5 oldnexus.trees newnexus.trees - delete trees #1 and #5
+    nexus_treemanip.py -d 1,4,20-30 oldnexus.trees newnexus.trees - delete trees #1, #4, #20-30
+    
+Resampling trees:
+    nexus_treemanip.py -r 10 oldnexus.trees newnexus.trees   - resample every 10th tree
+    
+Remove comments:
+    nexus_treemanip.py -c oldnexus.trees newnexus.trees
 
 
 To Do
