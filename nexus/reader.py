@@ -138,7 +138,6 @@ class TreeHandler(GenericHandler):
     is_tree = re.compile(r"""tree .*=.*;""")
     
     def __init__(self):
-        self.ntrees = 0
         self.was_translated = False # does the treefile have a translate block?
         self._been_detranslated = False # has detranslate been called?
         self.translators = {}
@@ -148,6 +147,10 @@ class TreeHandler(GenericHandler):
     def __getitem__(self, index):
         return self.trees[index]
     
+    @property
+    def ntrees(self):
+        return len(self.trees)
+        
     def parse(self, data):
         """
         Parses a `tree` nexus block from `data`.
@@ -188,7 +191,6 @@ class TreeHandler(GenericHandler):
                     raise NexusFormatException("Tree block has incomplete translate table")
                 
                 self.trees.append(line)
-                self.ntrees += 1
             
     def detranslate(self):
         """Detranslates all trees in the file"""
