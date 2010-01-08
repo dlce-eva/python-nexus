@@ -12,12 +12,18 @@ __usage__ = """
 Deleting trees:
     nexus_treemanip.py -d 1 fudge.trees output.nex   - delete tree #1
     nexus_treemanip.py -d 1-5 fudge.trees output.nex - delete trees #1-5
-    nexus_treemanip.py -d 1,4 fudge.trees output.nex - delete trees #1 and #5
-    nexus_treemanip.py -d 1,4,20-30 fudge.trees output.nex - delete trees #1, #4, and #20-30
-
+    nexus_treemanip.py -d 1,5 fudge.trees output.nex - delete trees #1 and #5
+    nexus_treemanip.py -d 1,4,20-30 fudge.trees output.nex - delete trees #1, #4, #20-30
+    
+Resampling trees:
+    nexus_treemanip.py -r 10 fudge.trees output.nex   - resample every 10th tree
+    
+Remove comments:
+    nexus_treemanip.py -c fudge.trees output.nex
 """
 
 class TreeListException(Exception):
+    """Generic Exception for Tree Lists"""
     def __init__(self, arg):
         Exception.__init__(self, arg)
         self.arg = arg
@@ -25,6 +31,12 @@ class TreeListException(Exception):
 def parse_deltree(dstring):
     """
     Returns a list of trees to be deleted
+    
+    :param dstring: A string
+    :type dstring: string 
+    
+    :return: A list of trees to be deleted.
+    :raises TreeListException: if dstring is invalid.
     
     >>> parse_deltree('1')
     [1]
@@ -53,6 +65,119 @@ def parse_deltree(dstring):
             except (ValueError):
                 raise TreeListException("'%s' is not a valid token for a tree list" % token)
     return sorted(out)
+
+
+def run_deltree(deltree, nexus_obj, do_print=True):
+    """
+    Returns a list of trees to be deleted
+    
+    :param deltree: A string of trees to be deleted.
+    :type deltree: String 
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :param do_print: flag to print() logging information or not
+    :type do_print: Boolean
+    
+    :return: A NexusReader instance with the given trees removed.
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'trees') == False:
+        raise NexusFormatException("Nexus has no `trees` block")
+        
+    new = []
+    delitems = parse_deltree(deltree)
+    
+    if do_print: 
+        print('Deleting: %d trees' % len(delitems))
+        
+    for index, tree in enumerate(nexus_obj.trees, 1):
+        if index in delitems:
+            if do_print: print('Deleting tree %d' % index)
+        else:
+            new.append(tree)
+    nexus_obj.trees.trees = new
+    return nexus_obj
+
+
+def run_resample(resample, nexus_obj, do_print=True):
+    """
+    Resamples the trees in a nexus
+    
+    :param resample: Resample every `resample` trees
+    :type resample: Integer 
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :param do_print: flag to print() logging information or not
+    :type do_print: Boolean
+    
+    :return: A NexusReader instance with the given trees removed.
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'trees') == False:
+        raise NexusFormatException("Nexus has no `trees` block")
+    
+    new = []
+    try:
+        every = int(resample)
+    except ValueError:
+        sys.exit("Invalid resample option %s - should be an integer" % resample)
+    
+    if do_print: 
+        print('Resampling ever %d trees' % every)
+    
+    ignore_count = 0 
+    for index, tree in enumerate(nexus_obj.trees, 1):
+        if index % every == 0:
+            new.append(tree)
+        else:
+            ignore_count += 1
+    
+    if do_print: 
+        print("Ignored %d trees" % ignore_count)
+    
+    nexus_obj.trees.trees = new
+    return nexus_obj
+    
+def run_removecomments(nexus_obj, do_print=True):
+    """
+    Removes comments from the trees in a nexus
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :param do_print: flag to print() logging information or not
+    :type do_print: Boolean
+    
+    :return: A NexusReader instance with the comments.
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'trees') == False:
+        raise NexusFormatException("Nexus has no `trees` block")
+    
+    new = []
+    for index, tree in enumerate(nexus_obj.trees, 1):
+        new.append(nexus_obj.trees.remove_comments(tree))
+    
+    if do_print:
+        print("Removed comments")
+    
+    nexus_obj.trees.trees = new
+    return nexus_obj
+    
+    
     
 
 if __name__ == '__main__':
@@ -65,6 +190,9 @@ if __name__ == '__main__':
     parser.add_option("-r", "--resample", dest="resample", 
             action="store", default=False, 
             help="Resample the trees every Nth tree")
+    parser.add_option("-c", "--removecomments", dest="removecomments", 
+            action="store_true", default=False, 
+            help="Remove comments from the trees")
     options, args = parser.parse_args()
     
     try:
@@ -87,35 +215,14 @@ if __name__ == '__main__':
     
     # Delete trees
     if options.deltree:
-        new = []
-        delitems = parse_deltree(options.deltree)
-        print 'Deleting: %d trees' % len(delitems)
-        for index, tree in enumerate(nexus.trees, 1):
-            if index in delitems:
-                print 'Deleting tree %d' % index
-            else:
-                new.append(tree)
-        nexus.trees.trees = new
+        nexus = run_deltree(options.deltree, nexus)
     
     # Resample trees
-    elif options.resample:
-        new = []
-        try:
-            every = int(options.resample)
-        except ValueError:
-            sys.exit("Invalid resample option %s - should be an integer" % options.resample)
+    if options.resample:
+        nexus = run_resample(options.resample, nexus)
         
-        ignore_count = 0 
-        for index, tree in enumerate(nexus.trees, 1):
-            if index % every == 0:
-                new.append(tree)
-            else:
-                ignore_count += 1
-        print "Ignored %d trees" % ignore_count
-        nexus.trees.trees = new
-        
-    else:
-        sys.exit("No Action Chosen!")
+    if options.removecomments:
+        nexus = run_removecomments(nexus)
     
     nexus.write_to_file(newnexus)
     print "New nexus written to %s" % newnexus

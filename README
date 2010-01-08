@@ -330,12 +330,17 @@ if the data is coded as presence/absence in binary format).
 
 Usage: python nexus_remove_constantchars.py oldnexus.nex newnexus.nex
 
+nexus_treemanip.py
+------------------
+
+Provides a number of functions for manipulating trees.
+
+Usage: python nexus_treemanip.py [option] oldnexus.trees newnexus.trees
+
+
+
 
 
 
 To Do
 ================================================================================
-
-
-1) parse translated trees block (e.g. example-translated.trees).
-2) add resample option for character shuffler.
