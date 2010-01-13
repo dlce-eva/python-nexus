@@ -223,4 +223,4 @@ if __name__ == '__main__':
         nexus = run_removecomments(nexus)
     
     nexus.write_to_file(newnexus)
-    print "New nexus written to %s" % newnexus
+    print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
