@@ -29,6 +29,7 @@ setup(
         'nexus/bin/nexus_randomise.py',
         'nexus/bin/nexus_remove_constantchars.py',
         'nexus/bin/nexus_remove_uniquechars.py', 
+        'nexus/bin/nexus_treemanip.py',
     ],
     test_suite='nose.collector',
 )
