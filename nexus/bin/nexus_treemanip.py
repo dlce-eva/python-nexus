@@ -10,16 +10,19 @@ Performs some functions on trees
 
 __usage__ = """
 Deleting trees:
-    nexus_treemanip.py -d 1 oldnexus.trees newnexus.trees   - delete tree #1
-    nexus_treemanip.py -d 1-5 oldnexus.trees newnexus.trees - delete trees #1-5
-    nexus_treemanip.py -d 1,5 oldnexus.trees newnexus.trees - delete trees #1 and #5
-    nexus_treemanip.py -d 1,4,20-30 oldnexus.trees newnexus.trees - delete trees #1, #4, #20-30
+    nexus_treemanip.py -d 1 old.trees new.trees   - delete tree #1
+    nexus_treemanip.py -d 1-5 old.trees new.trees - delete trees #1-5
+    nexus_treemanip.py -d 1,5 old.trees new.trees - delete trees #1 and #5
+    nexus_treemanip.py -d 1,4,20-30 old.trees new.trees - delete trees #1, #4, #20-30
     
 Resampling trees:
-    nexus_treemanip.py -r 10 oldnexus.trees newnexus.trees   - resample every 10th tree
+    nexus_treemanip.py -r 10 old.trees new.trees   - resample every 10th tree
+
+Remove translate block:
+    nexus_treemanip.py -t old.trees new.trees
     
 Remove comments:
-    nexus_treemanip.py -c oldnexus.trees newnexus.trees
+    nexus_treemanip.py -c old.trees new.trees
 """
 
 class TreeListException(Exception):
@@ -158,7 +161,7 @@ def run_removecomments(nexus_obj, do_print=True):
     :param do_print: flag to print() logging information or not
     :type do_print: Boolean
     
-    :return: A NexusReader instance with the comments.
+    :return: A NexusReader instance with the comments removed.
     
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
@@ -176,12 +179,33 @@ def run_removecomments(nexus_obj, do_print=True):
     
     nexus_obj.trees.trees = new
     return nexus_obj
+
+def run_detranslate(nexus_obj, do_print=True):
+    """
+    Removes comments from the trees in a nexus
     
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :param do_print: flag to print() logging information or not
+    :type do_print: Boolean
+    
+    :return: A NexusReader instance with the comments removed.
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'trees') == False:
+        raise NexusFormatException("Nexus has no `trees` block")
+    nexus_obj.trees.detranslate()
+    return nexus_obj
+
 
 if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog oldnexus.trees newnexus.trees")
+    parser = OptionParser(usage="usage: %prog old.trees new.trees")
     parser.add_option("-d", "--deltree", dest="deltree", 
             action="store", default=False, 
             help="Remove the listed trees")
@@ -191,11 +215,14 @@ if __name__ == '__main__':
     parser.add_option("-c", "--removecomments", dest="removecomments", 
             action="store_true", default=False, 
             help="Remove comments from the trees")
+    parser.add_option("-t", "--detranslate", dest="detranslate", 
+            action="store_true", default=False, 
+            help="Remove taxa translation block from the trees")
     options, args = parser.parse_args()
     
     try:
         nexusname = args[0]
-        newnexus = args[1]
+        new = args[1]
     except IndexError:
         print __doc__
         print __usage__
@@ -218,9 +245,14 @@ if __name__ == '__main__':
     # Resample trees
     if options.resample:
         nexus = run_resample(options.resample, nexus)
-        
+    
+    # remove comments
     if options.removecomments:
         nexus = run_removecomments(nexus)
     
-    nexus.write_to_file(newnexus)
-    print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
+    # detranslate
+    if options.detranslate:
+        nexus = run_detranslate(nexus)
+    
+    nexus.write_to_file(new)
+    print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, new)
