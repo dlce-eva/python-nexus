@@ -163,7 +163,7 @@ class TreeHandler(GenericHandler):
         super(TreeHandler, self).parse(data)
         
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
-        translation_pattern = re.compile(r"""(\d+)\s(\w+)[,;]?""")
+        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.]+)[,;]?""")
         
         lost_in_translation = False
         translators = {}
@@ -178,6 +178,7 @@ class TreeHandler(GenericHandler):
             elif lost_in_translation:
                 if translation_pattern.match(line):
                     taxon_id, taxon = translation_pattern.findall(line)[0]
+                    taxon = taxon.strip("'")
                     assert taxon_id not in self.translators, \
                          "Duplicate Taxa ID %s in translate block" % taxon_id
                     self.translators[taxon_id] = taxon
