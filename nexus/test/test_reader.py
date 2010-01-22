@@ -422,3 +422,32 @@ def test_regression_whitespace_in_matrix():
     assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
         
     
+
+def test_badchars_quoted_in_taxaname():
+    nex = NexusReader()
+    nex.read_string("""
+    #NEXUS
+
+    Begin trees;
+    	Translate
+    		1 MANGIC_Bugan,
+    		2 MANGIC_Paliu,
+    		3 MANGIC_Mang,
+    		4 PALAUNGWA_Danaw,
+    		5 'PALAUNGWA_De.Ang'
+        ;
+        tree 1 = (1,2,3,4,5);
+    """)
+    # did we get a tree block?
+    assert 'trees' in nex.blocks
+    # did we find 3 trees?
+    assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+    # did we get the translation parsed properly.
+    assert nex.trees.was_translated == True
+    assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+    # check last entry
+    assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
+    # check detranslate
+    nex.trees.detranslate()
+    assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
+    
