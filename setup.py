@@ -25,7 +25,6 @@ setup(
         'nexus/bin/nexus_calc_missings.py', 
         'nexus/bin/nexus_combine_nexus.py',
         'nexus/bin/nexus_deinterleave.py',
-        'nexus/bin/nexus_detranslate.py',
         'nexus/bin/nexus_randomise.py',
         'nexus/bin/nexus_remove_constantchars.py',
         'nexus/bin/nexus_remove_uniquechars.py', 
