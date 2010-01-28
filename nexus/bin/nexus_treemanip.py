@@ -222,7 +222,6 @@ if __name__ == '__main__':
     
     try:
         nexusname = args[0]
-        new = args[1]
     except IndexError:
         print __doc__
         print __usage__
@@ -230,6 +229,11 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit()
         
+    try:
+        newnexus = args[1]
+    except IndexError:
+        newnexus = None
+    
     nexus = NexusReader(nexusname)
     if 'trees' not in nexus.blocks:
         sys.exit("No trees found in file %s!" % nexusname)
@@ -254,5 +258,8 @@ if __name__ == '__main__':
     if options.detranslate:
         nexus = run_detranslate(nexus)
     
-    nexus.write_to_file(new)
-    print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, new)
+    if newnexus:
+        nexus.write_to_file(new)
+        print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, new)
+    else:
+        print nexus.write()
