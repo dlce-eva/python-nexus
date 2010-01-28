@@ -15,13 +15,20 @@ if __name__ == '__main__':
     
     try:
         nexusname = args[0]
-        newnexus = args[1]
     except IndexError:
         print __doc__
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
+    
+    try:
+        newnexus = args[1]
+    except IndexError:
+        newnexus = None
         
     nexus = NexusReader(nexusname)
-    nexus.write_to_file(newnexus)
-    print "New nexus written to %s" % newnexus
+    if newnexus:
+        nexus.write_to_file(newnexus)
+        print "New nexus written to %s" % newnexus
+    else:
+        print nexus.write()

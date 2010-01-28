@@ -63,13 +63,17 @@ if __name__ == '__main__':
     
     try:
         nexusname = args[0]
-        newfile = args[1]
     except IndexError:
         print __doc__
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
         
+    try:
+        newnexus = args[1]
+    except IndexError:
+        newnexus = None
+    
     nexus = NexusReader(nexusname)
     const = find_constant_sites(nexus)
     print("%d constant sites found: %s" % (len(const), ",".join(["%s" % s for s in const])))
@@ -77,6 +81,7 @@ if __name__ == '__main__':
         raise Exception("Nothing to do!")
         quit()
     
-    new = new_nexus_without_sites(nexus, const)
-    new.write_to_file(filename=newfile)
-    
+    if newnexus:
+        new = new_nexus_without_sites(nexus, const)
+        new.write_to_file(filename=newnexus)
+        

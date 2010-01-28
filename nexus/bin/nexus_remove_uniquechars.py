@@ -45,12 +45,10 @@ def find_unique_sites(nexus_obj):
         # a character is unique if there's only two states
         # AND there's a state with 1 member 
         # AND the state with 1 member is NOT the 0 (absence) state
-        print i, missing, members
         if len(members) == 2:
             for state, count in members.items():
                 if state != '0' and count == 1:
                     unique.append(i)
-    print unique
     return unique
     
 
@@ -62,12 +60,16 @@ if __name__ == '__main__':
     
     try:
         nexusname = args[0]
-        newfile = args[1]
     except IndexError:
         print __doc__
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
+        
+    try:
+        newnexus = args[1]
+    except IndexError:
+        newnexus = None
         
     nexus = NexusReader(nexusname)
     const = find_unique_sites(nexus)
@@ -76,6 +78,7 @@ if __name__ == '__main__':
         raise Exception("Nothing to do!")
         quit()
     
-    new = new_nexus_without_sites(nexus, const)
-    new.write_to_file(filename=newfile)
+    if newnexus:
+        new = new_nexus_without_sites(nexus, const)
+        new.write_to_file(filename=newnexus)
     
