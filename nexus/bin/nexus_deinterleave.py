@@ -27,7 +27,7 @@ if __name__ == '__main__':
         newnexus = None
         
     nexus = NexusReader(nexusname)
-    if newnexus:
+    if newnexus is not None:
         nexus.write_to_file(newnexus)
         print "New nexus written to %s" % newnexus
     else:

@@ -81,7 +81,7 @@ if __name__ == '__main__':
         raise Exception("Nothing to do!")
         quit()
     
-    if newnexus:
+    if newnexus is not None:
         new = new_nexus_without_sites(nexus, const)
         new.write_to_file(filename=newnexus)
         

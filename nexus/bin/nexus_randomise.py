@@ -89,7 +89,7 @@ if __name__ == '__main__':
         
     nexus = NexusReader(nexusname)
     nexus = shufflenexus(nexus, options.numchars)
-    if newnexus:
+    if newnexus is not None:
         nexus.write_to_file(newnexus)
         print "New random nexus written to %s" % newnexus
     else:
