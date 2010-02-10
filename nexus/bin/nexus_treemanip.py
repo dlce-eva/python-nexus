@@ -225,7 +225,6 @@ def run_random(num_trees, nexus_obj):
     return nexus_obj
     
     assert int(num_trees), "num_trees is not an integer"
-    
     nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
     return nexus_obj
     
@@ -283,7 +282,7 @@ if __name__ == '__main__':
     if options.resample:
         nexus = run_resample(options.resample, nexus)
     
-    # Randomnly sample trees
+    # Randomly sample trees
     if options.random:
         nexus = run_random(options.random, nexus)
     
@@ -296,7 +295,8 @@ if __name__ == '__main__':
         nexus = run_detranslate(nexus)
     
     if newnexus is not None:
-        nexus.write_to_file(new)
-        print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, new)
+        nexus.write_to_file(newnexus)
+        print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
     else:
         print nexus.write()
+        
