@@ -349,6 +349,9 @@ Resampling trees:
 Remove comments:
     nexus_treemanip.py -c oldnexus.trees newnexus.trees
 
+Sampling N Random trees:
+    nexus_treemanip.py -n 100 oldnexus.trees newnexus.trees  - randomly sample 100 trees.
+
 
 To Do
 ================================================================================
