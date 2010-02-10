@@ -217,14 +217,19 @@ def run_random(num_trees, nexus_obj):
     
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    :raises ValueError: if num_trees is not an integer
+    :raises ValueError: if num_trees is larger than population
+    
     """
     assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
     if hasattr(nexus_obj, 'trees') == False:
         raise NexusFormatException("Nexus has no `trees` block")
-    nexus_obj.trees.detranslate()
-    return nexus_obj
     
-    assert int(num_trees), "num_trees is not an integer"
+    try:
+        num_trees = int(num_trees)
+    except ValueError:
+        raise ValueError("num_trees should be an integer")
+    
     nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
     return nexus_obj
     
