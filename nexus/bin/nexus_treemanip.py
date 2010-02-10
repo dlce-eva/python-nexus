@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import sys
 import os
+from random import sample
+
 from nexus import NexusReader, VERSION
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
@@ -201,6 +203,34 @@ def run_detranslate(nexus_obj, do_print=True):
     nexus_obj.trees.detranslate()
     return nexus_obj
 
+def run_random(num_trees, nexus_obj):
+    """
+    Returns a specified number (`num_trees`) of random trees from the nexus file.
+    
+    :param num_trees: The number of trees to resample
+    :type num_trees: Integer
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :return: A NexusReader instance.
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `trees` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'trees') == False:
+        raise NexusFormatException("Nexus has no `trees` block")
+    nexus_obj.trees.detranslate()
+    return nexus_obj
+    
+    assert int(num_trees), "num_trees is not an integer"
+    
+    nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
+    return nexus_obj
+    
+    
+    
 
 if __name__ == '__main__':
     #set up command-line options
@@ -212,6 +242,9 @@ if __name__ == '__main__':
     parser.add_option("-r", "--resample", dest="resample", 
             action="store", default=False, 
             help="Resample the trees every Nth tree")
+    parser.add_option("-n", "--random", dest="random", 
+            action="store", default=False, 
+            help="Randomly sample N trees from the treefile")
     parser.add_option("-c", "--removecomments", dest="removecomments", 
             action="store_true", default=False, 
             help="Remove comments from the trees")
@@ -249,6 +282,10 @@ if __name__ == '__main__':
     # Resample trees
     if options.resample:
         nexus = run_resample(options.resample, nexus)
+    
+    # Randomnly sample trees
+    if options.random:
+        nexus = run_random(options.random, nexus)
     
     # remove comments
     if options.removecomments:
