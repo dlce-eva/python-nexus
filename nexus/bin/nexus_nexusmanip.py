@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-from nexus import NexusReader, NexusFormatException, VERSION
+from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexusmanip - python-nexus tools v%(version)s
 
@@ -138,8 +138,14 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     :param sites_to_remove: A list of site numbers
     :type sites_to_remove: List
     
-    :return: A NexusReader instance
+    :return: A NexusWriter instance
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'data') == False:
+        raise NexusFormatException("Nexus has no `data` block")
+    
     # make new nexus
     nexout = NexusWriter()
     nexout.add_comment(
@@ -150,7 +156,7 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     for sitepos in range(nexus_obj.data.nchar):
         if sitepos in sites_to_remove:
             continue # skip!
-        for taxon, data in nexus.data:
+        for taxon, data in nexus_obj.data:
             nexout.add(taxon, new_sitepos, data[sitepos])
         new_sitepos += 1
     return nexout

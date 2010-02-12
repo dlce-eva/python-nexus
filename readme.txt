@@ -278,14 +278,6 @@ binary ones.
 Nexus manipulation scripts included
 ================================================================================
 
-nexus_calc_missings.py
-----------------------
-
-Calculates and displays the number of missing entries per taxon in each site in 
-a nexus file.
-
-Usage: python nexus_calc_missings.py filename.nex
-
 nexus_combine_nexus.py
 ----------------------
 
@@ -314,21 +306,6 @@ Randomly shuffles the character states between taxa in a nexus file.
 
 Usage: python nexus_randomise.py oldnexus.nex randomised.nex
 
-nexus_remove_constantchars.py
------------------------------
-
-Removes the constant sites from a nexus file (i.e. sites that have no character
-state changes).
-
-Usage: python nexus_remove_constantchars.py oldnexus.nex newnexus.nex
-
-nexus_remove_uniquechars.py
----------------------------
-
-Removes the unique sites from a nexus file (i.e. sites with only one taxon belonging to them - this only really makes sense
-if the data is coded as presence/absence in binary format).
-
-Usage: python nexus_remove_constantchars.py oldnexus.nex newnexus.nex
 
 nexus_treemanip.py
 ------------------
@@ -353,5 +330,22 @@ Sampling N Random trees:
     nexus_treemanip.py -n 100 oldnexus.trees newnexus.trees  - randomly sample 100 trees.
 
 
-To Do
-================================================================================
+nexus_nexusmanip.py
+-------------------
+
+Provides a number of functions for manipulating nexus character files.
+
+Usage: python nexus_nexusmanip.py [option] oldnexus.nex [newnexus.nex]
+
+Count missing characters:
+    Usage: python nexus_nexusmanip.py -m oldnexus.nex
+
+Remove constant characters:
+    Usage: python nexus_nexusmanip.py -c oldnexus.nex newnexus.nex
+    
+Remove the unique characters:
+    Usage: python nexus_nexusmanip.py -u oldnexus.nex newnexus.nex
+    
+
+
+
