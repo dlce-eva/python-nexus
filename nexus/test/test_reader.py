@@ -226,6 +226,33 @@ class Test_DataHandler_AlternateNexusFormat:
             assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
 
 
+class Test_DataHandler_CharacterBlockNexusFormat:
+    def setUp(self):
+        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-characters.nex'))
+        
+    def test_block_find(self):
+        assert 'data' in self.nex.blocks
+    
+    def test_charblock_find(self):
+        assert 'characters' in self.nex.data
+    
+    def test_taxa(self):
+        assert self.nex.data.ntaxa == 5
+        
+    def test_data(self):
+        assert self.nex.data.nchar == 5
+        
+    def test_label_parsing(self):
+        assert self.nex.data.characters[0] == 'CHAR_A'
+        assert self.nex.data.characters[1] == 'CHAR_B'
+        assert self.nex.data.characters[2] == 'CHAR_C'
+        assert self.nex.data.characters[3] == 'CHAR_D'
+        assert self.nex.data.characters[4] == 'CHAR_E'
+        
+    def test_sites(self):
+        assert False
+        
+
 class Test_TaxaHandler_AlternateNexusFormat:
     expected = ['John', 'Paul', 'George', 'Ringo']
     def setUp(self):

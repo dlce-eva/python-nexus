@@ -370,7 +370,8 @@ class DataHandler(GenericHandler):
         super(DataHandler, self).parse(data)
         seen_matrix = False
         self.format = self.parse_format_line("\n".join(data))
-
+        data = self._parse_charstate_block(data)
+        
         for line in data:
             lline = line.lower().strip()
             lline = self.remove_comments(lline)
@@ -393,8 +394,6 @@ class DataHandler(GenericHandler):
             # ignore a few things..
             elif BEGIN_PATTERN.match(line):
                 continue
-            elif 'charstatelabels' in lline:
-                raise NotImplementedError('Character block parsing is not implemented yet')
             elif seen_matrix == True:
                 # NORMALISE WHITESPACE
                 try:
@@ -427,6 +426,19 @@ class DataHandler(GenericHandler):
             for index, char in enumerate(self.matrix[taxon]):
                 self.characters[index] = self.characters.get(index, {})
                 self.characters[index][taxon] = self.matrix[taxon][index]
+    
+    def _parse_charstate_block(self, data):
+        """
+        Extracts the character state block and returns the data matrix without it
+        """
+        new = []
+        for line in data:
+            pass#print line
+            
+            
+        return data
+        
+        
     
     def write(self):
         """
