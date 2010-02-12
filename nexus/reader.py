@@ -84,7 +84,7 @@ class GenericHandler(object):
 
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
-    is_dimensions = re.compile(r"""dimensions ntax=(\d+)""", re.IGNORECASE)
+    is_dimensions = re.compile(r"""dimensions\s*ntax=\s*(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
     
     def __init__(self):
@@ -116,7 +116,8 @@ class TaxaHandler(GenericHandler):
             elif self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
             elif in_taxlabel_block:
-                self.taxa.append(line)
+                self.taxa.append(line.strip(";"))
+        
         assert self.ntaxa == len(self.taxa)
         
     def write(self):
