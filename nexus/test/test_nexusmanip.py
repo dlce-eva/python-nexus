@@ -111,3 +111,15 @@ class Test_FindUniqueSites:
         assert 6 in unique
         
         
+class Test_new_nexus_without_sites:
+    
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus_1(self):
+        new_nexus_without_sites({}, [])
+    
+    def test_remove_sites_1(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        nexus = new_nexus_without_sites(nexus, [1])
+        assert len(nexus.data) == 1
+        
+        
