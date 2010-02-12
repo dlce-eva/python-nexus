@@ -125,7 +125,25 @@ def find_unique_sites(nexus_obj):
     return unique
 
 
-
+def print_character_stats(nexus_obj):
+    """
+    Prints the number of states and members for each site in `nexus_obj`
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :return: None
+    """
+    for i in range(0, nexus_obj.data.nchar):
+        tally = {}
+        for taxa, characters in nexus_obj.data:
+            c = characters[i]
+            tally[c] = tally.get(c, 0) + 1
+        
+        for state in tally:
+            print("%d: %s %d" % i, state.ljust(5), tally[state])
+    return
+    
 
 def new_nexus_without_sites(nexus_obj, sites_to_remove):
     """
@@ -168,14 +186,18 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex [new.nex]")
     parser.add_option("-m", "--missings", dest="missings", 
-            action="store", default=False, 
+            action="store_true", default=False, 
             help="Count the missing characters")
     parser.add_option("-c", "--constant", dest="constant", 
-            action="store", default=False, 
+            action="store_true", default=False, 
             help="Remove the constant characters")
     parser.add_option("-u", "--unique", dest="unique", 
-            action="store", default=False, 
+            action="store_true", default=False, 
             help="Remove the unique characters")
+    parser.add_option("-s", "--stats", dest="stats", 
+            action="store_true", default=False, 
+            help="Print character-by-character stats")
+    options, args = parser.parse_args()
     
     try:
         nexusname = args[0]
@@ -204,6 +226,10 @@ if __name__ == '__main__':
         unique = find_unique_sites(nexus)
         newnexus = new_nexus_without_sites(nexus, unique)
         print("Unique Sites: %s" % ",".join([str(i) for i in unique]))
+    elif options.stats:
+        print_character_stats(nexus)
+    else:
+        exit()
         
     # check for saving
     if newnexus is not None and newnexusname is not None:
