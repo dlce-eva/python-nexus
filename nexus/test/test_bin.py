@@ -6,6 +6,7 @@ import nose
 
 from nexus import NexusReader, NexusWriter
 from nexus.bin.nexus_combine_nexus import combine_nexuses
+from nexus.bin.nexus_randomise import shufflenexus
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
 
@@ -93,5 +94,41 @@ class Test_CombineNexuses:
         assert re.search(r"""\bNTAX=4\b""", newnex.write())
         assert re.search(r"""\bNCHAR=2\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="12345"[\s;]', newnex.write())
-        
+
+
+class Test_ShuffleNexus:
+
+    def setup(self):
+        self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
+
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus_1(self):
+        shufflenexus({})
+
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus_2(self):
+        shufflenexus("I AM NOT A NEXUS")
+
+    def test_output(self):
+        nexus = shufflenexus(self.nexus)
+        assert isinstance(nexus, NexusWriter)
+
+    @nose.tools.raises(ValueError)
+    def test_resample_errorcheck_ok_1(self):
+        shufflenexus(self.nexus, "STRING")
+
+    @nose.tools.raises(ValueError)
+    def test_resample_errorcheck_2(self):
+        shufflenexus(self.nexus, 0)
+
+    def test_resample_10(self):
+        nexus = shufflenexus(self.nexus, 10)
+        assert len(nexus.characters) == 10
+        assert sorted(nexus.taxalist) == ['George', 'John', 'Paul', 'Ringo']
+
+    def test_resample_100(self):
+        nexus = shufflenexus(self.nexus, 100)
+        assert len(nexus.characters) == 100
+        assert sorted(nexus.taxalist) == ['George', 'John', 'Paul', 'Ringo']
+
     
