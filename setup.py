@@ -22,13 +22,12 @@ setup(
     package_dir={'nexus': 'nexus'},
     package_data={'nexus/examples': ['*.nex', '*.trees']},
     scripts=[
-        'nexus/bin/nexus_calc_missings.py', 
         'nexus/bin/nexus_combine_nexus.py',
         'nexus/bin/nexus_deinterleave.py',
+        'nexus/bin/nexus_nexusmanip.py',
         'nexus/bin/nexus_randomise.py',
-        'nexus/bin/nexus_remove_constantchars.py',
-        'nexus/bin/nexus_remove_uniquechars.py', 
         'nexus/bin/nexus_treemanip.py',
+        'nexus/bin/nexinfo.py',
     ],
     test_suite='nose.collector',
 )
