@@ -132,6 +132,10 @@ class TaxaHandler(GenericHandler):
         out.append('end;')
         return "\n".join(out)
     
+    def __repr__(self):
+        return "<NexusTaxaBlock: %d taxa>" % self.ntaxa
+    
+    
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
