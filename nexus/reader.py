@@ -53,8 +53,7 @@ class GenericHandler(object):
         
         :return: None
         """
-        for line in data:
-            self.block.append(line)
+        self.block.extend(data)
             
     def remove_comments(self, line):
         """
@@ -270,10 +269,14 @@ class TreeHandler(GenericHandler):
 
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
+    
+    _character_block_pattern = re.compile(r"""CHARSTATELABELS(.*?);""", re.IGNORECASE | re.DOTALL)
+    
     def __init__(self):
         self.taxa = []
         self.ntaxa = 0
         self.characters = {}
+        self.charlabels = {}
         self.nchar = 0
         self.format = {}
         self.gaps = None
@@ -368,13 +371,12 @@ class DataHandler(GenericHandler):
         :raises NotImplementedError: If parsing encounters a not implemented section
         """
         super(DataHandler, self).parse(data)
-        seen_matrix = False
         self.format = self.parse_format_line("\n".join(data))
         data = self._parse_charstate_block(data)
         
+        seen_matrix = False
         for line in data:
             lline = line.lower().strip()
-            lline = self.remove_comments(lline)
             # Dimensions line
             if lline.startswith('dimensions '):
                 # try for nchar/ntax
@@ -395,49 +397,62 @@ class DataHandler(GenericHandler):
             elif BEGIN_PATTERN.match(line):
                 continue
             elif seen_matrix == True:
+                line = self.remove_comments(line)
+                
                 # NORMALISE WHITESPACE
                 try:
                     taxon, sites = WHITESPACE_PATTERN.split(line, 1)
                 except ValueError:
                     continue
+                
                 taxon = taxon.strip()
                 taxon = QUOTED_PATTERN.sub('\\1', taxon)
                 sites = sites.strip()
-
+                
                 if taxon not in self.taxa:
                     self.taxa.append(taxon)
-
+                    
                 self.matrix[taxon] = self.matrix.get(taxon, [])
                 self.matrix[taxon].extend(self._parse_sites(sites))
                 
         self._load_characters()
-                
-        if self.ntaxa is None:
+        
+        # WARNING: ntaxa and nchar in format string does not give us the right answer!
+        # Should we raise an error instead?
+        if self.ntaxa != len(self.taxa):
             self.ntaxa = len(self.taxa)
         
         if self.nchar != len(self.characters):
-            # WARNING: nchar in format string does not give us the right answer!
-            # Should we raise an error instead?
             self.nchar = len(self.characters)
     
     def _load_characters(self):
         """Loads characters into self.characters section"""
         for taxon in self.taxa:
             for index, char in enumerate(self.matrix[taxon]):
-                self.characters[index] = self.characters.get(index, {})
-                self.characters[index][taxon] = self.matrix[taxon][index]
+                label = self.charlabels.get(index, index)
+                #print taxon, index, char, label
+                self.characters[label] = self.characters.get(label, {})
+                assert taxon not in self.characters[label]
+                self.characters[label][taxon] = char
     
     def _parse_charstate_block(self, data):
         """
         Extracts the character state block and returns the data matrix without it
         """
-        new = []
-        for line in data:
-            pass#print line
-            
-            
-        return data
+        char_number_pattern = re.compile(r"""(\d+)\s+(.*)""")
+        char_index = 0
         
+        new_data = "\n".join(data)
+        charblock = self._character_block_pattern.findall(new_data)
+        new_data = self._character_block_pattern.sub('', new_data)
+        if len(charblock) == 1:
+            charblock = charblock[0]
+            for char in charblock.split(","):
+                char = char.strip()
+                char = char_number_pattern.sub('\\2', char) 
+                self.charlabels[char_index] = char
+                char_index += 1
+        return new_data.split("\n")
         
     
     def write(self):
