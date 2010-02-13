@@ -430,10 +430,8 @@ class DataHandler(GenericHandler):
         for taxon in self.taxa:
             for index, char in enumerate(self.matrix[taxon]):
                 label = self.charlabels.get(index, index)
-                #print taxon, index, char, label
                 self.characters[label] = self.characters.get(label, {})
-                assert taxon not in self.characters[label]
-                self.characters[label][taxon] = char
+                self.characters[label][taxon] = self.matrix[taxon][index]
     
     def _parse_charstate_block(self, data):
         """
