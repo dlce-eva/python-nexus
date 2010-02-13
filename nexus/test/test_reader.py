@@ -262,11 +262,10 @@ class Test_DataHandler_CharacterBlockNexusFormat:
                 assert self.nex.data.matrix[taxon][index] == expected_value
             
     def test_characters(self):
-        print self.nex.data.characters
         for site in ("A", "B", "C", "D", "E"):
             # All sites in CHAR_A are state "A", and all in CHAR_B and "B" etc
             for taxon in ("A", "B", "C", "D", "E"):
-                assert self.nex.data.characters["CHAR_%s" % site] == site
+                assert self.nex.data.characters["CHAR_%s" % site][taxon] == site
 
 
 class Test_TaxaHandler_AlternateNexusFormat:
