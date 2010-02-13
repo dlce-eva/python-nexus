@@ -34,7 +34,7 @@ def shufflenexus(nexus_obj, resample=False):
     
     if resample is False:
         resample = nexus_obj.data.nchar
-    
+        
     try:
         resample = int(resample)
     except ValueError:

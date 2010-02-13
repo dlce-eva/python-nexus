@@ -234,7 +234,7 @@ class Test_DataHandler_CharacterBlockNexusFormat:
         assert 'data' in self.nex.blocks
     
     def test_charblock_find(self):
-        assert 'characters' in self.nex.data
+        assert hasattr(self.nex.data, 'characters')
     
     def test_taxa(self):
         assert self.nex.data.ntaxa == 5
@@ -242,16 +242,32 @@ class Test_DataHandler_CharacterBlockNexusFormat:
     def test_data(self):
         assert self.nex.data.nchar == 5
         
+    def test_charlabels(self):
+         assert self.nex.data.charlabels[0] == 'CHAR_A'
+         assert self.nex.data.charlabels[1] == 'CHAR_B'
+         assert self.nex.data.charlabels[2] == 'CHAR_C'
+         assert self.nex.data.charlabels[3] == 'CHAR_D'
+         assert self.nex.data.charlabels[4] == 'CHAR_E'
+        
     def test_label_parsing(self):
-        assert self.nex.data.characters[0] == 'CHAR_A'
-        assert self.nex.data.characters[1] == 'CHAR_B'
-        assert self.nex.data.characters[2] == 'CHAR_C'
-        assert self.nex.data.characters[3] == 'CHAR_D'
-        assert self.nex.data.characters[4] == 'CHAR_E'
+        assert 'CHAR_A' in self.nex.data.characters
+        assert 'CHAR_B' in self.nex.data.characters
+        assert 'CHAR_C' in self.nex.data.characters
+        assert 'CHAR_D' in self.nex.data.characters
+        assert 'CHAR_E' in self.nex.data.characters
         
-    def test_sites(self):
-        assert False
-        
+    def test_matrix(self):
+        for taxon in ("A", "B", "C", "D", "E"):
+            for index, expected_value in enumerate(("A", "B", "C", "D", "E")):
+                assert self.nex.data.matrix[taxon][index] == expected_value
+            
+    def test_characters(self):
+        print self.nex.data.characters
+        for site in ("A", "B", "C", "D", "E"):
+            # All sites in CHAR_A are state "A", and all in CHAR_B and "B" etc
+            for taxon in ("A", "B", "C", "D", "E"):
+                assert self.nex.data.characters["CHAR_%s" % site] == site
+
 
 class Test_TaxaHandler_AlternateNexusFormat:
     expected = ['John', 'Paul', 'George', 'Ringo']
