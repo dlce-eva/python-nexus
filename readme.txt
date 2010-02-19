@@ -347,5 +347,9 @@ Remove the unique characters:
     Usage: python nexus_nexusmanip.py -u oldnexus.nex newnexus.nex
     
 
+nexinfo.py
+----------
+
+Displays quick information about the nexus file loaded.
 
 

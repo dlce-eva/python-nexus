@@ -132,17 +132,21 @@ def print_character_stats(nexus_obj):
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader 
     
-    :return: None
+    :return: A list of the state distribution
     """
+    state_distrib = []
     for i in range(0, nexus_obj.data.nchar):
         tally = {}
         for taxa, characters in nexus_obj.data:
             c = characters[i]
             tally[c] = tally.get(c, 0) + 1
         
+        print "%5d" % i,
         for state in tally:
-            print("%d: %s %d" % i, state.ljust(5), tally[state])
-    return
+            print "%sx%d" % (state, tally[state]),
+            state_distrib.append(tally[state])
+        print
+    return state_distrib
     
 
 def new_nexus_without_sites(nexus_obj, sites_to_remove):
@@ -227,7 +231,8 @@ if __name__ == '__main__':
         newnexus = new_nexus_without_sites(nexus, unique)
         print("Unique Sites: %s" % ",".join([str(i) for i in unique]))
     elif options.stats:
-        print_character_stats(nexus)
+        d = print_character_stats(nexus)
+        
     else:
         exit()
         

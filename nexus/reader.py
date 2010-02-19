@@ -347,7 +347,9 @@ class DataHandler(GenericHandler):
         sites = [site for site in sites]
         while len(sites) > 0:
             site = sites.pop(0)
-            if site == '(':
+            if site == ' ':
+                continue
+            elif site == '(':
                 # read-ahead
                 site = '' # discard open bracket
                 multistate = True

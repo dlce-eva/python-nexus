@@ -6,7 +6,6 @@ from nexus import NexusWriter
 data = {
     'char1': {'French': 1, 'English': 2, 'Latin': 3},
     'char2': {'French': 4, 'English': 5, 'Latin': 6},
-
 }
 
 class Test_NexusWriter_1:
@@ -101,13 +100,22 @@ class Test_NexusWriter_Binary:
         """Test Nexus -> Binary: Two Character"""
         self.nex.recode_to_binary()
         
-        assert self.nex.data['char1']['French'] == '100'
-        assert self.nex.data['char1']['English'] == '010'
-        assert self.nex.data['char1']['Latin'] == '001'
-        
-        assert self.nex.data['char2']['French'] == '100'
-        assert self.nex.data['char2']['English'] == '010'
-        assert self.nex.data['char2']['Latin'] == '001'
+        expected = {
+            'char1_1': {"French": '1', "English": "0", "Latin": "0"},
+            'char1_2': {"French": '0', "English": "1", "Latin": "0"},
+            'char1_3': {"French": '0', "English": "0", "Latin": "1"},
+            'char2_1': {"French": '1', "English": "0", "Latin": "0"},
+            'char2_2': {"French": '0', "English": "1", "Latin": "0"},
+            'char2_3': {"French": '0', "English": "0", "Latin": "1"},
+        }
+        for char, data in expected.items():
+            for taxon, exp_value in data.items():
+                assert self.nex.data[char][taxon] == exp_value
+    
+    def test_to_binary_nchar(self):
+        """Test Nexus -> Binary: Number of Characters"""
+        self.nex.recode_to_binary()
+        assert len(self.nex.characters) == 6
         
     def test_to_binary_symbollist(self):
         """Test Nexus -> Binary: Update Symbol List"""
@@ -118,6 +126,14 @@ class Test_NexusWriter_Binary:
         assert '1' in self.nex.symbols
         assert '0' in self.nex.symbols
         
+    def test_to_binary_nexus(self):
+        """Test Nexus -> Binary: Nexus"""
+        self.nex.recode_to_binary()
+        nexus = self.nex.make_nexus(interleave=False)
+        assert re.search("English\s+010010", nexus)
+        assert re.search("French\s+100100", nexus)
+        assert re.search("Latin\s+001001", nexus)
+        
     def test_to_binary_combined(self):
         """Test Nexus -> Binary: Three Character, extra state"""
         # add some more data...
@@ -125,18 +141,28 @@ class Test_NexusWriter_Binary:
         self.nex.add('Latin', 3, 'A')
         self.nex.add('English', 3, 'B')
         self.nex.recode_to_binary()
-        assert self.nex.data['3']['Latin'] == '10'
-        assert self.nex.data['3']['French'] == '10'
-        assert self.nex.data['3']['English'] == '01'
+        assert self.nex.data['3_1']['Latin'] == '1'
+        assert self.nex.data['3_1']['French'] == '1'
+        assert self.nex.data['3_1']['English'] == '0'
+        assert self.nex.data['3_2']['Latin'] == '0'
+        assert self.nex.data['3_2']['French'] == '0'
+        assert self.nex.data['3_2']['English'] == '1'
         
     def test_to_binary_missingdata(self):
         """Test Nexus -> Binary: Three Character, missing data"""
         # add some more data...
-        self.nex.add('French', 3, 'A')
-        self.nex.add('Latin', 3, 'A')
+        n = NexusWriter()
+        n.add('French', 1, 'A')
+        n.add('Latin', 1, 'A')
+        n.add('English', 1, '?')
+        n.add('French', 2, 'A')
+        n.add('Latin', 2, '?')
         # no English state for char 3...
-        self.nex.recode_to_binary()
-        assert re.search("English\s+\?", self.nex.make_nexus(interleave=True))
+        n.recode_to_binary()
+        nexus = n.make_nexus(interleave=False)
+        assert re.search("English\s+00", nexus)
+        assert re.search("French\s+11", nexus)
+        assert re.search("Latin\s+10", nexus)
     
     @nose.tools.raises(AssertionError)
     def test_is_binary_dirtycheck(self):
@@ -144,7 +170,23 @@ class Test_NexusWriter_Binary:
         self.nex.recode_to_binary()
         self.nex.add('French', 4, 'A') # should raise AssertionError
         
-
+    def test_to_binary_ignores_missing_sites(self):
+        self.nex.add("French", 3, "-")
+        self.nex.add("English", 3, "A")
+        self.nex.add("Latin", 3, "B")
+        
+        self.nex.recode_to_binary()
+        
+        assert len(self.nex.characters) == 8 # should not be 9!
+        assert self.nex.data['3_1']['Latin'] == '0'
+        assert self.nex.data['3_1']['French'] == '0'
+        assert self.nex.data['3_1']['English'] == '1'
+        assert self.nex.data['3_2']['Latin'] == '1'
+        assert self.nex.data['3_2']['French'] == '0'
+        assert self.nex.data['3_2']['English'] == '0'
+        
+        assert '3_3' not in self.nex.data
+        
 
 def test_regression_format_string_has_datatype_first():
     """Regression: Format string should contain 'datatype' as the first element"""
