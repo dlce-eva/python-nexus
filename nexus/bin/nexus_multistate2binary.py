@@ -51,9 +51,6 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex new.nex")
-    parser.add_option("-u", "--removeuniques", dest="removeuniques", 
-            action="store_true", default=False, 
-            help="Remove the unique characters")
     parser.add_option("-1", "--onefile", dest="onefile", 
             action="store_true", default=False, 
             help="One nexus file for each multistate character")
@@ -70,9 +67,6 @@ if __name__ == '__main__':
         
     nexus = NexusReader(nexusname)
     
-    if options.removeuniques:
-        print "NOT IMPLEMENTED"
-        
     new = binarise(nexus, one_nexus_per_block=options.onefile)
     if isinstance(new, NexusWriter):
         new.write_to_file(newnexusname)
