@@ -32,7 +32,7 @@ class NexusWriter:
         
     def clean(self, s):
         """Removes unsafe characters"""
-        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':''}
+        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':'', '?': ''}
         for f,t in replacements.items():
             s = s.replace(f, t)
         return s
@@ -100,19 +100,38 @@ class NexusWriter:
     def recode_to_binary(self):
         """Recodes the matrix to binary form"""
         newdata = {}
-        for char, block in self.data.items():
+        for char, chars_by_taxa in self.data.items():
             newdata[char] = {}
-            states = list(set(block.values())) # get uniques
+            states = list(set(chars_by_taxa.values())) # get uniques
+            
+            # clean up missing states.
+            if '-' in states:
+                states.remove("-")
+            if '?' in states:
+                states.remove("?")
+            
             states = sorted(states)
             num_states = len(states)
-            for taxon, value in block.items():
+            
+            for taxon, value in chars_by_taxa.items():
                 b = ['0' for x in range(num_states)]
-                b[states.index(value)] = '1'
+                if value not in ("-", "?"): # ignore missing values
+                    b[states.index(value)] = '1'
                 newdata[char][taxon] = "".join(b)
                 assert len(newdata[char][taxon]) == num_states
+            
+        # refill data
+        self.data, self.characters = {}, []
+        for char, data in newdata.items():
+            for taxon in self.taxalist:
+                binblock = data.get(taxon, ['0' for x in range(num_states)])
+                for idx, value in enumerate(binblock, 1):
+                    char_name = "%s_%d" % (char, idx)
+                    self.add(taxon, char_name, value)
+        
         # overwrite data & symbols
         self.symbols = ['1', '0']
-        self.data = newdata.copy()
+        # set binary flag
         self.is_binary = True
         
     def write(self, interleave=False, charblock=False):
