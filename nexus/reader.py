@@ -2,6 +2,7 @@
 Tools for reading a nexus file
 """
 import re
+import os
 
 try:
     import io
@@ -540,6 +541,7 @@ class NexusReader(object):
         :return: None
         """
         self.filename = filename
+        self.short_filename = os.path.split(filename)[1]
         try:
             handle = open(filename, 'rU')
         except IOError:
