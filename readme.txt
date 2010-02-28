@@ -94,6 +94,12 @@ A helper function to remove all the comments in a nexus file.
 >>> n.block.remove_comments("hello [comment!] world")
 "hello world"
 
+To find out what file the nexus was loaded from:
+
+>>> n.filename
+>>> n.short_filename
+'example.nex'
+
 
 `generic` block handler
 -----------------------
