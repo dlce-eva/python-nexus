@@ -2,47 +2,13 @@
 import sys
 import os
 from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
+from nexus.tools import combine_nexuses
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """combine-nexus - python-nexus tools v%(version)s
 combines a series of nexuses into one nexus.
 """ % {'version': VERSION,}
 
-
-def combine_nexuses(nexuslist):
-    """
-    Combines a list of NexusReader instances into a single nexus
-    
-    :param nexuslist: A list of NexusReader instances
-    :type nexuslist: List 
-    
-    :return: A NexusWriter instance
-    
-    :raises TypeError: if nexuslist is not a list of NexusReader instances
-    :raises IOError: if unable to read an file in nexuslist
-    :raises NexusFormatException: if a nexus file does not have a `data` block
-    """
-    if isinstance(nexuslist, list) == False:
-        raise TypeError("nexuslist is not a list")
-    
-    out = NexusWriter()
-    charpos = 1
-    for nex in nexuslist:
-        if isinstance(nex, NexusReader) == False:
-            raise TypeError("%s is not a NexusReader instance" % nex)
-        
-        if 'data' not in nex.blocks:
-            raise NexusFormatException("Warning: %s has no data block" % nex.filename)
-        
-        out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
-        
-        for site, data in nex.data.characters.items():
-            charpos += site
-            for taxon, value in data.items():
-                out.add(taxon, charpos, value)
-        charpos += 1
-    return out
-    
 
 if __name__ == '__main__':
     #set up command-line options
