@@ -59,21 +59,29 @@ def combine_nexuses(nexuslist):
         raise TypeError("nexuslist is not a list")
     
     out = NexusWriter()
-    charpos = 1
-    for nex in nexuslist:
+    charpos = 0
+    for nex_id, nex in enumerate(nexuslist, 1):
         if isinstance(nex, NexusReader) == False:
             raise TypeError("%s is not a NexusReader instance" % nex)
         
         if 'data' not in nex.blocks:
-            raise NexusFormatException("Warning: %s has no data block" % nex.filename)
+            raise NexusFormatException("Error: %s has no data block" % nex.filename)
         
         out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
         
-        for site, data in nex.data.characters.items():
-            charpos += site
+        for site_idx, site in enumerate(sorted(nex.data.characters), 0):
+            data = nex.data.characters.get(site)
+            charpos += 1
+            
+            # work out character label
+            charlabel = nex.data.charlabels.get(site_idx, site_idx + 1)
+            if nex.filename == '<String>':
+                label = '%s.%s' % (str(nex_id), charlabel)
+            else:
+                label = '%s.%s' % (nex.filename, charlabel)
+            
             for taxon, value in data.items():
-                out.add(taxon, charpos, value)
-        charpos += 1
+                out.add(taxon, label, value)
     return out
 
 
