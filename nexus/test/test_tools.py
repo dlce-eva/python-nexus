@@ -58,10 +58,10 @@ class Test_CombineNexuses:
         
     def test_combine_simple(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
-        assert newnex.data['1']['Harry'] == '1'
-        assert newnex.data['1']['Simon'] == '2'
-        assert newnex.data['2']['Harry'] == '3'
-        assert newnex.data['2']['Simon'] == '4'
+        assert newnex.data['1.1']['Harry'] == '1'
+        assert newnex.data['1.1']['Simon'] == '2'
+        assert newnex.data['2.1']['Harry'] == '3'
+        assert newnex.data['2.1']['Simon'] == '4'
     
     def test_combine_simple_generated_matrix(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
@@ -76,10 +76,11 @@ class Test_CombineNexuses:
         
     def test_combine_missing(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
-        assert newnex.data['1']['Harry'] == '1'
-        assert newnex.data['1']['Simon'] == '2'
-        assert newnex.data['2']['Betty'] == '3'
-        assert newnex.data['2']['Boris'] == '4'
+        print newnex.data
+        assert newnex.data['1.1']['Harry'] == '1'
+        assert newnex.data['1.1']['Simon'] == '2'
+        assert newnex.data['2.1']['Betty'] == '3'
+        assert newnex.data['2.1']['Boris'] == '4'
         
     def test_combine_missing_generated_matrix(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
@@ -136,7 +137,17 @@ class Test_CombineNexuses:
         assert re.search(r"""\bNCHAR=6\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="123456"[\s;]', newnex.write())
         
-
+        for tax in [1,2,3]:
+            assert re.search(r"""\bTax%d\s+123456\b""" % tax, newnex.write())
+        
+        counter = 1
+        for nex_id in [1,2]:
+            for char_id in [1,2,3]:
+                assert re.search(
+                    r"""\b%d\s+%d.char%d\b""" % (counter, nex_id, char_id), 
+                    newnex.write(charblock=True)
+                )
+                counter += 1
 
 class Test_ShuffleNexus:
 
