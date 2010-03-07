@@ -94,6 +94,49 @@ class Test_CombineNexuses:
         assert re.search(r"""\bNCHAR=2\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="12345"[\s;]', newnex.write())
 
+    def test_combine_with_character_labels(self):
+        n1 = NexusReader()
+        n1.read_string(
+            """
+            BEGIN DATA;
+                DIMENSIONS NTAX=3 NCHAR=3;
+                FORMAT DATATYPE=STANDARD MISSING=0 GAP=-  SYMBOLS="123";
+                CHARSTATELABELS
+            		1 char1,
+            		2 char2,
+            		3 char3
+            ;
+            MATRIX
+            Tax1         123
+            Tax2         123
+            Tax3         123
+            ;
+            """
+        )
+        n2 = NexusReader()
+        n2.read_string(
+            """
+            BEGIN DATA;
+                DIMENSIONS NTAX=3 NCHAR=3;
+                FORMAT DATATYPE=STANDARD MISSING=0 GAP=-  SYMBOLS="456";
+                CHARSTATELABELS
+            		1 char1,
+            		2 char2,
+            		3 char3
+            ;
+            MATRIX
+            Tax1         456
+            Tax2         456
+            Tax3         456
+            ;
+            """
+        )
+        newnex = combine_nexuses([n1, n2])
+        assert re.search(r"""\bNTAX=3\b""", newnex.write())
+        assert re.search(r"""\bNCHAR=6\b""", newnex.write())
+        assert re.search(r'\sSYMBOLS="123456"[\s;]', newnex.write())
+        
+
 
 class Test_ShuffleNexus:
 
