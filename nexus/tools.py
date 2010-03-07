@@ -75,10 +75,7 @@ def combine_nexuses(nexuslist):
             
             # work out character label
             charlabel = nex.data.charlabels.get(site_idx, site_idx + 1)
-            if nex.filename == '<String>':
-                label = '%s.%s' % (str(nex_id), charlabel)
-            else:
-                label = '%s.%s' % (nex.filename, charlabel)
+            label = '%s.%s' % (str(nex_id), charlabel)
             
             for taxon, value in data.items():
                 out.add(taxon, label, value)
