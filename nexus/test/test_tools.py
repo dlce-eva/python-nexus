@@ -299,4 +299,42 @@ class Test_new_nexus_without_sites:
         assert len(nexus.data) == 1
     
     
+class Test_multistatise:
+
+    def setup(self):
+        self.nex = NexusReader()
+        self.nex.read_string(
+        """Begin data;
+        Dimensions ntax=4 nchar=4;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        Harry              1000
+        Simon              0100
+        Betty              0010
+        Louise             0001
+        ;""")
+        self.nex = multistatise(self.nex)
+        
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus_1(self):
+        multistatise({})
+    
+    def test_nexusreader_transformation(self):
+        assert isinstance(self.nex, NexusReader), "Nexus_obj should be a NexusReader instance"
+        
+    def test_block_find(self):
+        assert 'data' in self.nex.blocks
+    
+    def test_ntaxa_recovery(self):
+        assert self.nex.data.ntaxa == 4
+        
+    def test_nchar_recovery(self):
+        assert self.nex.data.nchar == 1
+        
+    def test_matrix(self):
+        assert self.nex.data.matrix['Harry'][0] == 'A'
+        assert self.nex.data.matrix['Simon'][0] == 'B'
+        assert self.nex.data.matrix['Betty'][0] == 'C'
+        assert self.nex.data.matrix['Louise'][0] == 'D'
+    
     

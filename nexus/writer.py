@@ -14,6 +14,7 @@ MATRIX
 ;
 END;
 """
+from reader import NexusReader
 
 class NexusWriter:
     
@@ -190,3 +191,17 @@ class NexusWriter:
         handle.write(self.make_nexus(interleave, charblock))
         handle.close()
     
+    
+    def _convert_to_reader(self):
+        """
+        This is a hack to convert a NexusWriter object to a NexusReader instance
+        
+        One day I'll refactor this all so Reader and Writer subclass something,
+        which will make this unnecessary.
+        """
+        n = NexusReader()
+        out = self.make_nexus(interleave=False, charblock=True)
+        n.read_string(out)
+        return n
+        
+        
