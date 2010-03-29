@@ -129,7 +129,6 @@ class Test_DataHandler_SimpleNexusFormat:
             '^end;$',
         ]
         written = self.nex.write()
-        print written
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE)
 
