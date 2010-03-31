@@ -347,47 +347,37 @@ class Test_multistatise:
             FORMAT DATATYPE=STANDARD MISSING=? GAP=- INTERLEAVE=YES;
         MATRIX
         
-        Aztec_Tetelcingo        0100000
         Aztec_Zacapoaxtla       0000001
-        Cahuilla                0100000
         Chemehuevi              0001000
-        ClassicalAztec          0100000
-        Comanche                1000000
         Cora                    0100000
         Cupeno                  0000000
-        Eudeve                  0100000
-        Gabrielino              0100000
         Guarijio                0010000
-        Hopi                    0100000
-        Huichol                 0100000
-        Kawaiisu                1000000
         Kitanemuk               0100000
         Luiseno                 0100000
         Mayo                    0001000
-        Mono                    1000000
-        NorthernPaiute          1000000
         NorthernTepehuan        0010000
-        Opata                   0100000
-        Pannamint               1000000
         Papago-Pima             0000010
         PimadeOnavas            0010000
-        Pipil                   0100000
-        Serrano                 0100000
         Shoshoni_GosiuteDialect 1000000
         SoutheasternTepehuan    0000010
         SouthernPaiute          1000000
         SouthernUte             1000000
-        Tarahumara              0010000
-        Tubar                   0100000
         Tubatulabel             0000100
         Yaqui                   0001000
         ;
         END;
         """
+        expected = {
+        
+        
+        
+        }
+        
         nex = NexusReader()
         nex.read_string(data)
         msnex = multistatise(nex)
-        
+        for taxon,sites in self.msnex.items():
+            print taxon,sites
         print msnex.write()
         assert False
         
