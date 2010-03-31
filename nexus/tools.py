@@ -292,10 +292,11 @@ def multistatise(nexus_obj):
         site_idx += 1
         assert site_idx < 26, "Too many characters to handle! - run out of A-Z"
         
-    for taxon in missing:
-        # add missing state for anything that is all missing, and has not been
-        # observed anywhere
-        nexout.add(taxon, charlabel, '?')
+    # add missing state for anything that is all missing, and has not been
+    # observed anywhere
+    for taxon in nexus_obj.data.taxa:
+        if taxon not in nexout.data[str(charlabel)]:
+            nexout.add(taxon, charlabel, '?')
     return nexout._convert_to_reader()
     
     

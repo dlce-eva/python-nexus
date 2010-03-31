@@ -338,7 +338,8 @@ class Test_multistatise:
         assert self.nex.data.matrix['Louise'][0] == 'D'
     
     
-    def test_regression_XXXXX(self):
+    def test_regression_include_invisible_languages(self):
+        """Include languages that have no entries"""
         data = """
         #NEXUS
         
@@ -347,38 +348,37 @@ class Test_multistatise:
             FORMAT DATATYPE=STANDARD MISSING=? GAP=- INTERLEAVE=YES;
         MATRIX
         
-        Aztec_Zacapoaxtla       0000001
-        Chemehuevi              0001000
-        Cora                    0100000
-        Cupeno                  0000000
-        Guarijio                0010000
-        Kitanemuk               0100000
-        Luiseno                 0100000
-        Mayo                    0001000
-        NorthernTepehuan        0010000
-        Papago-Pima             0000010
-        PimadeOnavas            0010000
-        Shoshoni_GosiuteDialect 1000000
-        SoutheasternTepehuan    0000010
-        SouthernPaiute          1000000
-        SouthernUte             1000000
-        Tubatulabel             0000100
-        Yaqui                   0001000
+        Gertrude                0000001
+        Debbie                  0001000
+        Zarathrustra            0000000
+        Christie                0010000
+        Benny                   0100000
+        Bertha                  0100000
+        Craig                   0010000
+        Fannie-May              0000010
+        Charles                 0010000
+        Annik                   1000000
+        Frank                   0000010
+        Amber                   1000000
+        Andreea                 1000000
+        Edward                  0000100
+        Donald                  0001000
         ;
         END;
         """
-        expected = {
-        
-        
-        
-        }
         
         nex = NexusReader()
         nex.read_string(data)
         msnex = multistatise(nex)
-        for taxon,sites in self.msnex.items():
-            print taxon,sites
-        print msnex.write()
-        assert False
         
+        for taxon,sites in msnex.data.matrix.items():
+            if taxon[0] == 'Z':
+                continue # will check later
+            
+            # first letter of taxa name is the expected character state
+            assert taxon[0] == sites[0], "%s should be %s not %s" % (taxon, taxon[0], sites[0])
+        print msnex.data.matrix
+        # deal with completely missing taxa
+        assert 'Zarathrustra' in msnex.data.matrix
+        assert msnex.data.matrix['Zarathrustra'][0] == '?'
         
