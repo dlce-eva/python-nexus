@@ -492,7 +492,8 @@ class DataHandler(GenericHandler):
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
         out.append(_make_format_line(self))
         out.append("matrix")
-        for taxon, sites in self.matrix.items():
+        for taxon in sorted(self.matrix):
+            sites = self.matrix[taxon]
             assert len(sites) == self.nchar, \
                 "Number of characters is wrong - expecting %d, got %d" % (self.nchar, len(sites))
             out.append("%s %s" % (taxon.ljust(20), ''.join(sites)))
