@@ -5,6 +5,28 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 import sys
 from nexus import NexusReader
 
+def print_taxa_stats(nexus_obj):
+    """
+    Prints the taxa state statistics for a given `nexus_obj`
+    
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader 
+    
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `data` block
+    """
+    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
+    if hasattr(nexus_obj, 'data') == False:
+        raise NexusFormatException("Nexus has no `data` block")
+    
+    for taxon in sorted(nexus_obj.data.matrix):
+        tally = {}
+        for site in nexus_obj.data.matrix[taxon]:
+            tally[site] = tally.get(site, 0) + 1
+            
+        tally = ", ".join(['%s x %s' % (k,tally[k]) for k in sorted(tally)])
+        print taxon.ljust(20), tally
+    return
 
 if __name__ == '__main__':
     #set up command-line options
@@ -23,3 +45,5 @@ if __name__ == '__main__':
     for k, v in n.blocks.items():
         print ' ', k, v
         
+        if k == 'data':
+            print_taxa_stats(n)
