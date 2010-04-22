@@ -12,7 +12,7 @@ Performs a number of nexus manipulation methods.
 """ % {'version': VERSION,}
 
 
-def print_missing_sites(nexus_obj, action, value_dict):
+def print_missing_sites(nexus_obj):
     """
     Prints out counts of the number of missing/gap sites in a nexus.
 
