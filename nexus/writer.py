@@ -74,7 +74,10 @@ class NexusWriter:
             for t in self.taxalist:
                 s = []
                 for c in self.characters:
-                    s.append(self.data[c].get(t, self.MISSING))
+                    value = self.data[c].get(t, self.MISSING)
+                    if len(value) > 1: # wrap equivocal states in ()'s
+                        value = "(%s)" % value
+                    s.append(value)
                 out.append("%s %s" % (t.ljust(25), ''.join(s)))
         return "\n".join(out)
         
@@ -91,9 +94,14 @@ class NexusWriter:
         assert self.is_binary == False, "Unable to add data to a binarised nexus form"
         character = self._add_char(character)
         taxon = self._add_taxa(taxon)
-        assert (taxon in self.data[character]) == False, "Duplicate entry for %s-%s" % (taxon, character)
         value = str(value)
-        self.data[character][taxon] = value
+        # have multiple entries
+        #assert (taxon in self.data[character]) == False, "Duplicate entry for %s-%s" % (taxon, character)
+        if taxon in self.data[character]:
+            self.data[character][taxon] += value
+        else:
+            self.data[character][taxon] = value
+        
         # add to symbols
         if value not in self.symbols and value not in ['?', '-']:
             self.symbols.append(value)
