@@ -3,7 +3,7 @@ import sys
 import os
 from random import sample
 
-from nexus import NexusReader, VERSION
+from nexus import NexusReader, VERSION, NexusFormatException
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """treemanip.py - python-nexus tools v%(version)s
@@ -72,7 +72,7 @@ def parse_deltree(dstring):
     return sorted(out)
 
 
-def run_deltree(deltree, nexus_obj, do_print=True):
+def run_deltree(deltree, nexus_obj, do_print=False):
     """
     Returns a list of trees to be deleted
     
@@ -109,7 +109,7 @@ def run_deltree(deltree, nexus_obj, do_print=True):
     return nexus_obj
 
 
-def run_resample(resample, nexus_obj, do_print=True):
+def run_resample(resample, nexus_obj, do_print=False):
     """
     Resamples the trees in a nexus
     
@@ -153,7 +153,7 @@ def run_resample(resample, nexus_obj, do_print=True):
     nexus_obj.trees.trees = new
     return nexus_obj
     
-def run_removecomments(nexus_obj, do_print=True):
+def run_removecomments(nexus_obj, do_print=False):
     """
     Removes comments from the trees in a nexus
     
@@ -182,7 +182,7 @@ def run_removecomments(nexus_obj, do_print=True):
     nexus_obj.trees.trees = new
     return nexus_obj
 
-def run_detranslate(nexus_obj, do_print=True):
+def run_detranslate(nexus_obj, do_print=False):
     """
     Removes comments from the trees in a nexus
     
@@ -255,6 +255,9 @@ if __name__ == '__main__':
     parser.add_option("-t", "--detranslate", dest="detranslate", 
             action="store_true", default=False, 
             help="Remove taxa translation block from the trees")
+    parser.add_option("-q", "--quiet", dest="quiet", 
+            action="store_true", default=False, 
+            help="Be quiet (no logging information displayed)")
     options, args = parser.parse_args()
     
     try:
@@ -276,32 +279,34 @@ if __name__ == '__main__':
         sys.exit("No trees found in file %s!" % nexusname)
     if nexus.trees.ntrees == 0:
         sys.exit("No trees found in found %s!" % nexusname)
-    print "%d trees found with %d translated taxa" % \
-        (nexus.trees.ntrees, len(nexus.trees.translators))
+    if options.quiet is False:
+        print "%d trees found with %d translated taxa" % \
+            (nexus.trees.ntrees, len(nexus.trees.translators))
     
     # Delete trees
     if options.deltree:
-        nexus = run_deltree(options.deltree, nexus)
+        nexus = run_deltree(options.deltree, nexus, options.quiet)
     
     # Resample trees
     if options.resample:
-        nexus = run_resample(options.resample, nexus)
+        nexus = run_resample(options.resample, nexus, options.quiet)
     
     # Randomly sample trees
     if options.random:
-        nexus = run_random(options.random, nexus)
+        nexus = run_random(options.random, nexus, options.quiet)
     
     # remove comments
     if options.removecomments:
-        nexus = run_removecomments(nexus)
+        nexus = run_removecomments(nexus, options.quiet)
     
     # detranslate
     if options.detranslate:
-        nexus = run_detranslate(nexus)
+        nexus = run_detranslate(nexus, options.quiet)
     
     if newnexus is not None:
-        nexus.write_to_file(newnexus)
-        print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
+        nexus.write_to_file(newnexus, options.quiet)
+        if options.quiet is False:
+            print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
     else:
         print nexus.write()
         
