@@ -4,13 +4,14 @@ import re
 
 import nose
 
-from nexus import NexusReader, NexusWriter
+from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import *
+from nexus.bin.nexus_treemanip import run_resample
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
 
 class Test_CombineNexuses:
-    
+    """Test combine_nexuses"""
     def setup(self):
         self.nex1 = NexusReader()
         self.nex1.read_string(
@@ -150,7 +151,7 @@ class Test_CombineNexuses:
                 counter += 1
 
 class Test_ShuffleNexus:
-
+    """Test shufflenexus"""
     def setup(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
 
@@ -186,7 +187,7 @@ class Test_ShuffleNexus:
 
 
 class Test_CountMissings:
-
+    """Test count_missing_sites"""
     @nose.tools.raises(AssertionError)
     def test_failure_on_nonnexus(self):
         count_missing_sites({})
@@ -223,6 +224,7 @@ class Test_CountMissings:
 
 
 class Test_FindConstantSites:
+    """Test find_constant_sites"""
     @nose.tools.raises(AssertionError)
     def test_failure_on_nonnexus_1(self):
         find_constant_sites({})
@@ -246,7 +248,7 @@ class Test_FindConstantSites:
 
 
 class Test_FindUniqueSites:
-
+    """Test find_unique_sites"""
     @nose.tools.raises(AssertionError)
     def test_failure_on_nonnexus_1(self):
         find_unique_sites({})
@@ -300,7 +302,7 @@ class Test_new_nexus_without_sites:
     
     
 class Test_multistatise:
-
+    """Test multistatise"""
     def setup(self):
         self.nex = NexusReader()
         self.nex.read_string(
@@ -382,3 +384,22 @@ class Test_multistatise:
         assert 'Zarathrustra' in msnex.data.matrix
         assert msnex.data.matrix['Zarathrustra'][0] == '?'
         
+        
+class Test_ResampleTrees:
+    """Test nexus_treemanip.run_resample"""
+    def setup(self):
+        self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
+        
+    @nose.tools.raises(NexusFormatException)
+    def test_failure_on_no_treeblock(self):
+        run_resample(1, NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex')))
+        
+    def test_resample(self):
+        newnex = run_resample(2, self.nexus)
+        assert len(newnex.trees.trees) == 1
+        
+    def test_resample_one(self):
+        newnex = run_resample(1, self.nexus)
+        assert len(newnex.trees.trees) == 3
+        
+    
