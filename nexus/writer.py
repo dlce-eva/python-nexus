@@ -71,7 +71,7 @@ class NexusWriter:
                     out.append("%s %s" % (t.ljust(25), self.data[c].get(t, self.MISSING)))
                 out.append("")
         else:
-            for t in self.taxalist:
+            for t in sorted(self.taxalist):
                 s = []
                 for c in self.characters:
                     value = self.data[c].get(t, self.MISSING)
