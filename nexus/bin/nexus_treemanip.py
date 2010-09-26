@@ -304,7 +304,7 @@ if __name__ == '__main__':
         nexus = run_detranslate(nexus, options.quiet)
     
     if newnexus is not None:
-        nexus.write_to_file(newnexus, options.quiet)
+        nexus.write_to_file(newnexus)
         if options.quiet is False:
             print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
     else:
