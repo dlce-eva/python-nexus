@@ -1,3 +1,5 @@
+import os
+
 from random import shuffle, randrange
 
 from reader import NexusReader, NexusFormatException
@@ -69,13 +71,17 @@ def combine_nexuses(nexuslist):
         
         out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
         
+        if hasattr(nex, 'short_filename'):
+            nexus_label = os.path.splitext(nex.short_filename)[0]
+        else:
+            nexus_label = str(nex_id)
+            
         for site_idx, site in enumerate(sorted(nex.data.characters), 0):
             data = nex.data.characters.get(site)
             charpos += 1
-            
             # work out character label
             charlabel = nex.data.charlabels.get(site_idx, site_idx + 1)
-            label = '%s.%s' % (str(nex_id), charlabel)
+            label = '%s.%s' % (nexus_label, charlabel)
             
             for taxon, value in data.items():
                 out.add(taxon, label, value)
