@@ -336,7 +336,9 @@ class DataHandler(GenericHandler):
         ['1', '12']
         >>> DataHandler()._parse_sites('123(4,5)56')
         ['1', '2', '3', '4,5', '5', '6']
-
+        >>> DataHandler()._parse_sites("ACGTU?")
+        ['A', 'C', 'G', 'T', 'U', '?']
+        
         :param sites: string
         :type sites: string
 
