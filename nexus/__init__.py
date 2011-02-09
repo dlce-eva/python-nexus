@@ -95,14 +95,14 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 from reader import *
 from writer import NexusWriter
 
-__version__ = "0.7b"
+__version__ = "0.8"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__
 PACKAGE_AUTHOR = "Simon J. Greenhill"
-PACKAGE_COPYRIGHT = "Copyright 2009-2010 Simon J. Greenhill"
+PACKAGE_COPYRIGHT = "Copyright 2009-2011 Simon J. Greenhill"
 PACKAGE_LICENSE = """
-Copyright (c) 2009-2010, Simon J. Greenhill
+Copyright (c) 2009-2011, Simon J. Greenhill
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
