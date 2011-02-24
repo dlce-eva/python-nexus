@@ -33,7 +33,7 @@ class NexusWriter:
         
     def clean(self, s):
         """Removes unsafe characters"""
-        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':'', '?': ''}
+        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':'', '?': '', '-': ''}
         for f,t in replacements.items():
             s = s.replace(f, t)
         return s
