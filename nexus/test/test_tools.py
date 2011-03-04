@@ -88,10 +88,6 @@ class Test_CombineNexuses:
         
     @nose.tools.raises(TypeError)
     def test_failure_on_nonlist_2(self):
-        combine_nexuses("i am not a list")
-    
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonlist_3(self):
         combine_nexuses(["hello",]) # should be NexusReader instances
         
     def test_combine_simple(self):
@@ -187,18 +183,11 @@ class Test_CombineNexuses:
                 )
                 counter += 1
 
+
 class Test_ShuffleNexus:
     """Test shufflenexus"""
     def setup(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        shufflenexus({})
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        shufflenexus("I AM NOT A NEXUS")
 
     def test_output(self):
         nexus = shufflenexus(self.nexus)
@@ -225,14 +214,6 @@ class Test_ShuffleNexus:
 
 
 class Test_CountSiteValues:
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus1(self):
-        count_site_values({})
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus2(self):
-        count_site_values("I AM NOT A NEXUS")
-
     @nose.tools.raises(TypeError)
     def test_failure_on_notiterableargument(self):
         count_site_values(NexusReader(), 1)
@@ -306,14 +287,6 @@ class Test_CountSiteValues:
 
 class Test_FindConstantSites:
     """Test find_constant_sites"""
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        find_constant_sites({})
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        find_constant_sites("I AM NOT A NEXUS")
-
     def test_find_constant_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_constant_sites(nexus)) == 0
@@ -330,14 +303,6 @@ class Test_FindConstantSites:
 
 class Test_FindUniqueSites:
     """Test find_unique_sites"""
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        find_unique_sites({})
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        find_unique_sites("I AM NOT A NEXUS")
-
     def test_find_unique_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_unique_sites(nexus)) == 0
@@ -371,11 +336,7 @@ class Test_FindUniqueSites:
 
 
 class Test_NewNexusWithoutSites:
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        new_nexus_without_sites({}, [])
-
+    """Tests for new_nexus_without_sites"""
     def test_remove_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         nexus = new_nexus_without_sites(nexus, [1])
@@ -398,10 +359,6 @@ class Test_Multistatise:
         ;""")
         self.nex = multistatise(self.nex)
         
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        multistatise({})
-    
     def test_nexusreader_transformation(self):
         assert isinstance(self.nex, NexusReader), "Nexus_obj should be a NexusReader instance"
         
@@ -421,8 +378,8 @@ class Test_Multistatise:
         assert self.nex.data.matrix['Louise'][0] == 'D'
     
     
-    def test_regression_include_invisible_languages(self):
-        """Include languages that have no entries"""
+    def test_regression_include_invisible_taxa(self):
+        """Include taxa that have no entries"""
         data = """
         #NEXUS
         
@@ -471,10 +428,6 @@ class Test_ResampleTrees:
     def setup(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         
-    @nose.tools.raises(NexusFormatException)
-    def test_failure_on_no_treeblock(self):
-        run_resample(1, NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex')))
-        
     def test_resample(self):
         newnex = run_resample(2, self.nexus)
         assert len(newnex.trees.trees) == 1
@@ -485,15 +438,6 @@ class Test_ResampleTrees:
         
 
 class Test_FindConstantSites:
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus1(self):
-        find_constant_sites({})
-
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus2(self):
-        find_constant_sites("I AM NOT A NEXUS")
-
     def test_find_constant_sites1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_constant_sites(nexus)) == 0
