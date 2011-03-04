@@ -88,29 +88,36 @@ def combine_nexuses(nexuslist):
     return out
 
 
-def count_missing_sites(nexus_obj):
+def count_site_values(nexus_obj, characters=('-', '?')):
     """
-    Counts the number of missing/gap sites in a nexus
+    Counts the number of sites with values in `characters` in a nexus
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader 
+
+    :param characters: An iterable of the characters to count
+    :type characters: tuple
 
     :return: (A dictionary of taxa and missing counts, and a list of log comments)
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
+    try:
+        characters = iter(characters)
+    except TypeError:
+        raise TypeError("characters should be iterable")
+    
     assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
     if hasattr(nexus_obj, 'data') == False:
         raise NexusFormatException("Nexus has no `data` block")
-
-    missing = {}
-    for taxon, characters in nexus_obj.data:
-        missing[taxon] = missing.get(taxon, 0)
-        characters = "".join(characters)
-        for c in characters:
-            if c in ('?', '-'):
-                missing[taxon] += 1
-    return missing
+    
+    tally = {}
+    for taxon, sites in nexus_obj.data:
+        tally[taxon] = tally.get(taxon, 0)
+        for site in sites:
+            if site in characters:
+                site[taxon] += 1
+    return site
 
 
 def find_constant_sites(nexus_obj):
@@ -305,6 +312,6 @@ def multistatise(nexus_obj):
             nexout.add(taxon, charlabel, '?')
     return nexout._convert_to_reader()
     
-    
+
     
     

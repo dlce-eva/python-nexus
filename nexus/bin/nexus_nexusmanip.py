@@ -3,7 +3,7 @@ from __future__ import division
 import sys
 import os
 from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
-from nexus.tools import count_missing_sites, \
+from nexus.tools import count_site_values, \
     find_constant_sites, find_unique_sites, new_nexus_without_sites
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
@@ -13,26 +13,26 @@ Performs a number of nexus manipulation methods.
 """ % {'version': VERSION,}
 
 
-def print_missing_sites(nexus_obj):
+def print_site_values(nexus_obj):
     """
     Prints out counts of the number of missing/gap sites in a nexus.
 
-    (Wrapper around `count_missings`)
+    (Wrapper around `count_site_values`)
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader 
     """
-    missings = count_missing_sites(nexus_obj)
+    count = count_site_values(nexus_obj)
     print ("Missing data in %s" % nexus_obj.filename)
-    for taxon in missings:
+    for taxon in count:
         print("%s: %d/%d (%0.2f%%)" % \
-            (taxon.ljust(20), missings[taxon], nexus.data.nchar, (missings[taxon]/nexus.data.nchar)*100)
+            (taxon.ljust(20), count[taxon], nexus.data.nchar, (count[taxon]/nexus.data.nchar)*100)
         )
     print('-'*76)
-    total_missing = sum([x for x in missings.values()])
+    total_count = sum([x for x in count.values()])
     total_data = nexus.data.nchar * nexus.data.ntaxa
     print('TOTAL: %d/%d (%0.2f%%)' % \
-        (total_missing, total_data, (total_missing/total_data)*100)
+        (total_count, total_data, (total_count/total_data)*100)
     )
 
 def print_character_stats(nexus_obj):
