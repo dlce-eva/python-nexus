@@ -5,6 +5,15 @@ from random import shuffle, randrange
 from reader import NexusReader, NexusFormatException
 from writer import NexusWriter
 
+def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
+    """Performs some checking to make sure we got a valid NexusReader"""
+    if isinstance(nexus_obj, NexusReader) == False:
+        raise TypeError("Nexus_obj should be a NexusReader instance")
+    for b in required_blocks:
+        if hasattr(nexus_obj, b) == False:
+            raise NexusFormatException("Nexus has no `%s` block" % b)
+    return True
+    
 def binarise(nexus_obj, one_nexus_per_block=False):
     """
     Returns a binary variant of the given `nexus_obj`.
@@ -21,10 +30,7 @@ def binarise(nexus_obj, one_nexus_per_block=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
 
     nexuslist = []
     n = NexusWriter()
@@ -63,11 +69,7 @@ def combine_nexuses(nexuslist):
     out = NexusWriter()
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
-        if isinstance(nex, NexusReader) == False:
-            raise TypeError("%s is not a NexusReader instance" % nex)
-        
-        if 'data' not in nex.blocks:
-            raise NexusFormatException("Error: %s has no data block" % nex.filename)
+        check_for_valid_NexusReader(nex, required_blocks=['data'])
         
         out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
         
@@ -103,21 +105,20 @@ def count_site_values(nexus_obj, characters=('-', '?')):
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     try:
-        characters = iter(characters)
+        iter(characters) # just check it's iterable. Don't _change_ it to an
+            # iterable or we won't be able to compare the characters properly below.
     except TypeError:
         raise TypeError("characters should be iterable")
     
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     
     tally = {}
     for taxon, sites in nexus_obj.data:
         tally[taxon] = tally.get(taxon, 0)
         for site in sites:
             if site in characters:
-                site[taxon] += 1
-    return site
+                tally[taxon] += 1
+    return tally
 
 
 def find_constant_sites(nexus_obj):
@@ -131,10 +132,8 @@ def find_constant_sites(nexus_obj):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
-
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
+    
     const = []
     for i in range(0, nexus_obj.data.nchar):
         states = []
@@ -163,10 +162,8 @@ def find_unique_sites(nexus_obj):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
-
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
+    
     unique = []
     for i in range(0, nexus_obj.data.nchar):
         members = {}
@@ -203,9 +200,7 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
 
     # make new nexus
     nexout = NexusWriter()
@@ -240,9 +235,7 @@ def shufflenexus(nexus_obj, resample=False):
     :raises ValueError: if resample is not False or a positive Integer
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
 
     if resample is False:
         resample = nexus_obj.data.nchar
@@ -280,10 +273,7 @@ def multistatise(nexus_obj):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
         
     site_idx = 0
     nexout = NexusWriter()
