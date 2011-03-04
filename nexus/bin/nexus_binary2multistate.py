@@ -3,6 +3,7 @@ import sys
 import os
 from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
 from nexus.tools import multistatise, combine_nexuses
+
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexus_binary2multistate - python-nexus tools v%(version)s
 
