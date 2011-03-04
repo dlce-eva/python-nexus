@@ -186,23 +186,28 @@ class Test_ShuffleNexus:
         assert sorted(nexus.taxalist) == ['George', 'John', 'Paul', 'Ringo']
 
 
-class Test_CountMissings:
-    """Test count_missing_sites"""
-    @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus(self):
-        count_missing_sites({})
+
+class Test_CountSiteValues:
 
     @nose.tools.raises(AssertionError)
-    def test_failure_on_nonnexus_2(self):
-        count_missing_sites("I AM NOT A NEXUS")
+    def test_failure_on_nonnexus1(self):
+        count_site_values({})
 
-    def test_count_missings_1(self):
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus2(self):
+        count_site_values("I AM NOT A NEXUS")
+
+    @nose.tools.raises(TypeError)
+    def test_failure_on_notiterableargument(self):
+        count_site_values(NexusReader(), 1)
+
+    def test_count_missing_one(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
-        missing = count_missing_sites(nexus)
+        missing = count_site_values(nexus)
         for taxon in missing:
             assert missing[taxon] == 0
 
-    def test_count_missings_2(self):
+    def test_count_missing_two(self):
         expected = {'Harry': 0, 'Simon': 1, 'Peter': 1, 'Betty': 2, 'Louise': 3}
         nexus = NexusReader()
         nexus.read_string("""#NEXUS 
@@ -218,9 +223,49 @@ class Test_CountMissings:
             ;
         End;
         """)
-        missing = count_missing_sites(nexus)
+        missing = count_site_values(nexus)
         for taxon in missing:
             assert missing[taxon] == expected[taxon]
+
+    def test_count_other_values_one(self):
+        expected = {'Harry': 1, 'Simon': 1, 'Peter': 0, 'Betty': 0, 'Louise': 0}
+        nexus = NexusReader()
+        nexus.read_string("""#NEXUS 
+        Begin data;
+        Dimensions ntax=4 nchar=3;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        Harry              0A0  [No missing]
+        Simon              0A0  [one missing]
+        Peter              0-0  [one gap]
+        Betty              ?-1  [one gap and one missing = 2 missing]
+        Louise             ???  [three missing]
+            ;
+        End;
+        """)
+        count = count_site_values(nexus, 'A')
+        for taxon in count:
+            assert count[taxon] == expected[taxon]
+
+    def test_count_other_values_two(self):
+        expected = {'Harry': 1, 'Simon': 2, 'Peter': 1, 'Betty': 0, 'Louise': 0}
+        nexus = NexusReader()
+        nexus.read_string("""#NEXUS 
+        Begin data;
+        Dimensions ntax=4 nchar=3;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        Harry              0A0  [No missing]
+        Simon              0AB  [one missing]
+        Peter              0-B  [one gap]
+        Betty              ?-1  [one gap and one missing = 2 missing]
+        Louise             ???  [three missing]
+            ;
+        End;
+        """)
+        count = count_site_values(nexus, ['A', 'B'])
+        for taxon in count:
+            assert count[taxon] == expected[taxon]
 
 
 class Test_FindConstantSites:
@@ -402,4 +447,26 @@ class Test_ResampleTrees:
         newnex = run_resample(1, self.nexus)
         assert len(newnex.trees.trees) == 3
         
-    
+
+class Test_find_constant_sites:
+
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus1(self):
+        find_constant_sites({})
+
+    @nose.tools.raises(AssertionError)
+    def test_failure_on_nonnexus2(self):
+        find_constant_sites("I AM NOT A NEXUS")
+
+    def test_find_constant_sites1(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        assert len(find_constant_sites(nexus)) == 0
+
+    def test_find_constant_sites2(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
+        const = find_constant_sites(nexus)
+        assert len(const) == 4
+        assert 0 in const
+        assert 1 in const
+        assert 2 in const
+        assert 3 in const
