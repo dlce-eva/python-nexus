@@ -4,6 +4,8 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
 import sys
 from nexus import NexusReader
+from nexus.tools import check_for_valid_NexusReader
+
 
 def print_taxa_stats(nexus_obj):
     """
@@ -15,9 +17,7 @@ def print_taxa_stats(nexus_obj):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'data') == False:
-        raise NexusFormatException("Nexus has no `data` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     
     for taxon in sorted(nexus_obj.data.matrix):
         tally = {}

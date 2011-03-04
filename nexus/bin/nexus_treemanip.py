@@ -4,6 +4,8 @@ import os
 from random import sample
 
 from nexus import NexusReader, VERSION, NexusFormatException
+from nexus.tools import check_for_valid_NexusReader
+
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """treemanip.py - python-nexus tools v%(version)s
@@ -90,9 +92,7 @@ def run_deltree(deltree, nexus_obj, do_print=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'trees') == False:
-        raise NexusFormatException("Nexus has no `trees` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
         
     new = []
     delitems = parse_deltree(deltree)
@@ -127,9 +127,7 @@ def run_resample(resample, nexus_obj, do_print=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'trees') == False:
-        raise NexusFormatException("Nexus has no `trees` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
     
     new = []
     try:
@@ -168,9 +166,7 @@ def run_removecomments(nexus_obj, do_print=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'trees') == False:
-        raise NexusFormatException("Nexus has no `trees` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
     
     new = []
     for index, tree in enumerate(nexus_obj.trees, 1):
@@ -197,9 +193,7 @@ def run_detranslate(nexus_obj, do_print=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'trees') == False:
-        raise NexusFormatException("Nexus has no `trees` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
     nexus_obj.trees.detranslate()
     return nexus_obj
 
@@ -219,11 +213,8 @@ def run_random(num_trees, nexus_obj):
     :raises NexusFormatException: if nexus_obj does not have a `trees` block
     :raises ValueError: if num_trees is not an integer
     :raises ValueError: if num_trees is larger than population
-    
     """
-    assert isinstance(nexus_obj, NexusReader), "Nexus_obj should be a NexusReader instance"
-    if hasattr(nexus_obj, 'trees') == False:
-        raise NexusFormatException("Nexus has no `trees` block")
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
     
     try:
         num_trees = int(num_trees)
