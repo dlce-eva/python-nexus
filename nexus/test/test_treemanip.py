@@ -9,7 +9,7 @@ from nexus.bin.nexus_treemanip import *
 
 
 EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
-        
+
 class Test_TreeManip_run_deltree:
     
     @nose.tools.raises(TypeError)
