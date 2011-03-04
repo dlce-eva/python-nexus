@@ -12,14 +12,6 @@ EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'example
 
 class Test_TreeManip_run_deltree:
     
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        run_deltree('1', {}, do_print=False)
-        
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        run_deltree('1', "I AM NOT A NEXUS", do_print=False)
-    
     def test_run_deltree(self):
         #(options, nexus, do_print=True)
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
@@ -32,14 +24,6 @@ class Test_TreeManip_run_deltree:
 
 class Test_TreeManip_run_resample:
 
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        run_deltree('1', {}, do_print=False)
-        
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        run_deltree('1', "I AM NOT A NEXUS", do_print=False)
-        
     def test_run_resample_1(self):
         # shouldn't resample anything..
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
@@ -53,14 +37,6 @@ class Test_TreeManip_run_resample:
 
 class Test_TreeManip_run_removecomments:
     
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        run_removecomments({}, do_print=False)
-        
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        run_removecomments("I AM NOT A NEXUS", do_print=False)
-        
     def test_run_removecomments(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
         new_nex = run_removecomments(nexus, do_print=False)
@@ -68,14 +44,6 @@ class Test_TreeManip_run_removecomments:
 
         
 class Test_TreeManip_run_randomise:
-    
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_1(self):
-        run_random(100, {})
-        
-    @nose.tools.raises(TypeError)
-    def test_failure_on_nonnexus_2(self):
-        run_random(100, "I AM NOT A NEXUS")
     
     @nose.tools.raises(ValueError)
     def test_failure_on_nonint(self):
