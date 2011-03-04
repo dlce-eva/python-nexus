@@ -13,17 +13,17 @@ Performs a number of nexus manipulation methods.
 """ % {'version': VERSION,}
 
 
-def print_site_values(nexus_obj):
+def print_site_values(nexus_obj, characters=['-', '?']):
     """
-    Prints out counts of the number of missing/gap sites in a nexus.
+    Prints out counts of the number of sites with state in `characters` in a nexus.
 
     (Wrapper around `count_site_values`)
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader 
     """
-    count = count_site_values(nexus_obj)
-    print ("Missing data in %s" % nexus_obj.filename)
+    count = count_site_values(nexus_obj, characters)
+    print ("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
     for taxon in count:
         print("%s: %d/%d (%0.2f%%)" % \
             (taxon.ljust(20), count[taxon], nexus.data.nchar, (count[taxon]/nexus.data.nchar)*100)
@@ -65,9 +65,9 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex [new.nex]")
-    parser.add_option("-m", "--missings", dest="missings", 
+    parser.add_option("-n", "--number", dest="number", 
             action="store_true", default=False, 
-            help="Count the missing characters")
+            help="Count the number of characters")
     parser.add_option("-c", "--constant", dest="constant", 
             action="store_true", default=False, 
             help="Remove the constant characters")
@@ -96,8 +96,12 @@ if __name__ == '__main__':
     nexus = NexusReader(nexusname)
     newnexus = None
     
-    if options.missings:
-        print_missing_sites(nexus)
+    if options.sitecounts:
+        if newnexusname is not None:
+            print_site_values(nexus, newnexusname)
+        else:
+            print_site_values(nexus)
+            
     elif options.constant:
         const = find_constant_sites(nexus)
         newnexus = new_nexus_without_sites(nexus, const)
