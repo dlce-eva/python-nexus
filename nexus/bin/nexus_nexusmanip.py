@@ -24,7 +24,7 @@ def print_site_values(nexus_obj, characters=['-', '?']):
     """
     count = count_site_values(nexus_obj, characters)
     print ("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
-    for taxon in count:
+    for taxon in sorted(count):
         print("%s: %d/%d (%0.2f%%)" % \
             (taxon.ljust(20), count[taxon], nexus.data.nchar, (count[taxon]/nexus.data.nchar)*100)
         )
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     nexus = NexusReader(nexusname)
     newnexus = None
     
-    if options.sitecounts:
+    if options.number:
         if newnexusname is not None:
             print_site_values(nexus, newnexusname)
         else:
