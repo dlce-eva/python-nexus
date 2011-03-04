@@ -155,11 +155,11 @@ class Test_ShuffleNexus:
     def setup(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_1(self):
         shufflenexus({})
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_2(self):
         shufflenexus("I AM NOT A NEXUS")
 
@@ -188,12 +188,11 @@ class Test_ShuffleNexus:
 
 
 class Test_CountSiteValues:
-
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus1(self):
         count_site_values({})
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus2(self):
         count_site_values("I AM NOT A NEXUS")
 
@@ -270,11 +269,11 @@ class Test_CountSiteValues:
 
 class Test_FindConstantSites:
     """Test find_constant_sites"""
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_1(self):
         find_constant_sites({})
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_2(self):
         find_constant_sites("I AM NOT A NEXUS")
 
@@ -294,11 +293,11 @@ class Test_FindConstantSites:
 
 class Test_FindUniqueSites:
     """Test find_unique_sites"""
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_1(self):
         find_unique_sites({})
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_2(self):
         find_unique_sites("I AM NOT A NEXUS")
 
@@ -334,9 +333,9 @@ class Test_FindUniqueSites:
         assert 6 in unique
 
 
-class Test_new_nexus_without_sites:
+class Test_NewNexusWithoutSites:
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_1(self):
         new_nexus_without_sites({}, [])
 
@@ -346,7 +345,7 @@ class Test_new_nexus_without_sites:
         assert len(nexus.data) == 1
     
     
-class Test_multistatise:
+class Test_Multistatise:
     """Test multistatise"""
     def setup(self):
         self.nex = NexusReader()
@@ -362,7 +361,7 @@ class Test_multistatise:
         ;""")
         self.nex = multistatise(self.nex)
         
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus_1(self):
         multistatise({})
     
@@ -448,13 +447,13 @@ class Test_ResampleTrees:
         assert len(newnex.trees.trees) == 3
         
 
-class Test_find_constant_sites:
+class Test_FindConstantSites:
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus1(self):
         find_constant_sites({})
 
-    @nose.tools.raises(AssertionError)
+    @nose.tools.raises(TypeError)
     def test_failure_on_nonnexus2(self):
         find_constant_sites("I AM NOT A NEXUS")
 
