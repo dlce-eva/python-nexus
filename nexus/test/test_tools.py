@@ -435,7 +435,7 @@ class Test_ResampleTrees:
     def test_resample_one(self):
         newnex = run_resample(1, self.nexus)
         assert len(newnex.trees.trees) == 3
-        
+    
 
 class Test_FindConstantSites:
     def test_find_constant_sites1(self):
