@@ -65,4 +65,4 @@ class Test_TreeManip_run_randomise:
         # raises ValueError, sample size too big (only 3 trees in this file)
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
         new_nex = run_random(10, nexus)
-
+        

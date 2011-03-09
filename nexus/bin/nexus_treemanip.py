@@ -197,7 +197,7 @@ def run_detranslate(nexus_obj, do_print=False):
     nexus_obj.trees.detranslate()
     return nexus_obj
 
-def run_random(num_trees, nexus_obj):
+def run_random(num_trees, nexus_obj, do_print=False):
     """
     Returns a specified number (`num_trees`) of random trees from the nexus file.
     
@@ -221,7 +221,14 @@ def run_random(num_trees, nexus_obj):
     except ValueError:
         raise ValueError("num_trees should be an integer")
     
-    nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
+    if num_trees > nexus_obj.trees.ntrees:
+        raise ValueError("Treefile only has %d trees in it." % nexus_obj.trees.ntrees)
+    elif num_trees == nexus_obj.trees.ntrees:
+        return nexus_obj # um. ok.
+    else:
+        if do_print:
+            print("%d trees read... sampling %d" % (nexus_obj.trees.ntrees, num_trees))
+        nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
     return nexus_obj
     
     
