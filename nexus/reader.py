@@ -71,7 +71,9 @@ class GenericHandler(object):
         
         :return: Returns a cleaned string.
         """
-        return COMMENT_PATTERN.sub('', line)
+        if '[' in line:
+            return COMMENT_PATTERN.sub('', line)
+        return line
         
     def write(self):
         """
