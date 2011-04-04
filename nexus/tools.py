@@ -63,9 +63,6 @@ def combine_nexuses(nexuslist):
     :raises IOError: if unable to read an file in nexuslist
     :raises NexusFormatException: if a nexus file does not have a `data` block
     """
-    if isinstance(nexuslist, list) == False:
-        raise TypeError("nexuslist is not a list")
-    
     out = NexusWriter()
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
