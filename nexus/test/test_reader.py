@@ -163,9 +163,7 @@ class Test_DataHandler_SimpleNexusFormat:
             Harry              11111
             ;""")
         assert nex.data.nchar == 5
-
-
-            
+        
 
 class Test_DataHandler_InterleavedNexusFormat:
     def test_interleave_matrix_parsing(self):
@@ -189,7 +187,7 @@ class Test_DataHandler_AlternateNexusFormat:
         # the alternate format has a distinct taxa and characters block, and
         # we need to estimate the number of taxa in a different way.
         assert self.nex.data.ntaxa == 4
-        
+    
     def test_format_string(self):
         expected = {
             'datatype': 'dna',
@@ -491,4 +489,36 @@ def test_badchars_quoted_in_taxaname():
     # check detranslate
     nex.trees.detranslate()
     assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
+    
+
+class Test_TreeHandler_Regression_RandomAPETrees:
+    
+    nexus = """
+    #NEXUS
+    [R-package APE, Mon Apr  4 13:30:05 2011]
+
+    BEGIN TAXA;
+    	DIMENSIONS NTAX = 5;
+    	TAXLABELS
+    		t5
+    		t2
+    		t3
+    		t4
+    		t1
+    	;
+    END;
+    BEGIN TREES;
+    	TREE * UNTITLED = [&R] (((t5:0.8158685302,(t2:0.3804786047,t3:0.9345045802):0.9044287337):0.2170910214,t4:0.5744336853):0.9122619091,t1:0.2579922327);
+    	TREE * UNTITLED = [&R] (((t1:0.7530630897,t5:0.00636632205):0.8808043781,t2:0.967890667):0.861689928,(t3:0.795280267,t4:0.4398460181):0.2651306945);
+    END;
+    """
+    
+    def test_treeloading(self):
+        n = NexusReader()
+        n.read_string(self.nexus)
+        print n.trees.trees
+        assert n.trees.ntrees == 2
+        
+    
+
     
