@@ -388,14 +388,12 @@ class Test_TreeHandler_BEAST_Format:
     def test_parsing_sets_translators(self):
         assert len(self.nex.trees.translators) == 38 # 38 taxa in example trees
 
-    # def test_detranslate_BEAST_format_extended(self):
-    #     print self.nex.trees[0]
-    #     self.nex.trees.detranslate()
-    #     print self.nex.trees[0]
-    #     for index, taxon in self.nex.trees.translators.items():
-    #         # check if the taxon name is present in the tree...
-    #         assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
-    #     assert self.nex.trees._been_detranslated == True
+    def test_detranslate_BEAST_format_extended(self):
+        self.nex.trees.detranslate()
+        for index, taxon in self.nex.trees.translators.items():
+            # check if the taxon name is present in the tree...
+            assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
+        assert self.nex.trees._been_detranslated == True
     
 
 class Test_TreeHandler__detranslate_tree:
