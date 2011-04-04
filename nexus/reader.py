@@ -86,7 +86,7 @@ class GenericHandler(object):
 
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
-    is_dimensions = re.compile(r"""dimensions\s*ntax=\s*(\d+)""", re.IGNORECASE)
+    is_dimensions = re.compile(r"""dimensions\s*ntax\s*=\s*(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
     
     def __init__(self):
@@ -119,7 +119,6 @@ class TaxaHandler(GenericHandler):
                 in_taxlabel_block = True
             elif in_taxlabel_block:
                 self.taxa.append(line.strip(";"))
-        
         assert self.ntaxa == len(self.taxa)
         
     def write(self):
@@ -142,7 +141,7 @@ class TaxaHandler(GenericHandler):
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
-    is_tree = re.compile(r"""tree .*=.*;""")
+    is_tree = re.compile(r"""tree .*=.*;""", re.IGNORECASE)
     
     def __init__(self):
         self.was_translated = False # does the treefile have a translate block?
@@ -175,7 +174,6 @@ class TreeHandler(GenericHandler):
         lost_in_translation = False
         translators = {}
         for line in data:
-            
             # look for translation start, and turn on lost_in_translation
             if translate_start.match(line):
                 lost_in_translation = True
@@ -428,7 +426,7 @@ class DataHandler(GenericHandler):
                 
         self._load_characters()
         
-        # WARNING: ntaxa and nchar in format string does not give us the right answer!
+        # WARNING: what if ntaxa and nchar in format string does not give us the right answer?
         # Should we raise an error instead?
         if self.ntaxa != len(self.taxa):
             self.ntaxa = len(self.taxa)
