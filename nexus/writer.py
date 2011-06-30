@@ -199,6 +199,20 @@ class NexusWriter:
         handle.write(self.make_nexus(interleave, charblock))
         handle.close()
     
+    def write_as_table(self):
+        """
+        Generates a simple table of the nexus
+        """
+        out = []
+        for t in sorted(self.taxalist):
+            s = []
+            for c in self.characters:
+                value = self.data[c].get(t, self.MISSING)
+                if len(value) > 1: # wrap equivocal states in ()'s
+                    value = "(%s)" % value
+                s.append(value)
+            out.append("%s %s" % (t.ljust(25), ''.join(s)))
+        return "\n".join(out)
     
     def _convert_to_reader(self):
         """
