@@ -147,6 +147,7 @@ class TreeHandler(GenericHandler):
         self.was_translated = False # does the treefile have a translate block?
         self._been_detranslated = False # has detranslate been called?
         self.translators = {}
+        self.taxa = []
         self.trees = []
         super(TreeHandler, self).__init__()
         
@@ -172,7 +173,6 @@ class TreeHandler(GenericHandler):
         translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.]+)[,;]?""")
         
         lost_in_translation = False
-        translators = {}
         for line in data:
             # look for translation start, and turn on lost_in_translation
             if translate_start.match(line):
@@ -189,7 +189,7 @@ class TreeHandler(GenericHandler):
                     self.translators[taxon_id] = taxon
                 if line.endswith(';'):
                     lost_in_translation = False
-                    translators = translators
+                    self.taxa = self.translators.values()
                     
             elif self.is_tree.search(line):
                 if lost_in_translation == True:
@@ -197,7 +197,12 @@ class TreeHandler(GenericHandler):
                     raise NexusFormatException("Tree block has incomplete translate table")
                 
                 self.trees.append(line)
-            
+        
+        # get taxa if not translated.
+        if len(self.translators) == 0:
+            self.taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
+        
+    
     def detranslate(self):
         """Detranslates all trees in the file"""
         if self._been_detranslated == True:
@@ -280,6 +285,7 @@ class DataHandler(GenericHandler):
     def __init__(self):
         self.taxa = []
         self.ntaxa = 0
+        self.symbols = set()
         self.characters = {}
         self.charlabels = {}
         self.nchar = 0
@@ -363,11 +369,16 @@ class DataHandler(GenericHandler):
                     else:
                         site += nextchar
             out.append(site)
+            
+            # add to symbol list
+            if site not in self.symbols:
+                self.symbols.update(set(site))
+                
         # check we're not in hanging multistate chunk
         if multistate:
             raise NexusFormatException("Data Matrix contains incomplete multistate values")
         return out
-    
+        
     def parse(self, data):
         """
         Parses a `data` block
@@ -485,7 +496,7 @@ class DataHandler(GenericHandler):
                     continue 
                 else:
                     if key == 'symbols':
-                        value = '"%s"' % value
+                        value = '"%s"' % "".join(sorted(self.symbols))
                     fstring.append("%s=%s" % (key, value))
             return " ".join(fstring) + ";"
 

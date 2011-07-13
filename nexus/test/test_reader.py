@@ -130,7 +130,7 @@ class Test_DataHandler_SimpleNexusFormat:
         ]
         written = self.nex.write()
         for expected in expected_patterns:
-            assert re.search(expected, written, re.MULTILINE)
+            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
 
     def test__load_characters(self):
         for site, data in self.nex.data.characters.items():
@@ -297,6 +297,12 @@ class Test_TreeHandler_SimpleTreefile:
         assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
         assert len(self.nex.trees.trees) == 3 == self.nex.trees.ntrees
         
+    def test_taxa(self):
+        expected = ['Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon', 'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David']
+        assert len(self.nex.trees.taxa) == len(expected)
+        for taxon in expected:
+            assert taxon in self.nex.trees.taxa
+        
     def test_iterable(self):
         for tree in self.nex.blocks['trees']:
             pass
@@ -329,6 +335,12 @@ class Test_TreeHandler_TranslatedTreefile:
             tree # will raise something if unable to iterate
         for tree in self.nex.trees:
             tree
+    
+    def test_taxa(self):
+        expected = ['Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon', 'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David']
+        assert len(self.nex.trees.taxa) == len(expected)
+        for taxon in expected:
+            assert taxon in self.nex.trees.taxa
     
     def test_was_translated_flag_set(self):
         assert self.nex.trees.was_translated == True
@@ -378,6 +390,17 @@ class Test_TreeHandler_BEAST_Format:
         # did we get a tree block?
         assert 'trees' in self.nex.blocks
 
+    def test_taxa(self):
+        expected = [
+            "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11", 
+            "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20", "V21", 
+            "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29", "M30", "P31", 
+            "T32", "R33", "P34", "R35", "W36", "F37", "F38"
+        ]
+        assert len(self.nex.trees.taxa) == len(expected)
+        for taxon in expected:
+            assert taxon in self.nex.trees.taxa
+            
     def test_treecount(self):
         assert len(self.nex.blocks['trees'].trees) == 1 == self.nex.blocks['trees'].ntrees
         assert len(self.nex.trees.trees) == 1 == self.nex.trees.ntrees
@@ -514,9 +537,4 @@ class Test_TreeHandler_Regression_RandomAPETrees:
     def test_treeloading(self):
         n = NexusReader()
         n.read_string(self.nexus)
-        print n.trees.trees
         assert n.trees.ntrees == 2
-        
-    
-
-    
