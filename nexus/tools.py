@@ -67,7 +67,6 @@ def combine_nexuses(nexuslist):
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
         check_for_valid_NexusReader(nex, required_blocks=['data'])
-        
         out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
         
         if hasattr(nex, 'short_filename'):

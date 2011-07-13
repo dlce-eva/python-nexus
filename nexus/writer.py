@@ -27,7 +27,7 @@ class NexusWriter:
         self.comments = []
         self.characters = []
         self.clean_characters = {}
-        self.symbols = []
+        self.symbols = set()
         self.data = {}
         self.is_binary = False
         
@@ -103,8 +103,8 @@ class NexusWriter:
             self.data[character][taxon] = value
         
         # add to symbols
-        if value not in self.symbols and value not in ['?', '-']:
-            self.symbols.append(value)
+        if value not in ['?', '-']:
+            self.symbols.add(value)
         
     def recode_to_binary(self):
         """Recodes the matrix to binary form"""
@@ -139,7 +139,7 @@ class NexusWriter:
                     self.add(taxon, char_name, value)
         
         # overwrite data & symbols
-        self.symbols = ['1', '0']
+        self.symbols = set('10')
         # set binary flag
         self.is_binary = True
         
