@@ -1,13 +1,14 @@
 import os
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import multistatise
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
-class Test_Multistatise:
+class Test_Multistatise(unittest.TestCase):
     """Test multistatise"""
-    def setup(self):
+    def setUp(self):
         self.nex = NexusReader()
         self.nex.read_string(
         """Begin data;
@@ -79,7 +80,10 @@ class Test_Multistatise:
             
             # first letter of taxa name is the expected character state
             assert taxon[0] == sites[0], "%s should be %s not %s" % (taxon, taxon[0], sites[0])
-        print msnex.data.matrix
         # deal with completely missing taxa
         assert 'Zarathrustra' in msnex.data.matrix
         assert msnex.data.matrix['Zarathrustra'][0] == '?'
+
+
+if __name__ == '__main__':
+    unittest.main()

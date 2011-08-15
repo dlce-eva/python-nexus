@@ -95,7 +95,7 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 from reader import *
 from writer import NexusWriter
 
-__version__ = "0.8"
+__version__ = "0.85"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__

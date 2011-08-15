@@ -1,6 +1,6 @@
 import re
 import copy
-import nose
+import unittest
 from nexus import NexusWriter
 
 data = {
@@ -8,8 +8,8 @@ data = {
     'char2': {'French': 4, 'English': 5, 'Latin': 6},
 }
 
-class Test_NexusWriter_1:
-    def setup(self):
+class Test_NexusWriter_1(unittest.TestCase):
+    def setUp(self):
         self.nex = NexusWriter()
         
     def test_char_adding1(self):
@@ -29,8 +29,8 @@ class Test_NexusWriter_1:
         assert self.nex.data['char2']['Latin'] == '6'
         
 
-class Test_NexusWriter_2:
-    def setup(self):
+class Test_NexusWriter_2(unittest.TestCase):
+    def setUp(self):
         self.nex = NexusWriter()
         for char, b in data.items():
             for taxon, value in b.items():
@@ -89,8 +89,8 @@ class Test_NexusWriter_2:
         assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
 
 
-class Test_NexusWriter_Binary:
-    def setup(self):
+class Test_NexusWriter_Binary(unittest.TestCase):
+    def setUp(self):
         self.nex = NexusWriter()
         for char, b in data.items():
             for taxon, value in b.items():
@@ -164,11 +164,10 @@ class Test_NexusWriter_Binary:
         assert re.search("French\s+11", nexus)
         assert re.search("Latin\s+10", nexus)
     
-    @nose.tools.raises(AssertionError)
     def test_is_binary_dirtycheck(self):
         """Test Nexus -> Binary: is_binary dirty check"""
         self.nex.recode_to_binary()
-        self.nex.add('French', 4, 'A') # should raise AssertionError
+        self.assertRaises(AssertionError, self.nex.add, 'French', 4, 'A')
         
     def test_to_binary_ignores_missing_sites(self):
         self.nex.add("French", 3, "-")
@@ -188,23 +187,26 @@ class Test_NexusWriter_Binary:
         assert '3_3' not in self.nex.data
         
 
-def test_regression_format_string_has_datatype_first():
-    """Regression: Format string should contain 'datatype' as the first element"""
-    # SplitsTree complains otherwise.
-    nex = NexusWriter()
-    for char, b in data.items():
-        for taxon, value in b.items():
-            nex.add(taxon, char, value)
-    out = nex.make_nexus()
-    assert "FORMAT DATATYPE=STANDARD" in out
+class RegressionTests(unittest.TestCase):
+    def test_regression_format_string_has_datatype_first(self):
+        """Regression: Format string should contain 'datatype' as the first element"""
+        # SplitsTree complains otherwise.
+        nex = NexusWriter()
+        for char, b in data.items():
+            for taxon, value in b.items():
+                nex.add(taxon, char, value)
+        out = nex.make_nexus()
+        assert "FORMAT DATATYPE=STANDARD" in out
     
-def test_regression_format_string_has_quoted_symbols():
-    """Regression: Symbols in the format string should be quoted"""
-    nex = NexusWriter()
-    for char, b in data.items():
-        for taxon, value in b.items():
-            nex.add(taxon, char, value)
-    out = nex.make_nexus()
-    assert 'SYMBOLS="123456"' in out
+    def test_regression_format_string_has_quoted_symbols(self):
+        """Regression: Symbols in the format string should be quoted"""
+        nex = NexusWriter()
+        for char, b in data.items():
+            for taxon, value in b.items():
+                nex.add(taxon, char, value)
+        out = nex.make_nexus()
+        assert 'SYMBOLS="123456"' in out
 
     
+if __name__ == '__main__':
+    unittest.main()
