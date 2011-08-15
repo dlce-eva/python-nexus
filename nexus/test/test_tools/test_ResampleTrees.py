@@ -1,14 +1,15 @@
 """Tests for utils in bin directory"""
 import os
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.bin.nexus_treemanip import run_resample
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
-class Test_ResampleTrees:
+class Test_ResampleTrees(unittest.TestCase):
     """Test nexus_treemanip.run_resample"""
-    def setup(self):
+    def setUp(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         
     def test_resample(self):
@@ -19,3 +20,6 @@ class Test_ResampleTrees:
         newnex = run_resample(1, self.nexus)
         assert len(newnex.trees.trees) == 3
     
+
+if __name__ == '__main__':
+    unittest.main()

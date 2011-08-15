@@ -1,16 +1,15 @@
 import os
 import re
-
-import nose
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import combine_nexuses
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
-class Test_CombineNexuses:
+class Test_CombineNexuses(unittest.TestCase):
     """Test combine_nexuses"""
-    def setup(self):
+    def setUp(self):
         self.nex1 = NexusReader()
         self.nex1.read_string(
             """Begin data;
@@ -43,13 +42,11 @@ class Test_CombineNexuses:
             ;"""
         )
     
-    @nose.tools.raises(TypeError)
     def test_failure_on_nonlist_1(self):
-        combine_nexuses("i am not a list")
+        self.assertRaises(TypeError, combine_nexuses, "I am not a list")
         
-    @nose.tools.raises(TypeError)
     def test_failure_on_nonlist_2(self):
-        combine_nexuses(["hello",]) # should be NexusReader instances
+        self.assertRaises(TypeError, combine_nexuses, ["hello",]) # should be NexusReader instances
         
     def test_combine_simple(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
@@ -142,3 +139,7 @@ class Test_CombineNexuses:
                     newnex.write(charblock=True)
                 )
                 counter += 1
+
+
+if __name__ == '__main__':
+    unittest.main()

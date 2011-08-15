@@ -1,11 +1,12 @@
 import os
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import find_unique_sites
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
-class Test_FindUniqueSites:
+class Test_FindUniqueSites(unittest.TestCase):
     """Test find_unique_sites"""
     def test_find_unique_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -37,3 +38,6 @@ class Test_FindUniqueSites:
         # - are we handling missing data appropriately?
         assert 5 in unique
         assert 6 in unique
+        
+if __name__ == '__main__':
+    unittest.main()

@@ -1,12 +1,13 @@
 import os
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import find_constant_sites
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
 
-class Test_FindConstantSites:
+class Test_FindConstantSites(unittest.TestCase):
     """Test find_constant_sites"""
     def test_find_constant_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -21,3 +22,6 @@ class Test_FindConstantSites:
         assert 2 in const
         assert 3 in const
 
+
+if __name__ == '__main__':
+    unittest.main()

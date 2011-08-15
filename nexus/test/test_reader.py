@@ -1,12 +1,13 @@
 """Tests for nexus reading"""
 import os
 import re
+import unittest
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
 
-class Test_NexusReader_Core:
+class Test_NexusReader_Core(unittest.TestCase):
     """Test the Core functionality of NexusReader"""
     def test_read_file(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -46,7 +47,7 @@ class Test_NexusReader_Core:
         assert text == nex.write()
 
 
-class Test_DataHandler_SimpleNexusFormat:
+class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
     expected = {
         'Harry': ['0', '0'],
         'Simon': ['0', '1'],
@@ -165,7 +166,7 @@ class Test_DataHandler_SimpleNexusFormat:
         assert nex.data.nchar == 5
         
 
-class Test_DataHandler_InterleavedNexusFormat:
+class Test_DataHandler_InterleavedNexusFormat(unittest.TestCase):
     def test_interleave_matrix_parsing(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example3.nex'))
         assert nexus.data.ntaxa == 2 == len(nexus.data.taxa)
@@ -176,7 +177,7 @@ class Test_DataHandler_InterleavedNexusFormat:
     
     
 
-class Test_DataHandler_AlternateNexusFormat:
+class Test_DataHandler_AlternateNexusFormat(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
         
@@ -223,7 +224,7 @@ class Test_DataHandler_AlternateNexusFormat:
             assert self.nex.data.matrix[k] == ['a', 'c', 't', 'g']
 
 
-class Test_DataHandler_CharacterBlockNexusFormat:
+class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-characters.nex'))
         
@@ -265,7 +266,7 @@ class Test_DataHandler_CharacterBlockNexusFormat:
                 assert self.nex.data.characters["CHAR_%s" % site][taxon] == site
 
 
-class Test_TaxaHandler_AlternateNexusFormat:
+class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
     expected = ['John', 'Paul', 'George', 'Ringo']
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
@@ -284,7 +285,7 @@ class Test_TaxaHandler_AlternateNexusFormat:
             assert taxa == self.expected[idx]
     
 
-class Test_TreeHandler_SimpleTreefile:
+class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
     
@@ -317,7 +318,7 @@ class Test_TreeHandler_SimpleTreefile:
         assert expected == written
     
 
-class Test_TreeHandler_TranslatedTreefile:
+class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
     
@@ -378,7 +379,7 @@ class Test_TreeHandler_TranslatedTreefile:
         assert other_tree_file.trees[0] == self.nex.trees[0]
     
 
-class Test_TreeHandler_BEAST_Format:
+class Test_TreeHandler_BEAST_Format(unittest.TestCase):
 
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
@@ -419,7 +420,7 @@ class Test_TreeHandler_BEAST_Format:
         assert self.nex.trees._been_detranslated == True
     
 
-class Test_TreeHandler__detranslate_tree:
+class Test_TreeHandler__detranslate_tree(unittest.TestCase):
     
     def test_no_change(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
@@ -457,84 +458,87 @@ class Test_TreeHandler__detranslate_tree:
         assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
 
 
-
-def test_regression_whitespace_in_matrix():
+class test_Regression_whitespace_in_matrix(unittest.TestCase):
     """Regression: Test that leading whitespace in a data matrix is parsed ok"""
-    nex = NexusReader()
-    nex.read_string("""
-    #NEXUS 
+    def test_regression(self):
+        nex = NexusReader()
+        nex.read_string("""
+        #NEXUS 
     
-    Begin data;
-        Dimensions ntax=4 nchar=2;
-                            Format datatype=standard symbols="01" gap=-;
-            Matrix
-    Harry              00
-            Simon              01
-                    Betty              10
-                                Louise 11
-        ;
-    End;
-    """)
-    assert nex.blocks['data'].nchar == 2
-    assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
-    assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
-    assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
-    assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
+        Begin data;
+            Dimensions ntax=4 nchar=2;
+                                Format datatype=standard symbols="01" gap=-;
+                Matrix
+        Harry              00
+                Simon              01
+                        Betty              10
+                                    Louise 11
+            ;
+        End;
+        """)
+        assert nex.blocks['data'].nchar == 2
+        assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
+        assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
+        assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
+        assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
         
     
 
-def test_badchars_quoted_in_taxaname():
-    nex = NexusReader()
-    nex.read_string("""
-    #NEXUS
+class test_badchars_quoted_in_taxaname(unittest.TestCase):
+    def test_regressions(self):
+        nex = NexusReader()
+        nex.read_string("""
+        #NEXUS
 
-    Begin trees;
-    	Translate
-    		1 MANGIC_Bugan,
-    		2 MANGIC_Paliu,
-    		3 MANGIC_Mang,
-    		4 PALAUNGWA_Danaw,
-    		5 'PALAUNGWA_De.Ang'
-        ;
-        tree 1 = (1,2,3,4,5);
-    """)
-    # did we get a tree block?
-    assert 'trees' in nex.blocks
-    # did we find 3 trees?
-    assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
-    # did we get the translation parsed properly.
-    assert nex.trees.was_translated == True
-    assert len(nex.trees.translators) == 5 # 5 taxa in example trees
-    # check last entry
-    assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
-    # check detranslate
-    nex.trees.detranslate()
-    assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
+        Begin trees;
+        	Translate
+        		1 MANGIC_Bugan,
+        		2 MANGIC_Paliu,
+        		3 MANGIC_Mang,
+        		4 PALAUNGWA_Danaw,
+        		5 'PALAUNGWA_De.Ang'
+            ;
+            tree 1 = (1,2,3,4,5);
+        """)
+        # did we get a tree block?
+        assert 'trees' in nex.blocks
+        # did we find 3 trees?
+        assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+        # did we get the translation parsed properly.
+        assert nex.trees.was_translated == True
+        assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+        # check last entry
+        assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
+        # check detranslate
+        nex.trees.detranslate()
+        assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
     
 
-class Test_TreeHandler_Regression_RandomAPETrees:
-    
-    nexus = """
-    #NEXUS
-    [R-package APE, Mon Apr  4 13:30:05 2011]
+class Test_TreeHandler_Regression_RandomAPETrees(unittest.TestCase):
+    def test_regression(self):
+        nex = NexusReader()
+        nex.read_string(
+        """
+        #NEXUS
+        [R-package APE, Mon Apr  4 13:30:05 2011]
 
-    BEGIN TAXA;
-    	DIMENSIONS NTAX = 5;
-    	TAXLABELS
-    		t5
-    		t2
-    		t3
-    		t4
-    		t1
-    	;
-    END;
-    BEGIN TREES;
-    	TREE * UNTITLED = [&R] (((t5:0.8158685302,(t2:0.3804786047,t3:0.9345045802):0.9044287337):0.2170910214,t4:0.5744336853):0.9122619091,t1:0.2579922327);
-    	TREE * UNTITLED = [&R] (((t1:0.7530630897,t5:0.00636632205):0.8808043781,t2:0.967890667):0.861689928,(t3:0.795280267,t4:0.4398460181):0.2651306945);
-    END;
-    """
-    
-    def test_treeloading(self):
-        n = NexusReader()
-        n.read_string(self.nexus)
-        assert n.trees.ntrees == 2
+        BEGIN TAXA;
+        	DIMENSIONS NTAX = 5;
+        	TAXLABELS
+        		t5
+        		t2
+        		t3
+        		t4
+        		t1
+        	;
+        END;
+        BEGIN TREES;
+        	TREE * UNTITLED = [&R] (((t5:0.8158685302,(t2:0.3804786047,t3:0.9345045802):0.9044287337):0.2170910214,t4:0.5744336853):0.9122619091,t1:0.2579922327);
+        	TREE * UNTITLED = [&R] (((t1:0.7530630897,t5:0.00636632205):0.8808043781,t2:0.967890667):0.861689928,(t3:0.795280267,t4:0.4398460181):0.2651306945);
+        END;
+        """
+        )
+        assert nex.trees.ntrees == 2
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,16 +1,14 @@
 import os
-
-import nose
+import unittest
 
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import count_site_values
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
 
-class Test_CountSiteValues:
-    @nose.tools.raises(TypeError)
+class Test_CountSiteValues(unittest.TestCase):
     def test_failure_on_notiterableargument(self):
-        count_site_values(NexusReader(), 1)
+        self.assertRaises(TypeError, count_site_values, 1)
 
     def test_count_missing_one(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
@@ -78,3 +76,6 @@ class Test_CountSiteValues:
         for taxon in count:
             assert count[taxon] == expected[taxon]
 
+
+if __name__ == '__main__':
+    unittest.main()
