@@ -30,6 +30,5 @@ setup(
         'nexus/bin/nexus_describecharacter.py',
         'nexus/bin/nexus_describetaxa.py',
     ],
-    test_suite='nose.collector',
 )
 
