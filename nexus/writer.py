@@ -104,7 +104,7 @@ class NexusWriter:
         
         # add to symbols
         if value not in ['?', '-']:
-            self.symbols.add(value)
+            [self.symbols.add(v) for v in value]
         
     def recode_to_binary(self):
         """Recodes the matrix to binary form"""
