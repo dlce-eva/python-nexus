@@ -153,6 +153,15 @@ def tally_by_site(nexus_obj):
     }
     """
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
+    tally = {}
+    for site, data in nexus_obj.data.characters.items():
+        tally[site] = tally.get(site, {})
+        for taxon, state in data.items():
+            tally[site][state] = tally[site].get(state, [])
+            tally[site][state].append(taxon)
+    return tally
+    
+
 
 def tally_by_taxon(nexus_obj):
     """
@@ -174,3 +183,11 @@ def tally_by_taxon(nexus_obj):
     }
     """
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
+    tally = {}
+    for taxon, characters in nexus_obj.data:
+        tally[taxon] = {}
+        for pos, char in enumerate(characters):
+            label = nexus_obj.data.charlabels.get(pos, pos)
+            tally[taxon][char] = tally[taxon].get(char, [])
+            tally[taxon][char].append(label)
+    return tally
