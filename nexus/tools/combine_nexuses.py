@@ -1,3 +1,4 @@
+import os
 from nexus import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
@@ -18,13 +19,15 @@ def combine_nexuses(nexuslist):
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
         check_for_valid_NexusReader(nex, required_blocks=['data'])
-        out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nex.filename))
         
         if hasattr(nex, 'short_filename'):
             nexus_label = os.path.splitext(nex.short_filename)[0]
+        elif hasattr(nex, 'label'):
+            nexus_label = nex.label
         else:
             nexus_label = str(nex_id)
-            
+        
+        out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nexus_label))
         for site_idx, site in enumerate(sorted(nex.data.characters), 0):
             data = nex.data.characters.get(site)
             charpos += 1
