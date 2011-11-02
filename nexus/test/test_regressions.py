@@ -62,21 +62,26 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
         
 
-# class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
-#     """Regression: Test that we can parse MESQUITE taxa blocks"""
-#     def setUp(self):
-#         self.nex = NexusReader(os.path.join(REGRESSION_DIR, 'mesquite_formatted_branches.trees'))
-# 
-#     def test_taxa_block(self):
-#         for taxon in ['A', 'B', 'C']:
-#             assert taxon in self.nex.data.matrix
-#         # did we get the right number of taxa in the matrix?
-#         assert self.nex.data.ntaxa == len(self.nex.data.taxa) == 3
-# 
-#     def test_taxa_block_attributes(self):
-#         assert 'taxa' in nex.blocks
-#         assert len(self.nex.taxa.attributes) == 1
-#         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
-# 
-#     def test_trees_block(self):
-#         assert nex.trees.ntrees == 1
+class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
+    """Regression: Test that we can parse MESQUITE taxa blocks"""
+    def setUp(self):
+        self.nex = NexusReader(os.path.join(REGRESSION_DIR, 'mesquite_formatted_branches.trees'))
+    
+    def test_found_trees(self):
+        assert self.nex.trees.ntrees == 1
+    
+    def test_found_taxa(self):
+        assert len(self.nex.trees.taxa) == 3
+        assert 'A' in self.nex.trees.taxa
+        assert 'B' in self.nex.trees.taxa
+        assert 'C' in self.nex.trees.taxa
+        
+    def test_was_translated(self):
+        assert self.nex.trees.was_translated == True
+    
+    def test_translation(self):
+        assert self.nex.trees.translators['1'] == 'A'
+        assert self.nex.trees.translators['2'] == 'B'
+        assert self.nex.trees.translators['3'] == 'C'
+        
+        
