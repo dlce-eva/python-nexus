@@ -18,6 +18,8 @@ NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
 QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
+MESQUITE_TITLE_PATTERN = re.compile(r"""^TITLE\s+(.*);$""", re.IGNORECASE)
+MESQUITE_LINK_PATTERN = re.compile(r"""^LINK\s+(.*?)\s+=\s+(.*);$""", re.IGNORECASE)
 
 
 class NexusFormatException(Exception):
@@ -91,6 +93,7 @@ class TaxaHandler(GenericHandler):
     
     def __init__(self):
         self.taxa = []
+        self.attributes = []
         self.ntaxa = 0
         super(TaxaHandler, self).__init__()
         
@@ -118,7 +121,13 @@ class TaxaHandler(GenericHandler):
             elif self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
             elif in_taxlabel_block:
-                self.taxa.append(line.strip(";"))
+                for taxon in line.strip(';').split():
+                    self.taxa.append(taxon)
+            elif MESQUITE_TITLE_PATTERN.match(line):
+                self.attributes.append(line)
+            elif MESQUITE_LINK_PATTERN.match(line):
+                self.attributes.append(line)
+            
         assert self.ntaxa == len(self.taxa)
         
     def write(self):
@@ -128,6 +137,10 @@ class TaxaHandler(GenericHandler):
         :return: String
         """
         out = ['begin taxa;', 'dimensions ntax=%d' % self.ntaxa, 'taxlabels']
+        # handle any attributes
+        for att in self.attributes:
+            out.append("\t%s" % att)
+        # taxa labels
         for idx, taxon in enumerate(self.taxa, 1):
             out.append("\t[%d] '%s'" % (idx, taxon))
         out.append(';')
