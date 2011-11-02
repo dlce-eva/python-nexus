@@ -4,7 +4,7 @@ import unittest
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import count_site_values
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_CountSiteValues(unittest.TestCase):
     def test_failure_on_notiterableargument(self):

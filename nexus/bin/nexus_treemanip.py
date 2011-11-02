@@ -57,9 +57,18 @@ def parse_deltree(dstring):
     [1, 3, 4, 5, 6]
     >>> parse_deltree('1,3,4-6,8,9-10')
     [1, 3, 4, 5, 6, 8, 9, 10]
+
+    # alternate syntax
+    >>> parse_deltree('1:10')
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    >>> parse_deltree('1,3,4:6')
+    [1, 3, 4, 5, 6]
+    >>> parse_deltree('1,3,4:6,8,9:10')
+    [1, 3, 4, 5, 6, 8, 9, 10]
     """
     out = []
     for token in dstring.split(','):
+        token = token.replace(':', '-')
         if '-' in token:
             try:
                 start, stop = token.split("-")

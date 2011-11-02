@@ -5,7 +5,7 @@ import unittest
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import combine_nexuses
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_CombineNexuses(unittest.TestCase):
     """Test combine_nexuses"""
