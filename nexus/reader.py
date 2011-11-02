@@ -248,7 +248,6 @@ class TreeHandler(GenericHandler):
         
         :return: String of detranslated tree
         """
-        print 'T0:', tree
         for found in self._findall_chunks(tree):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
@@ -269,7 +268,6 @@ class TreeHandler(GenericHandler):
                     raise ValueError("Expected match for %s not in tree" % found['match'])
                 tree = tree.replace(found['match'], sub)
             
-        print 'T1:', tree
         return tree
         
     def write(self):
