@@ -1,0 +1,48 @@
+"""Regression Tests"""
+import os
+import re
+import unittest
+from nexus import NexusReader
+from nexus.reader import GenericHandler, DataHandler, TreeHandler
+
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
+REGRESSION_DIR = os.path.join(os.path.dirname(__file__), 'regression')
+
+
+class Test_DataHandler_WhitespaceInMatrix(unittest.TestCase):
+    """Regression: Test that leading whitespace in a data matrix is parsed ok"""
+    def test_regression(self):
+        nex = NexusReader(os.path.join(REGRESSION_DIR, 'white_space_in_matrix.nex'))
+        assert nex.blocks['data'].nchar == 2
+        assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
+        assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
+        assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
+        assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
+        
+    
+
+class Test_TreeHandler_Regression_RandomAPETrees(unittest.TestCase):
+    """Regression: Test that we can parse randomly generated APE/R trees"""
+    def test_regression(self):
+        nex = NexusReader(os.path.join(REGRESSION_DIR, 'ape_random.trees'))
+        assert nex.trees.ntrees == 2
+
+
+class Test_TreeHandler_Regression_BadCharsInTaxaName(unittest.TestCase):
+    def test_regressions(self):
+        nex = NexusReader(os.path.join(REGRESSION_DIR, 'bad_chars_in_taxaname.trees'))
+        # did we get a tree block?
+        assert 'trees' in nex.blocks
+        # did we find 3 trees?
+        assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+        # did we get the translation parsed properly.
+        assert nex.trees.was_translated == True
+        assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+        # check last entry
+        assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
+        # check detranslate
+        nex.trees.detranslate()
+        assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
+
+
+
