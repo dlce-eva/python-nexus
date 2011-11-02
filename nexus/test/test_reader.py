@@ -14,6 +14,21 @@ class Test_NexusReader_Core(unittest.TestCase):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert 'data' in nex.blocks
         assert 'Simon' in nex.blocks['data'].matrix
+    
+    def test_read_gzip_file(self):
+        # first, MAKE a gzip file
+        import gzip
+        from tempfile import NamedTemporaryFile
+        tmp = NamedTemporaryFile(delete=False, suffix=".gz")
+        tmp.close()
+        with open(os.path.join(EXAMPLE_DIR, 'example.nex'), 'rU') as f_in:
+            with gzip.open(tmp.name, 'wb') as f_out:
+                f_out.writelines(f_in)
+        # test it's ok
+        nex = NexusReader(tmp.name)
+        assert 'data' in nex.blocks
+        assert 'Simon' in nex.blocks['data'].matrix
+        os.unlink(tmp.name)        # cleanup
         
     def test_read_string(self):
         handle = open(os.path.join(EXAMPLE_DIR, 'example.nex'))
