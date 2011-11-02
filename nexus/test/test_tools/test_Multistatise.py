@@ -4,7 +4,7 @@ import unittest
 from nexus import NexusReader, NexusWriter, NexusFormatException
 from nexus.tools import multistatise
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../../examples')
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_Multistatise(unittest.TestCase):
     """Test multistatise"""

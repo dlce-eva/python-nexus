@@ -5,7 +5,7 @@ import unittest
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
-EXAMPLE_DIR = os.path.join(os.path.split(os.path.dirname(__file__))[0], '../examples')
+EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
 class Test_NexusReader_Core(unittest.TestCase):
     """Test the Core functionality of NexusReader"""
