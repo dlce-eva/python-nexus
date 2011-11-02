@@ -9,7 +9,7 @@ EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 REGRESSION_DIR = os.path.join(os.path.dirname(__file__), 'regression')
 
 
-class Test_DataHandler_WhitespaceInMatrix(unittest.TestCase):
+class Test_DataHandler_Regression_WhitespaceInMatrix(unittest.TestCase):
     """Regression: Test that leading whitespace in a data matrix is parsed ok"""
     def test_regression(self):
         nex = NexusReader(os.path.join(REGRESSION_DIR, 'white_space_in_matrix.nex'))
@@ -29,7 +29,7 @@ class Test_TreeHandler_Regression_RandomAPETrees(unittest.TestCase):
 
 
 class Test_TreeHandler_Regression_BadCharsInTaxaName(unittest.TestCase):
-    def test_regressions(self):
+    def test_regression(self):
         nex = NexusReader(os.path.join(REGRESSION_DIR, 'bad_chars_in_taxaname.trees'))
         # did we get a tree block?
         assert 'trees' in nex.blocks
@@ -45,4 +45,38 @@ class Test_TreeHandler_Regression_BadCharsInTaxaName(unittest.TestCase):
         assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
 
 
+class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
+    """Regression: Test that we can parse MESQUITE taxa blocks"""
+    def setUp(self):
+        self.nex = NexusReader(os.path.join(REGRESSION_DIR, 'mesquite_taxa_block.nex'))
+        
+    def test_taxa_block(self):
+        for taxon in ['A', 'B', 'C']:
+            assert taxon in self.nex.taxa
+        # did we get the right number of taxa in the matrix?
+        assert self.nex.taxa.ntaxa == len(self.nex.taxa.taxa) == 3
+        
+    def test_taxa_block_attributes(self):
+        assert 'taxa' in self.nex.blocks
+        assert len(self.nex.taxa.attributes) == 1
+        assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
+        
 
+# class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
+#     """Regression: Test that we can parse MESQUITE taxa blocks"""
+#     def setUp(self):
+#         self.nex = NexusReader(os.path.join(REGRESSION_DIR, 'mesquite_formatted_branches.trees'))
+# 
+#     def test_taxa_block(self):
+#         for taxon in ['A', 'B', 'C']:
+#             assert taxon in self.nex.data.matrix
+#         # did we get the right number of taxa in the matrix?
+#         assert self.nex.data.ntaxa == len(self.nex.data.taxa) == 3
+# 
+#     def test_taxa_block_attributes(self):
+#         assert 'taxa' in nex.blocks
+#         assert len(self.nex.taxa.attributes) == 1
+#         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
+# 
+#     def test_trees_block(self):
+#         assert nex.trees.ntrees == 1
