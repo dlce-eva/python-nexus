@@ -169,6 +169,7 @@ class TreeHandler(GenericHandler):
         self.was_translated = False # does the treefile have a translate block?
         self._been_detranslated = False # has detranslate been called?
         self.translators = {}
+        self.attributes = []
         self.taxa = []
         self.trees = []
         super(TreeHandler, self).__init__()
@@ -200,6 +201,11 @@ class TreeHandler(GenericHandler):
             if translate_start.match(line):
                 lost_in_translation = True
                 self.was_translated = True
+            # MESQUITE attributes
+            elif MESQUITE_TITLE_PATTERN.match(line):
+                self.attributes.append(line)
+            elif MESQUITE_LINK_PATTERN.match(line):
+                self.attributes.append(line)
                 
             # if we're in a translate block
             elif lost_in_translation:
@@ -315,6 +321,7 @@ class DataHandler(GenericHandler):
         self.symbols = set()
         self.characters = {}
         self.charlabels = {}
+        self.attributes = []
         self.nchar = 0
         self.format = {}
         self.gaps = None
@@ -434,6 +441,12 @@ class DataHandler(GenericHandler):
 
                 self.nchar = int(NCHAR_PATTERN.findall(line)[0])
 
+            # handle MESQUITE attributes
+            elif MESQUITE_TITLE_PATTERN.match(line):
+                self.attributes.append(line)
+            elif MESQUITE_LINK_PATTERN.match(line):
+                self.attributes.append(line)
+            
             # handle format line
             elif lline.startswith('format'):
                 continue
