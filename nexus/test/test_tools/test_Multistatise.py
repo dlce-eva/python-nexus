@@ -24,7 +24,7 @@ class Test_Multistatise(unittest.TestCase):
         
     def test_nexusreader_transformation(self):
         assert isinstance(self.nex, NexusReader), "Nexus_obj should be a NexusReader instance"
-        
+
     def test_block_find(self):
         assert 'data' in self.nex.blocks
     

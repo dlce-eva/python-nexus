@@ -143,6 +143,15 @@ class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
     is_tree = re.compile(r"""tree .*=.*;""", re.IGNORECASE)
     
+    translate_regex = re.compile(r"""
+        ([,(])              # boundary
+        ([A-Z0-9_\-\.]+)    # taxa-id
+        :?                # optional colon
+        (\[.+?\])?          # minimally match an optional comment chunk
+        (\d+\.\d+)?         # optional branchlengths
+        (?=[),])?           # end bounday - n.b. lookahead stops the next pattern being consumed
+    """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
+    
     def __init__(self):
         self.was_translated = False # does the treefile have a translate block?
         self._been_detranslated = False # has detranslate been called?
@@ -210,6 +219,21 @@ class TreeHandler(GenericHandler):
         for idx, tree in enumerate(self.trees):
             self.trees[idx] = self._detranslate_tree(tree, self.translators)
         self._been_detranslated = True
+    
+    def _findall_chunks(self, tree):
+        """Helper function to find groups used by detranslate."""
+        matches = []
+        index = 0
+        while True:
+            match = self.translate_regex.search(tree, index)
+            if not match:
+                break
+            m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))
+            m['match'] = tree[match.start():match.end() + 1]
+            m['end'] = tree[match.end()]
+            matches.append(m)
+            index = match.end()
+        return matches
         
     def _detranslate_tree(self, tree, translatetable):
         """
@@ -224,36 +248,28 @@ class TreeHandler(GenericHandler):
         
         :return: String of detranslated tree
         """
-        # regex = re.compile(r"""
-        # [,\(]                   # boundary
-        #  (
-        #     (\d+)               # taxa-id
-        #     (\[.+?\])?          # minimally match an optional comment chunk
-        #     (:\d+\.\d+)?        # optional branchlengths
-        #  )
-        # [,\)]                   # end!
-        # """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
-        if '[' in tree:
-            # beast mode comes first - it also has branchlengths
-            MODE = 'beast'
-            regex = re.compile(r"((\d+)[\[:])")
-        elif ':' in tree:
-            MODE = 'branchlengths'
-            regex = re.compile(r"((\d+):)")
-        else:
-            MODE = 'simple'
-            regex = re.compile(r"((\d+))")
-        
-        for found in regex.finditer(tree):
-            old, tax_id = found.groups()
-            if tax_id in translatetable:
-                taxon = translatetable[tax_id]
-                if MODE == 'branchlengths':
-                    tree = re.sub(r"\b(%s:)\b" % tax_id, "%s:" % taxon, tree)
-                elif MODE == 'beast':
-                    tree = re.sub(r"\b(%s)([\[:])" % tax_id, "%s:" % taxon, tree)
-                elif MODE == 'simple':
-                    tree = re.sub(r"\b(%s)\b" % tax_id, taxon, tree)
+        print 'T0:', tree
+        for found in self._findall_chunks(tree):
+            if found['taxon'] in translatetable:
+                taxon = translatetable[found['taxon']]
+                if found['comment'] and found['branch']:
+                    # comment and branch
+                    sub = "%s:%s%s" % (taxon, found['comment'], found['branch'])
+                elif found['comment']:
+                    # comment only
+                    sub = "%s%s" % (taxon, found['comment'])
+                elif found['branch']:
+                    # branch only
+                    sub = "%s:%s" % (taxon, found['branch'])
+                else: 
+                    # taxon only
+                    sub = taxon
+                sub = "%s%s%s" % (found['start'], sub, found['end'])
+                if found['match'] not in tree:
+                    raise ValueError("Expected match for %s not in tree" % found['match'])
+                tree = tree.replace(found['match'], sub)
+            
+        print 'T1:', tree
         return tree
         
     def write(self):

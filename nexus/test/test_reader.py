@@ -2,6 +2,7 @@
 import os
 import re
 import unittest
+from copy import deepcopy
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
@@ -370,7 +371,7 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         self.nex.trees.detranslate()
         assert self.nex.trees._been_detranslated == True
         self.nex.trees.detranslate() # should not cause an error
-
+    
     def test_detranslate(self):
         assert self.nex.trees._been_detranslated == False
         self.nex.trees.detranslate()
@@ -379,166 +380,338 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         assert other_tree_file.trees[0] == self.nex.trees[0]
     
 
-class Test_TreeHandler_BEAST_Format(unittest.TestCase):
+# 
+# class Test_TreeHandler_BEAST_Format(unittest.TestCase):
+# 
+#     def setUp(self):
+#         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
+# 
+#     def test_read_BEAST_format(self):
+#         assert self.nex.trees[0].startswith('tree STATE_201000')
+# 
+#     def test_block_find(self):
+#         # did we get a tree block?
+#         assert 'trees' in self.nex.blocks
+# 
+#     def test_taxa(self):
+#         expected = [
+#             "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11", 
+#             "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20", "V21", 
+#             "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29", "M30", "P31", 
+#             "T32", "R33", "P34", "R35", "W36", "F37", "F38"
+#         ]
+#         assert len(self.nex.trees.taxa) == len(expected)
+#         for taxon in expected:
+#             assert taxon in self.nex.trees.taxa
+#             
+#     def test_treecount(self):
+#         assert len(self.nex.blocks['trees'].trees) == 1 == self.nex.blocks['trees'].ntrees
+#         assert len(self.nex.trees.trees) == 1 == self.nex.trees.ntrees
+# 
+#     def test_flag_set(self):
+#         assert self.nex.trees.was_translated == True
+# 
+#     def test_parsing_sets_translators(self):
+#         assert len(self.nex.trees.translators) == 38 # 38 taxa in example trees
+# 
+#     def test_detranslate_BEAST_format_extended(self):
+#         self.nex.trees.detranslate()
+#         for index, taxon in self.nex.trees.translators.items():
+#             # check if the taxon name is present in the tree...
+#             assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
+#         assert self.nex.trees._been_detranslated == True
 
+# class Test_TreeHandler__detranslate_tree(unittest.TestCase):
+#     
+#     def test_no_change(self):
+#         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
+#         oldtree = "tree a = ((Chris,Bruce),Tom);"
+#         newtree = "tree a = ((Chris,Bruce),Tom);"
+#         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+#         assert trans == newtree,  "Unable to correctly NOT translate a simple tree"
+#         
+#     def test_no_change_branchlengths(self):
+#         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
+#         oldtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
+#         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
+#         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+#         assert trans == newtree, "Unable to correctly NOT translate a tree with branchlengths"
+#     
+#     def test_change(self):
+#         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
+#         oldtree = "tree a = ((0,1),2);"
+#         newtree = "tree a = ((Chris,Bruce),Tom);"
+#         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+#         assert trans == newtree,  "Unable to correctly detranslate a simple tree"
+#     
+#     def test_change_branchlengths(self):
+#         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
+#         oldtree = "tree a = ((0:0.1,1:0.2):0.3,2:0.4);"
+#         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
+#         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+#         assert trans == newtree,  "Unable to correctly detranslate a tree with branchlengths"
+# 
+#     def test_BEAST_format(self):
+#         translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
+#         oldtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
+#         newtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
+#         trans = TreeHandler()._detranslate_tree(oldtree, translatetable) 
+#         assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
+# 
+# 
+# class test_Regression_whitespace_in_matrix(unittest.TestCase):
+#     """Regression: Test that leading whitespace in a data matrix is parsed ok"""
+#     def test_regression(self):
+#         nex = NexusReader()
+#         nex.read_string("""
+#         #NEXUS 
+#     
+#         Begin data;
+#             Dimensions ntax=4 nchar=2;
+#                                 Format datatype=standard symbols="01" gap=-;
+#                 Matrix
+#         Harry              00
+#                 Simon              01
+#                         Betty              10
+#                                     Louise 11
+#             ;
+#         End;
+#         """)
+#         assert nex.blocks['data'].nchar == 2
+#         assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
+#         assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
+#         assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
+#         assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
+#         
+#     
+# 
+# class test_badchars_quoted_in_taxaname(unittest.TestCase):
+#     def test_regressions(self):
+#         nex = NexusReader()
+#         nex.read_string("""
+#         #NEXUS
+# 
+#         Begin trees;
+#           Translate
+#               1 MANGIC_Bugan,
+#               2 MANGIC_Paliu,
+#               3 MANGIC_Mang,
+#               4 PALAUNGWA_Danaw,
+#               5 'PALAUNGWA_De.Ang'
+#             ;
+#             tree 1 = (1,2,3,4,5);
+#         """)
+#         # did we get a tree block?
+#         assert 'trees' in nex.blocks
+#         # did we find 3 trees?
+#         assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+#         # did we get the translation parsed properly.
+#         assert nex.trees.was_translated == True
+#         assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+#         # check last entry
+#         assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
+#         # check detranslate
+#         nex.trees.detranslate()
+#         assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
+#     
+# 
+# class Test_TreeHandler_Regression_RandomAPETrees(unittest.TestCase):
+#     def test_regression(self):
+#         nex = NexusReader()
+#         nex.read_string(
+#         """
+#         #NEXUS
+#         [R-package APE, Mon Apr  4 13:30:05 2011]
+# 
+#         BEGIN TAXA;
+#           DIMENSIONS NTAX = 5;
+#           TAXLABELS
+#               t5
+#               t2
+#               t3
+#               t4
+#               t1
+#           ;
+#         END;
+#         BEGIN TREES;
+#           TREE * UNTITLED = [&R] (((t5:0.8158685302,(t2:0.3804786047,t3:0.9345045802):0.9044287337):0.2170910214,t4:0.5744336853):0.9122619091,t1:0.2579922327);
+#           TREE * UNTITLED = [&R] (((t1:0.7530630897,t5:0.00636632205):0.8808043781,t2:0.967890667):0.861689928,(t3:0.795280267,t4:0.4398460181):0.2651306945);
+#         END;
+#         """
+#         )
+#         assert nex.trees.ntrees == 2
+# 
+# class Test_TreeHandler_Regression_LargeMesquiteTreee(unittest.TestCase):
+#     
+#     def setUp(self):
+#         import gzip
+#         with gzip.open(os.path.join(os.path.dirname(__file__), 'regression/large.trees.gz')) as handle:
+#             self.file_content = handle.read()
+#         self.nex = NexusReader()
+#         self.nex.read_string(self.file_content)
+#         
+#     def test_block_find(self):
+#         # did we get a tree block?
+#         assert 'trees' in self.nex.blocks
+#         
+#     def test_treecount(self):
+#         # did we find 3 trees?
+#         assert len(self.nex.blocks['trees'].trees) == 1 == self.nex.blocks['trees'].ntrees
+#         assert len(self.nex.trees.trees) == 1 == self.nex.trees.ntrees
+#         
+#     def test_taxa(self):
+#         expected = ['t%03d' % i for i in range(1, 401)]
+#         assert len(self.nex.trees.taxa) == len(expected)
+#         for taxon in expected:
+#             assert taxon in self.nex.trees.taxa
+#     
+#     def test_was_translated_flag_set(self):
+#         assert self.nex.trees.was_translated == True
+# 
+#     def test_parsing_sets_translators(self):
+#         assert len(self.nex.trees.translators) == 400 # 400 taxa expected
+#         
+#     def test_been_detranslated_flag_set(self):
+#         assert self.nex.trees._been_detranslated == False
+#         nex = deepcopy(self.nex)
+#         nex.trees.detranslate()
+#         assert nex.trees._been_detranslated == True
+#         print nex.trees.trees
+#         assert False
+
+class Test_TreeHandler_translate_regex(unittest.TestCase):
+    
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
-
-    def test_read_BEAST_format(self):
-        assert self.nex.trees[0].startswith('tree STATE_201000')
-
-    def test_block_find(self):
-        # did we get a tree block?
-        assert 'trees' in self.nex.blocks
-
-    def test_taxa(self):
-        expected = [
-            "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11", 
-            "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20", "V21", 
-            "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29", "M30", "P31", 
-            "T32", "R33", "P34", "R35", "W36", "F37", "F38"
-        ]
-        assert len(self.nex.trees.taxa) == len(expected)
-        for taxon in expected:
-            assert taxon in self.nex.trees.taxa
-            
-    def test_treecount(self):
-        assert len(self.nex.blocks['trees'].trees) == 1 == self.nex.blocks['trees'].ntrees
-        assert len(self.nex.trees.trees) == 1 == self.nex.trees.ntrees
-
-    def test_flag_set(self):
-        assert self.nex.trees.was_translated == True
-
-    def test_parsing_sets_translators(self):
-        assert len(self.nex.trees.translators) == 38 # 38 taxa in example trees
-
-    def test_detranslate_BEAST_format_extended(self):
-        self.nex.trees.detranslate()
-        for index, taxon in self.nex.trees.translators.items():
-            # check if the taxon name is present in the tree...
-            assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
-        assert self.nex.trees._been_detranslated == True
-    
-
-class Test_TreeHandler__detranslate_tree(unittest.TestCase):
-    
-    def test_no_change(self):
-        translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
-        oldtree = "tree a = ((Chris,Bruce),Tom);"
-        newtree = "tree a = ((Chris,Bruce),Tom);"
-        trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly NOT translate a simple tree"
+        th = TreeHandler()
+        self.findall = th._findall_chunks
         
-    def test_no_change_branchlengths(self):
-        translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
-        oldtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
-        newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
-        trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree, "Unable to correctly NOT translate a tree with branchlengths"
+    def test_tree(self):
+        expected = {
+            0: {
+                'start': '(',
+                'taxon': 'Chris',
+                'comment': None,
+                'branch': None,
+                'end': ','
+            },
+            1: {
+                'start': ',',
+                'taxon': 'Bruce',
+                'comment': None,
+                'branch': None,
+                'end': ')'
+            },
+            2: {
+                'start': ',',
+                'taxon': 'Tom',
+                'comment': None,
+                'branch': None,
+                'end': ')'
+            },
+        }
+        found = self.findall("tree a = ((Chris,Bruce),Tom);")
+        assert len(found) == 3
+        for match in expected:
+            for key in expected[match]:
+                if expected[match][key] != found[match][key]:
+                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
+                    
+        
+    def test_tree_digits(self):
+        expected = {
+            0: {
+                'start': '(',
+                'taxon': '1',
+                'comment': None,
+                'branch': None,
+                'end': ','
+            },
+            1: {
+                'start': ',',
+                'taxon': '2',
+                'comment': None,
+                'branch': None,
+                'end': ')'
+            },
+            2: {
+                'start': ',',
+                'taxon': '3',
+                'comment': None,
+                'branch': None,
+                'end': ')'
+            },
+        }
+        found = self.findall("tree a = ((1,2),3);")
+        assert len(found) == 3
+        for match in expected:
+            for key in expected[match]:
+                if expected[match][key] != found[match][key]:
+                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
     
-    def test_change(self):
-        translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
-        oldtree = "tree a = ((0,1),2);"
-        newtree = "tree a = ((Chris,Bruce),Tom);"
-        trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly detranslate a simple tree"
-    
-    def test_change_branchlengths(self):
-        translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
-        oldtree = "tree a = ((0:0.1,1:0.2):0.3,2:0.4);"
-        newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
-        trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly detranslate a tree with branchlengths"
-
-    def test_BEAST_format(self):
-        translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
-        oldtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
-        newtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
-        trans = TreeHandler()._detranslate_tree(oldtree, translatetable) 
-        assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
-
-
-class test_Regression_whitespace_in_matrix(unittest.TestCase):
-    """Regression: Test that leading whitespace in a data matrix is parsed ok"""
-    def test_regression(self):
-        nex = NexusReader()
-        nex.read_string("""
-        #NEXUS 
-    
-        Begin data;
-            Dimensions ntax=4 nchar=2;
-                                Format datatype=standard symbols="01" gap=-;
-                Matrix
-        Harry              00
-                Simon              01
-                        Betty              10
-                                    Louise 11
-            ;
-        End;
-        """)
-        assert nex.blocks['data'].nchar == 2
-        assert nex.blocks['data'].matrix['Harry'] == ['0', '0']
-        assert nex.blocks['data'].matrix['Simon'] == ['0', '1']
-        assert nex.blocks['data'].matrix['Betty'] == ['1', '0']
-        assert nex.blocks['data'].matrix['Louise'] == ['1', '1']
+    def test_tree_with_branchlengths(self):
+        expected = {
+            0: {
+                'start': '(',
+                'taxon': '1',
+                'comment': None,
+                'branch': '0.1',
+                'end': ','
+            },
+            1: {
+                'start': ',',
+                'taxon': '2',
+                'comment': None,
+                'branch': '0.2',
+                'end': ')'
+            },
+            2: {
+                'start': ',',
+                'taxon': '3',
+                'comment': None,
+                'branch': '0.3',
+                'end': ')'
+            },
+        }
+        found = self.findall("tree a = ((1:0.1,2:0.2):0.9,3:0.3):0.9;")
+        assert len(found) == 3
+        for match in expected:
+            for key in expected[match]:
+                if expected[match][key] != found[match][key]:
+                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
         
     
-
-class test_badchars_quoted_in_taxaname(unittest.TestCase):
-    def test_regressions(self):
-        nex = NexusReader()
-        nex.read_string("""
-        #NEXUS
-
-        Begin trees;
-        	Translate
-        		1 MANGIC_Bugan,
-        		2 MANGIC_Paliu,
-        		3 MANGIC_Mang,
-        		4 PALAUNGWA_Danaw,
-        		5 'PALAUNGWA_De.Ang'
-            ;
-            tree 1 = (1,2,3,4,5);
-        """)
-        # did we get a tree block?
-        assert 'trees' in nex.blocks
-        # did we find 3 trees?
-        assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
-        # did we get the translation parsed properly.
-        assert nex.trees.was_translated == True
-        assert len(nex.trees.translators) == 5 # 5 taxa in example trees
-        # check last entry
-        assert nex.trees.translators['5'] == 'PALAUNGWA_De.Ang'
-        # check detranslate
-        nex.trees.detranslate()
-        assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
-    
-
-class Test_TreeHandler_Regression_RandomAPETrees(unittest.TestCase):
-    def test_regression(self):
-        nex = NexusReader()
-        nex.read_string(
-        """
-        #NEXUS
-        [R-package APE, Mon Apr  4 13:30:05 2011]
-
-        BEGIN TAXA;
-        	DIMENSIONS NTAX = 5;
-        	TAXLABELS
-        		t5
-        		t2
-        		t3
-        		t4
-        		t1
-        	;
-        END;
-        BEGIN TREES;
-        	TREE * UNTITLED = [&R] (((t5:0.8158685302,(t2:0.3804786047,t3:0.9345045802):0.9044287337):0.2170910214,t4:0.5744336853):0.9122619091,t1:0.2579922327);
-        	TREE * UNTITLED = [&R] (((t1:0.7530630897,t5:0.00636632205):0.8808043781,t2:0.967890667):0.861689928,(t3:0.795280267,t4:0.4398460181):0.2651306945);
-        END;
-        """
-        )
-        assert nex.trees.ntrees == 2
+    def test_tree_complex(self):
+        expected = {
+            0: {
+                'start': '(',
+                'taxon': '1',
+                'comment': '[&var=1]',
+                'branch': '0.1',
+                'end': ','
+            },
+            1: {
+                'start': ',',
+                'taxon': '2',
+                'comment': '[&var=2]',
+                'branch': '0.2',
+                'end': ')'
+            },
+            2: {
+                'start': ',',
+                'taxon': '3',
+                'comment': '[&var=4]',
+                'branch': '0.3',
+                'end': ')'
+            },
+        }
+        found = self.findall("tree a = ((1:[&var=1]0.1,2:[&var=2]0.2):[&var=3]0.9,3:[&var=4]0.3):[&var=5]0.9;")
+        assert len(found) == 3
+        for match in expected:
+            for key in expected[match]:
+                if expected[match][key] != found[match][key]:
+                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
+        
+        
 
 if __name__ == '__main__':
     unittest.main()
