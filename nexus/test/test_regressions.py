@@ -67,6 +67,11 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader(os.path.join(REGRESSION_DIR, 'mesquite_formatted_branches.trees'))
     
+    def test_attributes(self):
+        assert len(self.nex.trees.attributes) == 2
+        assert self.nex.trees.attributes[0] == """Title 'Trees from "temp.trees"';"""
+        assert self.nex.trees.attributes[1] == """LINK Taxa = Untitled_Block_of_Taxa;"""
+        
     def test_found_trees(self):
         assert self.nex.trees.ntrees == 1
     
@@ -83,5 +88,4 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
         assert self.nex.trees.translators['1'] == 'A'
         assert self.nex.trees.translators['2'] == 'B'
         assert self.nex.trees.translators['3'] == 'C'
-        
         
