@@ -572,10 +572,15 @@ class NexusReader(object):
         """
         self.filename = filename
         self.short_filename = os.path.split(filename)[1]
-        try:
-            handle = open(filename, 'rU')
-        except IOError:
+        
+        if os.path.isfile(filename) == False:
             raise IOError("Unable To Read File %s" % filename)
+        
+        if filename.endswith('.gz'):
+            import gzip
+            handle = gzip.open(filename, 'rb')
+        else:
+            handle = open(filename, 'rU')
         self._read(handle)
         handle.close()
     
