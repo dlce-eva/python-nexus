@@ -136,10 +136,12 @@ class TaxaHandler(GenericHandler):
         
         :return: String
         """
-        out = ['begin taxa;', 'dimensions ntax=%d' % self.ntaxa, 'taxlabels']
+        out = ['begin taxa;']
         # handle any attributes
         for att in self.attributes:
             out.append("\t%s" % att)
+        out.append('\tdimensions ntax=%d;' % self.ntaxa)
+        out.append('\ttaxlabels')
         # taxa labels
         for idx, taxon in enumerate(self.taxa, 1):
             out.append("\t[%d] '%s'" % (idx, taxon))
@@ -296,6 +298,8 @@ class TreeHandler(GenericHandler):
         :return: String
         """
         out = ['begin trees;']
+        for attr in self.attributes:
+            out.append("\t"+ attr)
         if self.was_translated and self._been_detranslated == False:
             out.append('\ttranslate')
             for index in sorted([int(k) for k in self.translators.keys()]):
@@ -573,6 +577,8 @@ class DataHandler(GenericHandler):
 
         out = []
         out.append('begin data;')
+        for att in self.attributes:
+            out.append("\t%s" % att)
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
         out.append(_make_format_line(self))
         out.append("matrix")
