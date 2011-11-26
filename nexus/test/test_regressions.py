@@ -60,7 +60,62 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
         assert 'taxa' in self.nex.blocks
         assert len(self.nex.taxa.attributes) == 1
         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
+    
+    def test_write(self):
+        expected_patterns = [
+            '^begin taxa;$',
+            '^\s+TITLE Untitled_Block_of_Taxa;$',
+            '^\s+dimensions ntax=3;$',
+            '^\s+taxlabels$',
+            "^\s+\[1\] 'A'$",
+            "^\s+\[2\] 'B'$",
+            "^\s+\[3\] 'C'$",
+            '^;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
+
+
+class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
+    """Regression: Test that we can parse MESQUITE data blocks"""
+    
+    def setUp(self):
+        self.nex = NexusReader()
+        self.nex.read_string("""
+        #NEXUS 
         
+        Begin data;
+        TITLE something;
+        Dimensions ntax=2 nchar=2;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        Harry              00
+        Simon              01
+            ;
+        End;
+        """)
+    
+    def test_attr_find(self):
+        assert len(self.nex.data.attributes) == 1
+        
+    def test_write(self):
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+TITLE something;$',
+            '^\s+dimensions ntax=2 nchar=2;$',
+            '^\s+format datatype=standard symbols="01" gap=-;$',
+            "^matrix$",
+            "^Harry\s+00",
+            "^Simon\s+01$",
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
+    
 
 class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
     """Regression: Test that we can parse MESQUITE taxa blocks"""
@@ -88,4 +143,8 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
         assert self.nex.trees.translators['1'] == 'A'
         assert self.nex.trees.translators['2'] == 'B'
         assert self.nex.trees.translators['3'] == 'C'
-        
+    
+    def test_write(self):
+        written = self.nex.write()
+        assert """Title 'Trees from "temp.trees"';""" in written
+        assert """LINK Taxa = Untitled_Block_of_Taxa;""" in written
