@@ -440,6 +440,17 @@ class DataHandler(GenericHandler):
         self.matrix[taxon] = self.matrix.get(taxon, [])
         self.matrix[taxon].extend(site_values)
         
+    def del_taxon(self, taxon):
+        """
+        Removes `taxon` from the data
+        
+        :param taxon: taxa name
+        :type data: string
+        
+        :return: None
+        """
+        del(self.matrix[taxon])
+        
     def parse(self, data):
         """
         Parses a `data` block
