@@ -1,2 +1,2 @@
 #!/bin/bash
-nosetests -w nexus/test/ $*
+nosetests --with-progressive -w nexus/test/ $*

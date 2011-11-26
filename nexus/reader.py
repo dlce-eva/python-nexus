@@ -316,13 +316,10 @@ class DataHandler(GenericHandler):
     _character_block_pattern = re.compile(r"""CHARSTATELABELS(.*?);""", re.IGNORECASE | re.DOTALL)
     
     def __init__(self):
-        self.taxa = []
-        self.ntaxa = 0
         self.symbols = set()
         self.characters = {}
         self.charlabels = {}
         self.attributes = []
-        self.nchar = 0
         self.format = {}
         self.gaps = None
         self.missing = None
@@ -331,7 +328,22 @@ class DataHandler(GenericHandler):
 
     def __getitem__(self, index):
         return (self.taxa[index], self.matrix[self.taxa[index]])
+    
+    @property
+    def ntaxa(self):
+        """Number of Taxa"""
+        return len(self.matrix)
+        
+    @property
+    def nchar(self):
+        """Number of Characters"""
+        return len(self.matrix[self.matrix.keys()[0]])
 
+    @property
+    def taxa(self):
+        """Taxa list"""
+        return self.matrix.keys()
+    
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
@@ -412,6 +424,21 @@ class DataHandler(GenericHandler):
         if multistate:
             raise NexusFormatException("Data Matrix contains incomplete multistate values")
         return out
+    
+    def add_taxon(self, taxon, site_values = None):
+        """
+        Adds a `taxon` to the matrix with values from `site_values`
+        
+        :param taxon: taxa name
+        :type data: string
+        
+        :param site_values: site values
+        :type data: list
+        
+        :return: None
+        """
+        self.matrix[taxon] = self.matrix.get(taxon, [])
+        self.matrix[taxon].extend(site_values)
         
     def parse(self, data):
         """
@@ -428,6 +455,8 @@ class DataHandler(GenericHandler):
         self.format = self.parse_format_line("\n".join(data))
         data = self._parse_charstate_block(data)
         
+        _dimensions_found_taxa, _dimensions_found_chars = 0, 0
+        
         seen_matrix = False
         for line in data:
             lline = line.lower().strip()
@@ -435,12 +464,11 @@ class DataHandler(GenericHandler):
             if lline.startswith('dimensions '):
                 # try for nchar/ntax
                 try:
-                    self.ntaxa = int(NTAX_PATTERN.findall(line)[0])
+                    _dimensions_found_taxa = int(NTAX_PATTERN.findall(line)[0])
                 except IndexError:
-                    self.ntaxa = None
-
-                self.nchar = int(NCHAR_PATTERN.findall(line)[0])
-
+                    _dimensions_found_taxa = None
+                _dimensions_found_chars = int(NCHAR_PATTERN.findall(line)[0])
+                
             # handle MESQUITE attributes
             elif MESQUITE_TITLE_PATTERN.match(line):
                 self.attributes.append(line)
@@ -465,25 +493,17 @@ class DataHandler(GenericHandler):
                 except ValueError:
                     continue
                 
-                taxon = taxon.strip()
-                taxon = QUOTED_PATTERN.sub('\\1', taxon)
-                sites = sites.strip()
-                
-                if taxon not in self.taxa:
-                    self.taxa.append(taxon)
-                    
-                self.matrix[taxon] = self.matrix.get(taxon, [])
-                self.matrix[taxon].extend(self._parse_sites(sites))
+                taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
+                self.add_taxon(taxon, self._parse_sites(sites.strip()))
                 
         self._load_characters()
         
         # WARNING: what if ntaxa and nchar in format string does not give us the right answer?
         # Should we raise an error instead?
-        if self.ntaxa != len(self.taxa):
-            self.ntaxa = len(self.taxa)
-        
-        if self.nchar != len(self.characters):
-            self.nchar = len(self.characters)
+        # assert self.ntaxa == _dimensions_found_taxa, \
+        #     "Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa)
+        # assert self.nchar == _dimensions_found_chars, \
+        #     "Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars)
     
     def _load_characters(self):
         """Loads characters into self.characters section"""
