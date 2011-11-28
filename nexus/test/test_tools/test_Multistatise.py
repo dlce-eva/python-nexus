@@ -47,7 +47,7 @@ class Test_Multistatise(unittest.TestCase):
         #NEXUS
         
         BEGIN DATA;
-            DIMENSIONS  NTAX=34 NCHAR=7;
+            DIMENSIONS  NTAX=15 NCHAR=7;
             FORMAT DATATYPE=STANDARD MISSING=? GAP=- INTERLEAVE=YES;
         MATRIX
         
