@@ -1,12 +1,15 @@
 """Tests for nexus reading"""
 import os
 import re
+import warnings
 import unittest
 from copy import deepcopy
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
+
+warnings.simplefilter("always")
 
 class Test_NexusReader_Core(unittest.TestCase):
     """Test the Core functionality of NexusReader"""
@@ -159,27 +162,36 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
             site_data = self.nex.data.characters[i]
             for taxon, value in site_data.items():
                 assert self.expected[taxon][i] == value
-
-    def test_numcharacters_checking(self):
+    
+    def test_incorrect_dimensions_warnings_ntaxa(self):
         nex = NexusReader()
-        nex.read_string(
-            """Begin data;
-            Dimensions ntax=1 nchar=2;
-            Format datatype=standard symbols="01" gap=-;
-            Matrix
-            Harry              1
-            ;""")
-        assert nex.data.nchar == 1
+        with warnings.catch_warnings(record=True) as w:
+            nex.read_string(
+                """Begin data;
+                Dimensions ntax=5 nchar=1;
+                Format datatype=standard symbols="01" gap=-;
+                Matrix
+                Harry              1
+                ;""")
+            assert len(w) == 1, 'Expected 1 warning, got %r' % w 
+            assert issubclass(w[-1].category, UserWarning)
+            assert "Expected" in str(w[-1].message)
+            assert nex.data.nchar == 1
         
-        nex = NexusReader()
-        nex.read_string(
-            """Begin data;
-            Dimensions ntax=4 nchar=1;
-            Format datatype=standard symbols="01" gap=-;
-            Matrix
-            Harry              11111
-            ;""")
-        assert nex.data.nchar == 5
+    def test_incorrect_dimensions_warnings_nchar(self):
+        with warnings.catch_warnings(record=True) as w:
+            nex = NexusReader()
+            nex.read_string(
+                """Begin data;
+                Dimensions ntax=1 nchar=5;
+                Format datatype=standard symbols="01" gap=-;
+                Matrix
+                Harry              1
+                ;""")
+            assert len(w) == 1, 'Expected 1 warning, got %r' % w 
+            assert issubclass(w[-1].category, UserWarning)
+            assert "Expected" in str(w[-1].message)
+            assert nex.data.nchar == 1
         
 
 class Test_DataHandler_InterleavedNexusFormat(unittest.TestCase):

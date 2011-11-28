@@ -21,7 +21,7 @@ class Test_CountSiteValues(unittest.TestCase):
         nexus = NexusReader()
         nexus.read_string("""#NEXUS 
         Begin data;
-        Dimensions ntax=4 nchar=3;
+        Dimensions ntax=5 nchar=3;
         Format datatype=standard symbols="01" gap=-;
         Matrix
         Harry              010  [No missing]
@@ -41,7 +41,7 @@ class Test_CountSiteValues(unittest.TestCase):
         nexus = NexusReader()
         nexus.read_string("""#NEXUS 
         Begin data;
-        Dimensions ntax=4 nchar=3;
+        Dimensions ntax=5 nchar=3;
         Format datatype=standard symbols="01" gap=-;
         Matrix
         Harry              0A0  [No missing]
@@ -61,7 +61,7 @@ class Test_CountSiteValues(unittest.TestCase):
         nexus = NexusReader()
         nexus.read_string("""#NEXUS 
         Begin data;
-        Dimensions ntax=4 nchar=3;
+        Dimensions ntax=5 nchar=3;
         Format datatype=standard symbols="01" gap=-;
         Matrix
         Harry              0A0  [No missing]
