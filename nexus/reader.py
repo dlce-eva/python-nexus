@@ -3,6 +3,7 @@ Tools for reading a nexus file
 """
 import re
 import os
+import warnings
 
 try:
     import io
@@ -470,19 +471,23 @@ class DataHandler(GenericHandler):
         self.format = self.parse_format_line("\n".join(data))
         data = self._parse_charstate_block(data)
         
-        _dimensions_found_taxa, _dimensions_found_chars = 0, 0
+        _dimensions_found_taxa, _dimensions_found_chars = None, None
         
         seen_matrix = False
         for line in data:
             lline = line.lower().strip()
             # Dimensions line
             if lline.startswith('dimensions '):
-                # try for nchar/ntax
+                # try for ntaxa
                 try:
                     _dimensions_found_taxa = int(NTAX_PATTERN.findall(line)[0])
                 except IndexError:
-                    _dimensions_found_taxa = None
-                _dimensions_found_chars = int(NCHAR_PATTERN.findall(line)[0])
+                    pass
+                # and nchar
+                try:
+                    _dimensions_found_chars = int(NCHAR_PATTERN.findall(line)[0])
+                except IndexError:
+                    pass
                 
             # handle MESQUITE attributes
             elif MESQUITE_TITLE_PATTERN.match(line):
@@ -513,12 +518,12 @@ class DataHandler(GenericHandler):
                 
         self._load_characters()
         
-        # WARNING: what if ntaxa and nchar in format string does not give us the right answer?
-        # Should we raise an error instead?
-        # assert self.ntaxa == _dimensions_found_taxa, \
-        #     "Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa)
-        # assert self.nchar == _dimensions_found_chars, \
-        #     "Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars)
+        # Raise Warnings if ntaxa or nchar in format string does not give us the right answer
+        if _dimensions_found_taxa is not None and self.ntaxa != _dimensions_found_taxa:
+            warnings.warn("Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa))
+            
+        if _dimensions_found_chars is not None and self.nchar != _dimensions_found_chars:
+            warnings.warn("Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars))
     
     def _load_characters(self):
         """Loads characters into self.characters section"""
