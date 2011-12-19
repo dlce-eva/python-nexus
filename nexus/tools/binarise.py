@@ -1,4 +1,5 @@
 from nexus import NexusWriter
+from nexus.tools import check_for_valid_NexusReader
 
 def binarise(nexus_obj, one_nexus_per_block=False):
     """

@@ -1,5 +1,5 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
 

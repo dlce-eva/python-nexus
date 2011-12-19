@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader
 from nexus.tools import count_site_values
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')

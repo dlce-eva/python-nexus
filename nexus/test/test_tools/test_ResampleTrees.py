@@ -2,7 +2,7 @@
 import os
 import unittest
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader
 from nexus.bin.nexus_treemanip import run_resample
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')

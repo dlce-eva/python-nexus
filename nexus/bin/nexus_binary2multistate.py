@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
-import os
-from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
+from nexus import NexusReader, VERSION
 from nexus.tools import multistatise, combine_nexuses
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
