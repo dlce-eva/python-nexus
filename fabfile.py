@@ -1,8 +1,18 @@
 from fabric.api import local
 
+project = 'nexus'
+
 def test():
     """Runs tests"""
-    local("nosetests --with-progressive -w nexus/test/")
+    local("nosetests --with-progressive -w %s/test/" % project)
+
+def lint():
+    """Runs pyflakes"""
+    local("pyflakes %s" % project)
+    
+def py2to3():
+    """Runs 2to3"""
+    local("2to3 %s" % project)
 
 def update():
     """Updates official bitbucket repo"""
