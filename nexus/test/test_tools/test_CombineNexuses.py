@@ -2,7 +2,7 @@ import os
 import re
 import unittest
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader
 from nexus.tools import combine_nexuses
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')

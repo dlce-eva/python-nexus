@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from nexus import NexusReader, NexusWriter, NexusFormatException
+from nexus import NexusReader
 from nexus.tools import find_unique_sites
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')

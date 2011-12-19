@@ -2,8 +2,13 @@
 import os
 import unittest
 
-from nexus import NexusReader, NexusWriter
-from nexus.bin.nexus_treemanip import *
+from nexus import NexusReader
+from nexus.bin.nexus_treemanip import TreeListException
+from nexus.bin.nexus_treemanip import parse_deltree, run_deltree
+from nexus.bin.nexus_treemanip import run_resample
+from nexus.bin.nexus_treemanip import run_removecomments
+from nexus.bin.nexus_treemanip import run_detranslate
+from nexus.bin.nexus_treemanip import run_random
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 

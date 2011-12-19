@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
-import os
-from nexus import NexusReader, NexusFormatException, VERSION
+from nexus import NexusReader, VERSION
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """deinterleave - python-nexus tools v%(version)s
 Converts an interleaved nexus to a simple nexus.
