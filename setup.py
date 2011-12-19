@@ -5,6 +5,7 @@ setup(
     name="python-nexus", 
     version=version,
     description="A generic nexus (phylogenetics) file format (.nex, .trees) reader for python",
+    long_description=nexus.__doc__,
     classifiers=[
         "Programming Language :: Python", 
         "Intended Audience :: Science/Research", 
