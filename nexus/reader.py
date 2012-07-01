@@ -173,13 +173,16 @@ class TreeHandler(GenericHandler):
         self._been_detranslated = False # has detranslate been called?
         self.translators = {}
         self.attributes = []
-        self.taxa = []
         self.trees = []
         super(TreeHandler, self).__init__()
         
     def __getitem__(self, index):
         return self.trees[index]
     
+    @property
+    def taxa(self):
+        return self.translators.values()
+        
     @property
     def ntrees(self):
         return len(self.trees)
@@ -220,19 +223,20 @@ class TreeHandler(GenericHandler):
                     self.translators[taxon_id] = taxon
                 if line.endswith(';'):
                     lost_in_translation = False
-                    self.taxa = self.translators.values()
                     
             elif self.is_tree.search(line):
                 if lost_in_translation == True:
                     # can't find a tree if we're still in the translate block!
                     raise NexusFormatException("Tree block has incomplete translate table")
-                
                 self.trees.append(line)
         
         # get taxa if not translated.
         if len(self.translators) == 0:
-            self.taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
-        
+            taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
+            for taxon_id, t in enumerate(taxa, 1):
+                self.translators[taxon_id] = t
+            
+            
     
     def detranslate(self):
         """Detranslates all trees in the file"""
