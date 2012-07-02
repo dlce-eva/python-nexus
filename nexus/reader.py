@@ -702,7 +702,7 @@ class NexusReader(object):
         :return: String
         """
         out = ["#NEXUS\n"]
-        for block in self.raw_blocks:
+        for block in self.blocks:
             out.append(self.blocks[block].write())
         return "\n".join(out)
     
