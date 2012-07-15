@@ -32,6 +32,7 @@ setup(
         'nexus/bin/nexus_randomise.py',
         'nexus/bin/nexus_tally.py',
         'nexus/bin/nexus_treemanip.py',
+        'nexus/bin/nexus_anonymise.py',
     ],
 )
 

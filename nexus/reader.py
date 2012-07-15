@@ -95,11 +95,14 @@ class TaxaHandler(GenericHandler):
     def __init__(self):
         self.taxa = []
         self.attributes = []
-        self.ntaxa = 0
         super(TaxaHandler, self).__init__()
         
     def __getitem__(self, index):
         return self.taxa[index]
+
+    @property
+    def ntaxa(self):
+        return len(self.taxa)
         
     def parse(self, data):
         """
@@ -116,7 +119,7 @@ class TaxaHandler(GenericHandler):
             line = self.remove_comments(line).strip()
             line = QUOTED_PATTERN.sub('\\1', line)
             if self.is_dimensions.match(line):
-                self.ntaxa = int(self.is_dimensions.findall(line)[0])
+                found_ntaxa = int(self.is_dimensions.findall(line)[0])
             elif line == ';':
                 continue
             elif self.is_taxlabel_block.match(line):
@@ -128,8 +131,7 @@ class TaxaHandler(GenericHandler):
                 self.attributes.append(line)
             elif MESQUITE_LINK_PATTERN.match(line):
                 self.attributes.append(line)
-            
-        assert self.ntaxa == len(self.taxa)
+        assert found_ntaxa == self.ntaxa
         
     def write(self):
         """
