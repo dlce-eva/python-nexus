@@ -58,7 +58,7 @@ class GenericHandler(object):
         :return: None
         """
         self.block.extend(data)
-            
+    
     def remove_comments(self, line):
         """
         Removes comments from lines
@@ -74,9 +74,7 @@ class GenericHandler(object):
         
         :return: Returns a cleaned string.
         """
-        if '[' in line:
-            return COMMENT_PATTERN.sub('', line)
-        return line
+        return COMMENT_PATTERN.sub('', line)
         
     def write(self):
         """
@@ -629,7 +627,6 @@ class NexusReader(object):
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
-    
     
     def read_file(self, filename):
         """
