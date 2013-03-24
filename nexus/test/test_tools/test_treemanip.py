@@ -39,7 +39,7 @@ class Test_TreeManip_run_resample(unittest.TestCase):
 class Test_TreeManip_run_removecomments(unittest.TestCase):
     
     def test_run_removecomments(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
+        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-beast.trees'))
         new_nex = run_removecomments(nex, do_print=False)
         assert '[&lnP=-15795.47019648783]' not in new_nex.trees[0]
 

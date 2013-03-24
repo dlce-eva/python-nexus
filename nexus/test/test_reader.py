@@ -411,7 +411,7 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
 class Test_TreeHandler_BEAST_Format(unittest.TestCase):
 
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
+        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-beast.trees'))
 
     def test_read_BEAST_format(self):
         assert self.nex.trees[0].startswith('tree STATE_201000')
@@ -620,7 +620,6 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         newtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable) 
         assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
-
 
 
 if __name__ == '__main__':

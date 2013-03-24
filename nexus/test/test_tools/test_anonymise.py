@@ -61,7 +61,7 @@ class Test_Anonymise(unittest.TestCase):
             assert hashtaxon in nex.trees.taxa
     
     def test_anonymise_beast_treefile(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example_beast.trees'))
+        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-beast.trees'))
         nex = anonymise(nex)
         expected = [
             "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11", 
@@ -72,13 +72,13 @@ class Test_Anonymise(unittest.TestCase):
         # check taxa block
         for taxon in expected:
             assert taxon not in nex.taxa.taxa, '%s should have been anonymised' % taxon
-            hashtaxon = hash(os.path.join(EXAMPLE_DIR, 'example_beast.trees'), taxon)
+            hashtaxon = hash(os.path.join(EXAMPLE_DIR, 'example-beast.trees'), taxon)
             assert hashtaxon in nex.taxa.taxa
         
         # check trees block
         for taxon in expected:
             assert taxon not in nex.trees.taxa, '%s should have been anonymised' % taxon
-            hashtaxon = hash(os.path.join(EXAMPLE_DIR, 'example_beast.trees'), taxon)
+            hashtaxon = hash(os.path.join(EXAMPLE_DIR, 'example-beast.trees'), taxon)
             assert hashtaxon in nex.trees.taxa
         
     def test_anonymise_characters(self):
