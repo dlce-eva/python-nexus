@@ -24,15 +24,18 @@ setup(
     package_dir={'nexus': 'nexus'},
     package_data={'nexus/examples': ['*.nex', '*.trees']},
     scripts=[
+        'nexus/bin/nexus_anonymise.py',
+        'nexus/bin/nexus_binary2multistate.py'
         'nexus/bin/nexus_combine_nexus.py',
         'nexus/bin/nexus_deinterleave.py',
         'nexus/bin/nexus_describecharacter.py',
         'nexus/bin/nexus_describetaxa.py',
+        'nexus/bin/nexus_multistate2binary.py'
         'nexus/bin/nexus_nexusmanip.py',
         'nexus/bin/nexus_randomise.py',
         'nexus/bin/nexus_tally.py',
+        'nexus/bin/nexus_to_fasta.py',
         'nexus/bin/nexus_treemanip.py',
-        'nexus/bin/nexus_anonymise.py',
     ],
 )
 
