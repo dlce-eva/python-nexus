@@ -45,6 +45,13 @@ class Test_Recode_To_Binary(unittest.TestCase):
         assert recoded['Dutch'] == '01', recoded
         assert recoded['Latin'] == '10', recoded
         
+    def test_absent_state_but_keep_zero(self):
+        orig = {'Maori': '0', 'Dutch': '2', 'Latin': '1'}
+        recoded = _recode_to_binary(orig, keep_zero=True)
+        assert recoded['Maori'] == '100', recoded
+        assert recoded['Dutch'] == '001', recoded
+        assert recoded['Latin'] == '010', recoded
+        
     def test_missing_state(self):
         orig = {'Maori': '?', 'Dutch': '2', 'Latin': '1'}
         recoded = _recode_to_binary(orig)

@@ -1,9 +1,25 @@
 from nexus import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
-def _recode_to_binary(char):
+def _recode_to_binary(char, keep_zero=False):
     """
     Recodes a dictionary to binary data. 
+    
+    :param char: A dictionary of taxa to state values
+    :type char: dict 
+    
+    :param keep_zero: A boolean flag denoting whether to 
+        treat '0' as a missing state or not. The default
+        (False) is to ignore '0' as a trait absence.
+        
+        Setting this to True will treat '0' as a unique
+        state.
+    :type keep_zero: Boolean
+
+    :return: A dictionary of taxa to recoded values.
+    :raises ValueError: if any of the states in the 
+        `char` dictionary is not a string (i.e. 
+        integer or None values)
     
     >>> recode, table = _recode_to_binary({'Maori': '1', 'Dutch': '2', 'Latin': '1'})
     >>> recode['Maori']
@@ -15,16 +31,17 @@ def _recode_to_binary(char):
     """
     
     newdata = {}
-    unwanted_states = ('-', '?', '0')
-    states = list(set(char.values())) # get uniques
+    
+        # unwanted states
+    unwanted_states = ['-', '?']
+    if not keep_zero:
+        unwanted_states.append('0')
+    
+    # get unique states
+    states = list(set([c for c in char.values() if c not in unwanted_states])) 
     
     if not all(isinstance(s, basestring) for s in states):
         raise ValueError('Data must be strings')
-    
-    # clean up missing states.
-    for u in unwanted_states:
-        if u in states:
-            states.remove(u)
     
     states = sorted(states)
     num_states = len(states)
