@@ -65,6 +65,15 @@ class Test_Recode_To_Binary(unittest.TestCase):
         assert recoded['Maori'] == '100'
         assert recoded['Dutch'] == '010'
         assert recoded['Latin'] == '001'
+    
+    @unittest.expectedFailure
+    def test_polymorphic_states(self):
+        orig = {'Maori': '1,3', 'Dutch': '2', 'Latin': '3'}
+        recoded = _recode_to_binary(orig)
+        assert recoded['Maori'] == '101', recoded
+        assert recoded['Dutch'] == '010', recoded
+        assert recoded['Latin'] == '001', recoded
+
 
 
 class Test_Binarise(unittest.TestCase):
@@ -116,34 +125,6 @@ class Test_Binarise(unittest.TestCase):
         assert re.search("Maori\s+100100", nexus)
         assert re.search("Latin\s+001001", nexus)
         
-#     # def test_to_binary_missingdata(self):
-#     #     """Test Nexus -> Binary: Three Character, missing data"""
-#     #     # add some more data...
-#     #     n = NexusWriter()
-#     #     n.add('Maori', 1, 'A')
-#     #     n.add('Latin', 1, 'A')
-#     #     n.add('Dutch', 1, '?')
-#     #     n.add('Maori', 2, 'A')
-#     #     n.add('Latin', 2, '?')
-#     #     # no Dutch state for char 3...
-#     #     nexus = n.make_nexus(interleave=False)
-#     #     assert re.search("Dutch\s+00", nexus)
-#     #     assert re.search("Maori\s+11", nexus)
-#     #     assert re.search("Latin\s+10", nexus)
-#         
-#     # def test_to_binary_ignores_missing_sites(self):
-#     #     self.nex.add("Maori", 3, "-")
-#     #     self.nex.add("Dutch", 3, "A")
-#     #     self.nex.add("Latin", 3, "B")
-#     #     assert len(self.nex.characters) == 8 # should not be 9!
-#     #     assert self.nex.data['3_1']['Latin'] == '0'
-#     #     assert self.nex.data['3_1']['Maori'] == '0'
-#     #     assert self.nex.data['3_1']['Dutch'] == '1'
-#     #     assert self.nex.data['3_2']['Latin'] == '1'
-#     #     assert self.nex.data['3_2']['Maori'] == '0'
-#     #     assert self.nex.data['3_2']['Dutch'] == '0'
-#     #     
-#     #     assert '3_3' not in self.nex.data
 
 
 if __name__ == '__main__':
