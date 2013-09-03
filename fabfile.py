@@ -4,7 +4,7 @@ project = 'nexus'
 
 def test():
     """Runs tests"""
-    local("nosetests --with-progressive -w %s/test/" % project)
+    local("nose2")
 
 def lint():
     """Runs pyflakes"""
