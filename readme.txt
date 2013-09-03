@@ -272,14 +272,6 @@ NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
 include a character block in the nexus (if you have character labels for example) 
 by setting charblock to True.
 
-NexusWriter also has a recode_to_binary function to recode multistate characters to 
-binary ones. 
-
->>> n.recode_to_binary()
-
-(... this may not work as expected though - so double check the results!)
-
-
 
 Nexus manipulation scripts included
 ================================================================================
