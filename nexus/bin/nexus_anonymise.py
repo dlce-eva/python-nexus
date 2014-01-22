@@ -39,7 +39,7 @@ def hash(salt, taxon):
 if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog fudge.nex output.nex")
-    options, nexuslist = parser.parse_args()
+    options, args = parser.parse_args()
     
     try:
         nexusname = args[0]
