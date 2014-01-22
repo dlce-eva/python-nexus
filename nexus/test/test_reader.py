@@ -66,6 +66,23 @@ class Test_NexusReader_Core(unittest.TestCase):
         assert text == nex.write()
 
 
+class Test_DataHandler_parse_sites(unittest.TestCase):
+    def test_simple(self):
+        assert DataHandler()._parse_sites('123') == ['1', '2', '3']
+    
+    def test_multi(self):
+        assert DataHandler()._parse_sites('1(12)') == ['1', '12']
+    
+    def test_comma(self):
+        assert DataHandler()._parse_sites('123(4,5)56') == ['1', '2', '3', '4,5', '5', '6']
+    
+    def test_space(self):
+        assert DataHandler()._parse_sites('123(4 5)56') == ['1', '2', '3', '4 5', '5', '6']
+    
+    def test_sequence(self):
+        assert DataHandler()._parse_sites("ACGTU?") == ['A', 'C', 'G', 'T', 'U', '?']
+
+
 class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
     expected = {
         'Harry': ['0', '0'],
@@ -80,7 +97,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         assert 'data' in self.nex.blocks
         assert hasattr(self.nex, 'data')
         assert self.nex.data == self.nex.data
-        
+    
     def test_raw(self):
         assert self.nex.data.block == [
             'Begin data;', 
