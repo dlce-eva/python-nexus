@@ -73,14 +73,19 @@ class Test_Recode_To_Binary(unittest.TestCase):
         assert recoded['Dutch'] == '010'
         assert recoded['Latin'] == '001'
     
-    @unittest.expectedFailure
-    def test_polymorphic_states(self):
+    def test_polymorphic_states_comma(self):
         orig = {'Maori': '1,3', 'Dutch': '2', 'Latin': '3'}
         recoded = _recode_to_binary(orig)
         assert recoded['Maori'] == '101', recoded
         assert recoded['Dutch'] == '010', recoded
         assert recoded['Latin'] == '001', recoded
-
+        
+    def test_polymorphic_states_space(self):
+        orig = {'Maori': '1 3', 'Dutch': '2', 'Latin': '3'}
+        recoded = _recode_to_binary(orig)
+        assert recoded['Maori'] == '101', recoded
+        assert recoded['Dutch'] == '010', recoded
+        assert recoded['Latin'] == '001', recoded
 
 
 class Test_Binarise(unittest.TestCase):
