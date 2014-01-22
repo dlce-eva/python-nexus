@@ -58,7 +58,12 @@ class GenericHandler(object):
         :return: None
         """
         self.block.extend(data)
-    
+        # save comments
+        self.comments = []
+        for line in data:
+            if line.strip().startswith("[") and line.strip().endswith("]"):
+                self.comments.append(line)
+        
     def remove_comments(self, line):
         """
         Removes comments from lines

@@ -622,5 +622,18 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
 
 
+class Test_Inline_Comments(unittest.TestCase):
+    def setUp(self):
+        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-comments.nex'))
+    
+    def test_whole_file_comments(self):
+        assert self.nex.comments == ['[one]']
+        
+    def test_taxa_comments(self):
+        assert self.nex.blocks['data'].comments == ['[two]'], self.nex.data.comments
+        
+    def test_trees_comments(self):
+        assert self.nex.blocks['characters'].comments == ['[three]']
+        
 if __name__ == '__main__':
     unittest.main()
