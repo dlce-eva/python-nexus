@@ -64,11 +64,14 @@ class NexusWriter:
         
     def _make_matrix_block(self, interleave):
         """Generates a matrix block"""
+        
+        max_taxon_size = max([len(t) for t in self.taxalist]) + 3
+        
         out = []
         if interleave:
             for c in self.characters:
                 for t in self.taxalist:
-                    out.append("%s %s" % (t.ljust(25), self.data[c].get(t, self.MISSING)))
+                    out.append("%s %s" % (t.ljust(max_taxon_size), self.data[c].get(t, self.MISSING)))
                 out.append("")
         else:
             for t in sorted(self.taxalist):
@@ -78,7 +81,7 @@ class NexusWriter:
                     if len(value) > 1: # wrap equivocal states in ()'s
                         value = "(%s)" % value
                     s.append(value)
-                out.append("%s %s" % (t.ljust(25), ''.join(s)))
+                out.append("%s %s" % (t.ljust(max_taxon_size), ''.join(s)))
         return "\n".join(out)
         
     def _make_comments(self):
