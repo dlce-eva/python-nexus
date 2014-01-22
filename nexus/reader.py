@@ -395,13 +395,15 @@ class DataHandler(GenericHandler):
     def _parse_sites(self, sites):
         """
         Parses a string of sites and returns a list of site values
-
+        
         >>> DataHandler()._parse_sites('123')
         ['1', '2', '3']
         >>> DataHandler()._parse_sites('1(12)')
         ['1', '12']
         >>> DataHandler()._parse_sites('123(4,5)56')
         ['1', '2', '3', '4,5', '5', '6']
+        >>> DataHandler()._parse_sites('123(4 5)56')
+        ['1', '2', '3', '4 5', '5', '6']
         >>> DataHandler()._parse_sites("ACGTU?")
         ['A', 'C', 'G', 'T', 'U', '?']
         

@@ -1,0 +1,18 @@
+#NEXUS
+[one]
+
+BEGIN Taxa;
+[two]
+DIMENSIONS ntax=4;
+TAXLABELS
+[1] 'John'
+[2] 'Paul'
+[3] 'George'
+[4] 'Ringo'
+;
+END; [Taxa]
+
+BEGIN trees;
+    [three]
+	tree tree = (1,2,3,4);
+end;
