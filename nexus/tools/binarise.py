@@ -32,23 +32,28 @@ def _recode_to_binary(char, keep_zero=False):
     
     newdata = {}
     
-        # unwanted states
+    # unwanted states
     unwanted_states = ['-', '?']
     if not keep_zero:
         unwanted_states.append('0')
     
-    # get unique states
-    states = list(set([c for c in char.values() if c not in unwanted_states])) 
-    
-    if not all(isinstance(s, basestring) for s in states):
+    if not all(isinstance(v, basestring) for v in char.values()):
         raise ValueError('Data must be strings')
+    
+    # preproccess taxa states and get unique states
+    states = set()
+    for taxon, value in char.items():
+        char[taxon] = [v for v in value.replace(" ", ",").split(",") \
+                            if v not in unwanted_states] 
+        states.update(char[taxon])
     
     states = sorted(states)
     num_states = len(states)
-    for taxon, value in char.items():
+    for taxon, values in char.items():
         newdata[taxon] = ['0' for x in range(num_states)]
-        if value not in unwanted_states: # ignore missing values
-            newdata[taxon][states.index(value)] = '1'
+        for value in values:
+            if value not in unwanted_states: # ignore missing values
+                newdata[taxon][states.index(value)] = '1'
         newdata[taxon] = "".join(newdata[taxon])
         assert len(newdata[taxon]) == num_states
     
