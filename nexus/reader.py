@@ -616,7 +616,7 @@ class NexusReader(object):
     def __init__(self, filename=None, debug=False):
         self.debug = debug
         self.blocks = {}
-        self.rawblocks = {}
+        self.raw_blocks = {}
         self.handlers = {
             'data': DataHandler,
             'characters': DataHandler,

@@ -59,18 +59,26 @@ def _recode_to_binary(char, keep_zero=False):
     
     return newdata
 
-def binarise(nexus_obj, one_nexus_per_block=False):
+def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
     """
     Returns a binary variant of the given `nexus_obj`.
     If `one_nexus_per_block` then we return a list of NexusWriter instances.
-
+    
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader 
-
+    
     :param one_nexus_per_block: Whether to return a single NexusWriter, or a 
                                 list of NexusWriter's (one per character)
     :type one_nexus_per_block: Boolean
-
+    
+    :param keep_zero: A boolean flag denoting whether to 
+        treat '0' as a missing state or not. The default
+        (False) is to ignore '0' as a trait absence.
+        
+        Setting this to True will treat '0' as a unique
+        state.
+    :type keep_zero: Boolean
+    
     :return: A NexusWriter instance or a list of NexusWriter instances.
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
@@ -82,7 +90,7 @@ def binarise(nexus_obj, one_nexus_per_block=False):
     for i in sorted(nexus_obj.data.charlabels):
         label = nexus_obj.data.charlabels[i] # character label
         char = nexus_obj.data.characters[label] # character dict (taxon->state)
-        recoding = _recode_to_binary(char) # recode
+        recoding = _recode_to_binary(char, keep_zero) # recode
         
         new_char_length = len(recoding[recoding.keys()[0]])
         
