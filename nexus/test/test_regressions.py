@@ -45,6 +45,25 @@ class Test_TreeHandler_Regression_BadCharsInTaxaName(unittest.TestCase):
         assert '(MANGIC_Bugan,MANGIC_Paliu,MANGIC_Mang,PALAUNGWA_Danaw,PALAUNGWA_De.Ang)' in nex.trees[0]
 
 
+class Test_TreeHandler_Regression_DetranslateWithDash(unittest.TestCase):
+    def test_regression(self):
+        nex = NexusReader(os.path.join(REGRESSION_DIR, 'detranslate-with-dash.trees'))
+        # did we get a tree block?
+        assert 'trees' in nex.blocks
+        # did we find 3 trees?
+        assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+        # did we get the translation parsed properly.
+        assert nex.trees.was_translated == True
+        assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+        # check last entry
+        assert nex.trees.translators['4'] == 'four-1', nex.trees.translators['4']
+        assert nex.trees.translators['5'] == 'four_2', nex.trees.translators['5']
+        # check detranslate
+        nex.trees.detranslate()
+        assert '(one,two,three,four-1,four_2)' in nex.trees[0]
+
+
+
 class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
     """Regression: Test that we can parse MESQUITE taxa blocks"""
     def setUp(self):
