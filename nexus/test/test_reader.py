@@ -423,7 +423,7 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         other_tree_file = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         assert other_tree_file.trees[0] == self.nex.trees[0]
     
-
+    
 
 class Test_TreeHandler_BEAST_Format(unittest.TestCase):
 

@@ -167,7 +167,7 @@ class TreeHandler(GenericHandler):
     translate_regex = re.compile(r"""
         ([,(])              # boundary
         ([A-Z0-9_\-\.]+)    # taxa-id
-        :?                # optional colon
+        :?                  # optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
         (\d+\.\d+)?         # optional branchlengths
         (?=[),])?           # end bounday - n.b. lookahead stops the next pattern being consumed
@@ -204,7 +204,7 @@ class TreeHandler(GenericHandler):
         super(TreeHandler, self).parse(data)
         
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
-        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.]+)[,;]?""")
+        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.\_\-]+)[,;]?""")
         
         lost_in_translation = False
         for line in data:
