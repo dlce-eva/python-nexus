@@ -169,7 +169,7 @@ class TreeHandler(GenericHandler):
         ([A-Z0-9_\-\.]+)    # taxa-id
         :?                  # optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
-        (\d+\.\d+)?         # optional branchlengths
+        (\d+(\.\d+)?)?         # optional branchlengths
         (?=[),])?           # end bounday - n.b. lookahead stops the next pattern being consumed
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
     
