@@ -63,6 +63,20 @@ class Test_TreeHandler_Regression_DetranslateWithDash(unittest.TestCase):
         assert '(one,two,three,four-1,four_2)' in nex.trees[0]
 
 
+class Test_TreeHandler_Regression_BranchLengthsInIntegers(unittest.TestCase):
+    def test_regression(self):
+        nex = NexusReader(os.path.join(REGRESSION_DIR, 'branchlengths-in-integers.trees'))
+        # did we get a tree block?
+        assert 'trees' in nex.blocks
+        # did we find 3 trees?
+        assert len(nex.blocks['trees'].trees) == 1 == nex.blocks['trees'].ntrees
+        # did we get the translation parsed properly.
+        assert nex.trees.was_translated == True
+        assert len(nex.trees.translators) == 5 # 5 taxa in example trees
+        # check detranslate
+        nex.trees.detranslate()
+        assert '(one:0.1,two:0.2,three:1,four:3,five:0.3)' in nex.trees[0]
+
 
 class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
     """Regression: Test that we can parse MESQUITE taxa blocks"""
