@@ -64,7 +64,6 @@ class NexusWriter:
         
     def _make_matrix_block(self, interleave):
         """Generates a matrix block"""
-        
         max_taxon_size = max([len(t) for t in self.taxalist]) + 3
         
         out = []
@@ -109,9 +108,6 @@ class NexusWriter:
         if value not in ['?', '-']:
             [self.symbols.add(v) for v in value]
         
-    def recode_to_binary(self):
-        """Recodes the matrix to binary form"""
-        
     def write(self, interleave=False, charblock=False):
         """
         Generates a string representation of the nexus 
@@ -137,6 +133,10 @@ class NexusWriter:
         
         :return: String
         """
+        assert len(self.data) > 0, "No data in nexus!"
+        assert len(self.taxalist) > 0, "No taxa in nexus!"
+        assert len(self.characters) > 0, "No characters in nexus!"
+
         return TEMPLATE.strip() % {
             'ntax': len(self.taxalist),
             'nchar': len(self.characters),
