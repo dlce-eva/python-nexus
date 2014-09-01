@@ -4,7 +4,7 @@ project = 'nexus'
 
 def test():
     """Runs tests"""
-    local("nose2")
+    local("nosetests")
 
 def lint():
     """Runs pyflakes"""

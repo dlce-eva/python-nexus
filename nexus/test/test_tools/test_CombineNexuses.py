@@ -3,7 +3,7 @@ import re
 import unittest
 
 from nexus import NexusReader
-from nexus.tools import combine_nexuses
+from nexus.tools.combine_nexuses import combine_nexuses
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
