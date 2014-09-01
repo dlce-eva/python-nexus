@@ -21,7 +21,7 @@ def _recode_to_binary(char, keep_zero=False):
         `char` dictionary is not a string (i.e. 
         integer or None values)
     
-    >>> recode, table = _recode_to_binary({'Maori': '1', 'Dutch': '2', 'Latin': '1'})
+    >>> recode = _recode_to_binary({'Maori': '1', 'Dutch': '2', 'Latin': '1'})
     >>> recode['Maori']
     '10'
     >>> recode['Dutch']
