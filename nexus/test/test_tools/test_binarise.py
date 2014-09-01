@@ -2,8 +2,7 @@ import re
 import unittest
 
 from nexus import NexusReader
-from nexus.tools import binarise
-from nexus.tools.binarise import _recode_to_binary
+from nexus.tools.binarise import binarise, _recode_to_binary
 
 class Test_Recode_To_Binary(unittest.TestCase):
     

@@ -2,7 +2,7 @@ import os
 import unittest
 
 from nexus import NexusReader
-from nexus.tools import multistatise
+from nexus.tools.multistatise import multistatise
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 

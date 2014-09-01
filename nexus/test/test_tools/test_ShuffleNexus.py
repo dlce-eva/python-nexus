@@ -2,7 +2,7 @@ import os
 import unittest
 
 from nexus import NexusReader, NexusWriter
-from nexus.tools import shufflenexus
+from nexus.tools.shufflenexus import shufflenexus
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
