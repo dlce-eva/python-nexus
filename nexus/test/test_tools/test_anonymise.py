@@ -10,12 +10,12 @@ EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 class Test_Anonymise(unittest.TestCase):
 
     def test_anonymise_data(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
-        nex = anonymise(nex)
+        filename = os.path.join(EXAMPLE_DIR, 'example.nex')
+        nex = anonymise(NexusReader(filename))
         for old_taxon in ['Harry', 'Simon', 'Betty', 'Louise']:
             assert old_taxon not in nex.data.matrix, \
                 '%s should have been anonymised' % old_taxon
-
+            
         assert nex.data.matrix['894a76c65225a9812d31ff75edf38feb'] == \
             ['1', '0']
         assert nex.data.matrix['a0434190848c0d64332dce12a8a27961'] == \
@@ -44,8 +44,10 @@ class Test_Anonymise(unittest.TestCase):
         for old_taxon in ['Harry', 'Simon']:
             assert old_taxon not in nex.data.matrix, \
                 '%s should have been anonymised' % old_taxon
-            assert hash(filename, old_taxon) == \
-                    ['0', '1', '2', '3', '4', '5']
+            h = hash(filename, old_taxon)
+            assert h in nex.data.matrix
+            assert h in nex.data.taxa
+            assert nex.data.matrix[h] == ['0', '1', '2', '3', '4', '5']
 
     def test_anonymise_untranslated_trees(self):
         # NOT IMPLEMENTED
@@ -74,40 +76,34 @@ class Test_Anonymise(unittest.TestCase):
             "V21", "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29",
             "M30", "P31", "T32", "R33", "P34", "R35", "W36", "F37", "F38"
         ]
-        # check taxa block
         for taxon in expected:
+            h = hash(filename, taxon)
+            # check taxa block
             assert taxon not in nex.taxa.taxa, \
                 '%s should have been anonymised' % taxon
-            hashtaxon = hash(filename, taxon)
-            assert hashtaxon in nex.taxa.taxa
-
-        # check trees block
-        for taxon in expected:
+            assert h in nex.taxa.taxa
+            
+            # check trees block
             assert taxon not in nex.trees.taxa, \
                 '%s should have been anonymised' % taxon
-            hashtaxon = hash(filename, taxon)
-            assert hashtaxon in nex.trees.taxa
-
+            assert h in nex.trees.taxa
+        
     def test_anonymise_characters(self):
         filename = os.path.join(EXAMPLE_DIR, 'example-characters.nex')
         nex = anonymise(NexusReader(filename))
-
+        
         expected_taxa = ['A', 'B', 'C', 'D', 'E']
-        # check taxa block
         for taxon in expected_taxa:
+            h = hash(filename, taxon)
+            # check taxa block
             assert taxon not in nex.taxa.taxa, \
                 '%s should have been anonymised' % taxon
-            hashtaxon = hash(filename, taxon)
-            assert hashtaxon in nex.taxa.taxa
+            assert h in nex.taxa.taxa
 
-        # check characters block
-        for taxon in expected_taxa:
+            # check characters block
             assert taxon not in nex.data.taxa, \
                 '%s should have been anonymised' % taxon
-            hashtaxon = hash(filename, taxon)
-            assert hashtaxon in nex.data.taxa
-
-
+            assert h in nex.data.taxa
 
 
 if __name__ == '__main__':
