@@ -27,7 +27,10 @@ def combine_nexuses(nexuslist):
         else:
             nexus_label = str(nex_id)
 
-        out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar -1, nexus_label))
+        out.add_comment(
+            "%d - %d: %s" % 
+                (charpos, charpos + nex.data.nchar - 1, nexus_label)
+        )
         for site_idx, site in enumerate(sorted(nex.data.characters), 0):
             data = nex.data.characters.get(site)
             charpos += 1
