@@ -34,10 +34,10 @@ class Test_FindUniqueSites(unittest.TestCase):
         assert 4 not in unique # constant
         # site 3 is a simple unique site - check we found it
         assert 3 in unique
-        # sites 5 and 6 should also be unique 
+        # sites 5 and 6 should also be unique
         # - are we handling missing data appropriately?
         assert 5 in unique
         assert 6 in unique
-        
+
 if __name__ == '__main__':
     unittest.main()

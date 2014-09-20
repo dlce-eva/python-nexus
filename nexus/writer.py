@@ -3,7 +3,7 @@ Tools for writing a nexus file
 """
 
 TEMPLATE = """
-#NEXUS 
+#NEXUS
 %(comments)s
 BEGIN DATA;
     DIMENSIONS NTAX=%(ntax)d NCHAR=%(nchar)d;
@@ -17,11 +17,11 @@ END;
 from reader import NexusReader
 
 class NexusWriter:
-    
+
     MISSING = '?'
     GAP = '-'
     DATATYPE = 'STANDARD'
-    
+
     def __init__(self):
         self.taxalist = []
         self.comments = []
@@ -30,14 +30,14 @@ class NexusWriter:
         self.symbols = set()
         self.data = {}
         self.is_binary = False
-        
+
     def clean(self, s):
         """Removes unsafe characters"""
         replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':'', '?': '', '-': ''}
         for f,t in replacements.items():
             s = s.replace(f, t)
         return s
-        
+
     def _add_char(self, charlabel):
         """Adds a character"""
         charlabel = str(charlabel)
@@ -46,13 +46,13 @@ class NexusWriter:
             self.data[charlabel] = {}
             self.clean_characters[charlabel] = self.clean(charlabel)
         return charlabel
-        
+
     def _add_taxa(self, taxon):
         """Adds a taxa"""
         if taxon not in self.taxalist:
             self.taxalist.append(taxon)
         return taxon
-        
+
     def _make_charlabel_block(self):
         """Generates a character label block"""
         out = ["CHARSTATELABELS"]
@@ -61,11 +61,11 @@ class NexusWriter:
         out[-1] = out[-1].strip(',') # remove trailing comma
         out.append(";")
         return "\n".join(out)
-        
+
     def _make_matrix_block(self, interleave):
         """Generates a matrix block"""
         max_taxon_size = max([len(t) for t in self.taxalist]) + 3
-        
+
         out = []
         if interleave:
             for c in self.characters:
@@ -82,15 +82,15 @@ class NexusWriter:
                     s.append(value)
                 out.append("%s %s" % (t.ljust(max_taxon_size), ''.join(s)))
         return "\n".join(out)
-        
+
     def _make_comments(self):
         """Generates a comments block"""
         return "\n".join(["[%s]" % c.ljust(70) for c in self.comments])
-        
+
     def add_comment(self, comment):
         """Adds a `comment` into the nexus file"""
         self.comments.append(comment)
-        
+
     def add(self, taxon, character, value):
         """Adds a `character` for the given `taxon` and sets it to `value`"""
         assert self.is_binary == False, "Unable to add data to a binarised nexus form"
@@ -103,34 +103,34 @@ class NexusWriter:
             self.data[character][taxon] += value
         else:
             self.data[character][taxon] = value
-        
+
         # add to symbols
         if value not in ['?', '-']:
             [self.symbols.add(v) for v in value]
-        
+
     def write(self, interleave=False, charblock=False):
         """
-        Generates a string representation of the nexus 
+        Generates a string representation of the nexus
         (basically a wrapper around make_nexus)
-        
+
         :param interleave: Generate interleaved matrix or not
-        :type interleave: Boolean 
-        :param charblock: Include a characters block or not 
-        :type charblock: Boolean 
-        
+        :type interleave: Boolean
+        :param charblock: Include a characters block or not
+        :type charblock: Boolean
+
         :return: String
         """
         return self.make_nexus(interleave, charblock)
-        
+
     def make_nexus(self, interleave=False, charblock=False):
         """
         Generates a string representation of the nexus
-        
+
         :param interleave: Generate interleaved matrix or not
-        :type interleave: Boolean 
-        :param charblock: Include a characters block or not 
-        :type charblock: Boolean 
-        
+        :type interleave: Boolean
+        :param charblock: Include a characters block or not
+        :type charblock: Boolean
+
         :return: String
         """
         assert len(self.data) > 0, "No data in nexus!"
@@ -149,25 +149,25 @@ class NexusWriter:
             'gap': self.GAP,
             'datatype': self.DATATYPE,
         }
-    
+
     def write_to_file(self, filename="output.nex", interleave=False, charblock=False):
         """
         Generates a string representation of the nexus
-        
+
         :param filename: Filename to store nexus as
-        :type filename: String 
+        :type filename: String
         :param interleave: Generate interleaved matrix or not
-        :type interleave: Boolean 
-        :param charblock: Include a characters block or not 
-        :type charblock: Boolean 
-        
+        :type interleave: Boolean
+        :param charblock: Include a characters block or not
+        :type charblock: Boolean
+
         :return: None
         """
         # do this first, so we don't make an empty file if make_nexus fails
         nexus = self.make_nexus(interleave, charblock)
         with open(filename, 'w+') as handle:
             handle.write(nexus)
-    
+
     def write_as_table(self):
         """
         Generates a simple table of the nexus
@@ -182,11 +182,11 @@ class NexusWriter:
                 s.append(value)
             out.append("%s %s" % (t.ljust(25), ''.join(s)))
         return "\n".join(out)
-    
+
     def _convert_to_reader(self):
         """
         This is a hack to convert a NexusWriter object to a NexusReader instance
-        
+
         One day I'll refactor this all so Reader and Writer subclass something,
         which will make this unnecessary.
         """
@@ -194,5 +194,5 @@ class NexusWriter:
         out = self.make_nexus(interleave=False, charblock=True)
         n.read_string(out)
         return n
-        
-        
+
+

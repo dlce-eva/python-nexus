@@ -67,7 +67,7 @@ Writing a Nexus File
 Add a comment to appear in the header of the file
 >>> n.add_comment("I am a comment")
 
-data are added by using the "add" function - 
+data are added by using the "add" function -
 which takes 3 arguments, a taxon, a character name, and a value
 
 >>> n.add('taxon1', 'Character1', 'A')
@@ -108,10 +108,10 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, 
+    1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.
-    
-    2. Redistributions in binary form must reproduce the above copyright 
+
+    2. Redistributions in binary form must reproduce the above copyright
        notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
 

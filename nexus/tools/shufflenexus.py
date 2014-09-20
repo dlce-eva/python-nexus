@@ -8,10 +8,10 @@ def shufflenexus(nexus_obj, resample=False):
     Shuffles the characters between each taxon to create a new nexus
 
     :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader 
+    :type nexus_obj: NexusReader
 
     :param resample: The number of characters to resample. If set to False, then
-        the number of characters will equal the number of characters in the 
+        the number of characters will equal the number of characters in the
         original data file.
     :type resample: Integer
 

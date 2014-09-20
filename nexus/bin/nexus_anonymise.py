@@ -27,7 +27,7 @@ def anonymise(nexus_obj):
             for t in nexus_obj.blocks[block].matrix:
                 newmatrix[hash(nexus_obj.filename, t)] = nexus_obj.blocks[block].matrix[t]
             nexus_obj.blocks[block].matrix = newmatrix
-            
+
         else:
             raise NotImplementedError("Unable to anonymise %s blocks" % block)
     return nexus_obj
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog fudge.nex output.nex")
     options, args = parser.parse_args()
-    
+
     try:
         nexusname = args[0]
     except IndexError:
@@ -48,15 +48,15 @@ if __name__ == '__main__':
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
-    
+
     try:
         newnexus = args[1]
     except IndexError:
         newnexus = None
-        
+
     nexus = NexusReader(nexusname)
     nexus = anonymise(nexus)
-    
+
     if newnexus is not None:
         nexus.write_to_file(newnexus)
         print "New nexus written to %s" % newnexus

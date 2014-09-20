@@ -3,13 +3,13 @@ from nexus import __version__ as version
 from nexus import __doc__ as long_desc
 
 setup(
-    name="python-nexus", 
+    name="python-nexus",
     version=version,
     description="A generic nexus (phylogenetics) file format (.nex, .trees) reader for python",
     long_description=long_desc,
     classifiers=[
-        "Programming Language :: Python", 
-        "Intended Audience :: Science/Research", 
+        "Programming Language :: Python",
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
