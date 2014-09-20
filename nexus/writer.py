@@ -163,10 +163,10 @@ class NexusWriter:
         
         :return: None
         """
-        
-        handle = open(filename, 'w+')
-        handle.write(self.make_nexus(interleave, charblock))
-        handle.close()
+        # do this first, so we don't make an empty file if make_nexus fails
+        nexus = self.make_nexus(interleave, charblock)
+        with open(filename, 'w+') as handle:
+            handle.write(nexus)
     
     def write_as_table(self):
         """
