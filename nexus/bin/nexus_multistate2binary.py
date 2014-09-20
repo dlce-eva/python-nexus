@@ -13,11 +13,11 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex new.nex")
-    parser.add_option("-1", "--onefile", dest="onefile", 
-            action="store_true", default=False, 
+    parser.add_option("-1", "--onefile", dest="onefile",
+            action="store_true", default=False,
             help="One nexus file for each multistate character")
     options, args = parser.parse_args()
-    
+
     try:
         nexusname = args[0]
         newnexusname = args[1]
@@ -26,9 +26,9 @@ if __name__ == '__main__':
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
-        
+
     nexus = NexusReader(nexusname)
-    
+
     new = binarise(nexus, one_nexus_per_block=options.onefile)
     if isinstance(new, NexusWriter):
         new.write_to_file(newnexusname)
@@ -36,5 +36,5 @@ if __name__ == '__main__':
         newnexusname, ext = os.path.splitext(newnexusname)
         for nex in new:
             nex.write_to_file("%s-%s%s" % (newnexusname, nex.clean(nex.characters[0]), ext))
-            
-    
+
+

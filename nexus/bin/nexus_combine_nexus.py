@@ -14,12 +14,12 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog nex1.nex nex2.nex ... nexN.nex")
     options, nexuslist = parser.parse_args()
-    
+
     if len(nexuslist) <= 1:
         print __doc__
         parser.print_help()
         sys.exit()
-    
+
     nexuslist = [NexusReader(n) for n in nexuslist]
     out = combine_nexuses(nexuslist)
     out.write_to_file('combined.nex', charblock=False, interleave=False)

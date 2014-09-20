@@ -11,7 +11,7 @@ data = {
 class Test_NexusWriter_1(unittest.TestCase):
     def setUp(self):
         self.nex = NexusWriter()
-        
+
     def test_char_adding1(self):
         """Test Character Addition 1"""
         for tx, value in data['char1'].items():
@@ -19,7 +19,7 @@ class Test_NexusWriter_1(unittest.TestCase):
         assert self.nex.data['char1']['French'] == '1'
         assert self.nex.data['char1']['English'] == '2'
         assert self.nex.data['char1']['Latin'] == '3'
-        
+
     def test_char_adding2(self):
         """Test Character Addition 2"""
         for tx, value in data['char2'].items():
@@ -27,7 +27,7 @@ class Test_NexusWriter_1(unittest.TestCase):
         assert self.nex.data['char2']['French'] == '4'
         assert self.nex.data['char2']['English'] == '5'
         assert self.nex.data['char2']['Latin'] == '6'
-        
+
 
 class Test_NexusWriter_2(unittest.TestCase):
     def setUp(self):
@@ -49,7 +49,7 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
         assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
         assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
-        
+
     def test_nexus_charblock(self):
         """Test Nexus Generation - with characters block"""
         n = self.nex.make_nexus(charblock=True)
@@ -66,7 +66,7 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
         assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
         assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
-    
+
     def test_nexus_interleave(self):
         """Test Nexus Generation - Interleaved"""
         n = self.nex.make_nexus(interleave=True)
@@ -82,7 +82,7 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("Latin\s+6", n)
         assert re.search("French\s+4", n)
         assert re.search("English\s+5", n)
-        
+
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
         assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
         assert re.search("FORMAT.*(INTERLEAVE)", n).groups()[0] == 'INTERLEAVE'
@@ -99,7 +99,7 @@ class RegressionTests(unittest.TestCase):
                 nex.add(taxon, char, value)
         out = nex.make_nexus()
         assert "FORMAT DATATYPE=STANDARD" in out
-    
+
     def test_regression_format_string_has_quoted_symbols(self):
         """Regression: Symbols in the format string should be quoted"""
         nex = NexusWriter()
@@ -109,6 +109,6 @@ class RegressionTests(unittest.TestCase):
         out = nex.make_nexus()
         assert 'SYMBOLS="123456"' in out
 
-    
+
 if __name__ == '__main__':
     unittest.main()

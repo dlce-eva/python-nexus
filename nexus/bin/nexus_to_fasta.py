@@ -13,16 +13,15 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog nexus")
     options, args = parser.parse_args()
-    
+
     try:
         nexusname = args[0]
     except IndexError:
         parser.print_help()
         sys.exit()
-        
+
     n = NexusReader(nexusname)
     for taxon in sorted(n.data.matrix):
         print '>%s' % taxon
         for line in wrap("".join(n.data.matrix[taxon]), 70):
             print line
-    

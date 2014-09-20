@@ -20,7 +20,7 @@ def print_site_values(nexus_obj, characters=['-', '?']):
     (Wrapper around `count_site_values`)
 
     :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader 
+    :type nexus_obj: NexusReader
     """
     count = count_site_values(nexus_obj, characters)
     print ("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
@@ -38,10 +38,10 @@ def print_site_values(nexus_obj, characters=['-', '?']):
 def print_character_stats(nexus_obj):
     """
     Prints the number of states and members for each site in `nexus_obj`
-    
+
     :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader 
-    
+    :type nexus_obj: NexusReader
+
     :return: A list of the state distribution
     """
     state_distrib = []
@@ -50,14 +50,14 @@ def print_character_stats(nexus_obj):
         for taxa, characters in nexus_obj.data:
             c = characters[i]
             tally[c] = tally.get(c, 0) + 1
-        
+
         print "%5d" % i,
         for state in tally:
             print "%sx%d" % (state, tally[state]),
             state_distrib.append(tally[state])
         print
     return state_distrib
-    
+
 
 
 
@@ -65,20 +65,20 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex [new.nex]")
-    parser.add_option("-n", "--number", dest="number", 
-            action="store_true", default=False, 
+    parser.add_option("-n", "--number", dest="number",
+            action="store_true", default=False,
             help="Count the number of characters")
-    parser.add_option("-c", "--constant", dest="constant", 
-            action="store_true", default=False, 
+    parser.add_option("-c", "--constant", dest="constant",
+            action="store_true", default=False,
             help="Remove the constant characters")
-    parser.add_option("-u", "--unique", dest="unique", 
-            action="store_true", default=False, 
+    parser.add_option("-u", "--unique", dest="unique",
+            action="store_true", default=False,
             help="Remove the unique characters")
-    parser.add_option("-s", "--stats", dest="stats", 
-            action="store_true", default=False, 
+    parser.add_option("-s", "--stats", dest="stats",
+            action="store_true", default=False,
             help="Print character-by-character stats")
     options, args = parser.parse_args()
-    
+
     try:
         nexusname = args[0]
     except IndexError:
@@ -86,22 +86,22 @@ if __name__ == '__main__':
         print "Author: %s\n" % __author__
         parser.print_help()
         sys.exit()
-        
+
     try:
         newnexusname = args[1]
     except IndexError:
         newnexusname = None
-        
-    
+
+
     nexus = NexusReader(nexusname)
     newnexus = None
-    
+
     if options.number:
         if newnexusname is not None:
             print_site_values(nexus, newnexusname)
         else:
             print_site_values(nexus)
-            
+
     elif options.constant:
         const = find_constant_sites(nexus)
         newnexus = new_nexus_without_sites(nexus, const)
@@ -112,13 +112,13 @@ if __name__ == '__main__':
         print("Unique Sites: %s" % ",".join([str(i) for i in unique]))
     elif options.stats:
         d = print_character_stats(nexus)
-        
+
     else:
         exit()
-        
+
     # check for saving
     if newnexus is not None and newnexusname is not None:
         newnexus.write_to_file(newnexusname)
         print("New nexus written to %s" % newnexusname)
-        
-    
+
+

@@ -41,45 +41,45 @@ class Test_CombineNexuses(unittest.TestCase):
             Simon              5
             ;"""
         )
-    
+
     def test_failure_on_nonlist_1(self):
         self.assertRaises(TypeError, combine_nexuses, "I am not a list")
-        
+
     def test_failure_on_nonlist_2(self):
         self.assertRaises(TypeError, combine_nexuses, ["hello",]) # should be NexusReader instances
-        
+
     def test_combine_simple(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
         assert newnex.data['1.1']['Harry'] == '1'
         assert newnex.data['1.1']['Simon'] == '2'
         assert newnex.data['2.1']['Harry'] == '3'
         assert newnex.data['2.1']['Simon'] == '4'
-    
+
     def test_combine_simple_generated_matrix(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
         assert re.search(r"""\bSimon\s+24\b""", newnex.write())
         assert re.search(r"""\bHarry\s+13\b""", newnex.write())
-    
+
     def test_combine_simple_generated_formatline(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
         assert re.search(r"""\bNTAX=2\b""", newnex.write())
         assert re.search(r"""\bNCHAR=2\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="1234"[\s;]', newnex.write())
-        
+
     def test_combine_missing(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
         assert newnex.data['1.1']['Harry'] == '1'
         assert newnex.data['1.1']['Simon'] == '2'
         assert newnex.data['2.1']['Betty'] == '3'
         assert newnex.data['2.1']['Boris'] == '4'
-        
+
     def test_combine_missing_generated_matrix(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
         assert re.search(r"""\bSimon\s+25\b""", newnex.write())
         assert re.search(r"""\bHarry\s+1\\?\b""", newnex.write())
         assert re.search(r"""\bBetty\s+\?3\b""", newnex.write())
         assert re.search(r"""\bBoris\s+\?4\b""", newnex.write())
-        
+
     def test_combine_missing_generated_formatline(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
         assert re.search(r"""\bNTAX=4\b""", newnex.write())
@@ -127,15 +127,15 @@ class Test_CombineNexuses(unittest.TestCase):
         assert re.search(r"""\bNTAX=3\b""", newnex.write())
         assert re.search(r"""\bNCHAR=6\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="123456"[\s;]', newnex.write())
-        
+
         for tax in [1,2,3]:
             assert re.search(r"""\bTax%d\s+123456\b""" % tax, newnex.write())
-        
+
         counter = 1
         for nex_id in [1,2]:
             for char_id in [1,2,3]:
                 assert re.search(
-                    r"""\b%d\s+%d.char%d\b""" % (counter, nex_id, char_id), 
+                    r"""\b%d\s+%d.char%d\b""" % (counter, nex_id, char_id),
                     newnex.write(charblock=True)
                 )
                 counter += 1
