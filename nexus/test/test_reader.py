@@ -3,7 +3,6 @@ import os
 import re
 import warnings
 import unittest
-from copy import deepcopy
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
@@ -74,13 +73,16 @@ class Test_DataHandler_parse_sites(unittest.TestCase):
         assert DataHandler()._parse_sites('1(12)') == ['1', '12']
 
     def test_comma(self):
-        assert DataHandler()._parse_sites('123(4,5)56') == ['1', '2', '3', '4,5', '5', '6']
+        assert DataHandler()._parse_sites('123(4,5)56') == \
+            ['1', '2', '3', '4,5', '5', '6']
 
     def test_space(self):
-        assert DataHandler()._parse_sites('123(4 5)56') == ['1', '2', '3', '4 5', '5', '6']
+        assert DataHandler()._parse_sites('123(4 5)56') == \
+            ['1', '2', '3', '4 5', '5', '6']
 
     def test_sequence(self):
-        assert DataHandler()._parse_sites("ACGTU?") == ['A', 'C', 'G', 'T', 'U', '?']
+        assert DataHandler()._parse_sites("ACGTU?") == \
+            ['A', 'C', 'G', 'T', 'U', '?']
 
 
 class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
@@ -90,8 +92,11 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         'Betty': ['1', '0'],
         'Louise': ['1', '1'],
     }
+
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        self.nex = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example.nex')
+        )
 
     def test_block_find(self):
         assert 'data' in self.nex.blocks
@@ -116,7 +121,8 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         expected = {'datatype': 'standard', 'gap': '-', 'symbols': '01'}
         for k, v in expected.items():
             assert self.nex.data.format[k] == v, \
-                "%s should equal %s and not %s" % (k, v, self.nex.data.format[k])
+                "%s should equal %s and not %s" % \
+                (k, v, self.nex.data.format[k])
         # did we get the right number of tokens?
         assert len(self.nex.data.format) == len(expected)
 
@@ -125,7 +131,8 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         for taxon in self.expected:
             assert taxon in self.nex.data.matrix
         # did we get the right number of taxa in the matrix?
-        assert self.nex.data.ntaxa == len(self.expected) == len(self.nex.data.taxa)
+        assert self.nex.data.ntaxa == len(self.expected)
+        assert self.nex.data.ntaxa == len(self.nex.data.taxa)
 
     def test_characters(self):
         # did we parse the characters properly?
@@ -140,17 +147,27 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
     def test_parse_format_line(self):
         d = DataHandler()
         f = d.parse_format_line('Format datatype=standard symbols="01" gap=-;')
-        assert f['datatype'] == 'standard', "Expected 'standard', but got '%s'" % f['datatype']
-        assert f['symbols'] == '01', "Expected '01', but got '%s'" % f['symbols']
-        assert f['gap'] == '-', "Expected 'gap', but got '%s'" % f['gap']
-
-        f = d.parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
-        assert f['datatype'] == 'rna', "Expected 'rna', but got '%s'" % f['datatype']
-        assert f['missing'] == '?', "Expected '?', but got '%s'" % f['missing']
-        assert f['gap'] == '-', "Expected '-', but got '%s'" % f['gap']
-        assert f['symbols'] == 'acgu', "Expected 'acgu', but got '%s'" % f['symbols']
-        assert f['labels'] == True, "Expected <True>, but got '%s'" % f['labels']
-        assert f['interleave'] == True, "Expected <True>, but got '%s'" % f['interleave']
+        assert f['datatype'] == 'standard', \
+            "Expected 'standard', but got '%s'" % f['datatype']
+        assert f['symbols'] == '01', \
+            "Expected '01', but got '%s'" % f['symbols']
+        assert f['gap'] == '-', \
+            "Expected 'gap', but got '%s'" % f['gap']
+        
+        fmt = 'FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;'
+        f = d.parse_format_line(fmt)
+        assert f['datatype'] == 'rna', \
+            "Expected 'rna', but got '%s'" % f['datatype']
+        assert f['missing'] == '?', \
+            "Expected '?', but got '%s'" % f['missing']
+        assert f['gap'] == '-', \
+            "Expected '-', but got '%s'" % f['gap']
+        assert f['symbols'] == 'acgu', \
+            "Expected 'acgu', but got '%s'" % f['symbols']
+        assert f['labels'] == True, \
+            "Expected <True>, but got '%s'" % f['labels']
+        assert f['interleave'] == True, \
+            "Expected <True>, but got '%s'" % f['interleave']
 
     def test_write(self):
         expected_patterns = [
@@ -167,7 +184,8 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         ]
         written = self.nex.write()
         for expected in expected_patterns:
-            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
+            assert re.search(expected, written, re.MULTILINE), \
+               'Expected "%s"' % expected
 
     def test__load_characters(self):
         for site, data in self.nex.data.characters.items():
@@ -249,7 +267,8 @@ class Test_DataHandler_AlternateNexusFormat(unittest.TestCase):
         # did we get the expected tokens?
         for k, v in expected.items():
             assert self.nex.data.format[k] == v, \
-                "%s should equal %s and not %s" % (k, v, self.nex.data.format[k])
+                "%s should equal %s and not %s" % \
+                (k, v, self.nex.data.format[k])
         # did we get the right number of tokens?
         assert len(self.nex.data.format) == len(expected)
 
@@ -271,7 +290,9 @@ class Test_DataHandler_AlternateNexusFormat(unittest.TestCase):
 
 class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-characters.nex'))
+        self.nex = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example-characters.nex')
+        )
 
     def test_block_find(self):
         assert 'data' in self.nex.blocks
@@ -286,11 +307,11 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
         assert self.nex.data.nchar == 5
 
     def test_charlabels(self):
-         assert self.nex.data.charlabels[0] == 'CHAR_A'
-         assert self.nex.data.charlabels[1] == 'CHAR_B'
-         assert self.nex.data.charlabels[2] == 'CHAR_C'
-         assert self.nex.data.charlabels[3] == 'CHAR_D'
-         assert self.nex.data.charlabels[4] == 'CHAR_E'
+        assert self.nex.data.charlabels[0] == 'CHAR_A'
+        assert self.nex.data.charlabels[1] == 'CHAR_B'
+        assert self.nex.data.charlabels[2] == 'CHAR_C'
+        assert self.nex.data.charlabels[3] == 'CHAR_D'
+        assert self.nex.data.charlabels[4] == 'CHAR_E'
 
     def test_label_parsing(self):
         assert 'CHAR_A' in self.nex.data.characters
@@ -307,12 +328,13 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
     def test_characters(self):
         for site in ("A", "B", "C", "D", "E"):
             # All sites in CHAR_A are state "A", and all in CHAR_B and "B" etc
-            for taxon in ("A", "B", "C", "D", "E"):
-                assert self.nex.data.characters["CHAR_%s" % site][taxon] == site
+            for t in ("A", "B", "C", "D", "E"):
+                assert self.nex.data.characters["CHAR_%s" % site][t] == site
 
 
 class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
     expected = ['John', 'Paul', 'George', 'Ringo']
+    
     def setUp(self):
         self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
 
@@ -340,11 +362,16 @@ class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
 
     def test_treecount(self):
         # did we find 3 trees?
-        assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
-        assert len(self.nex.trees.trees) == 3 == self.nex.trees.ntrees
+        assert len(self.nex.blocks['trees'].trees) == 3
+        assert self.nex.blocks['trees'].ntrees == 3
+        assert len(self.nex.trees.trees) == 3
+        assert self.nex.trees.ntrees == 3
 
     def test_taxa(self):
-        expected = ['Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon', 'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David']
+        expected = [
+            'Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon',
+            'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David'
+        ]
         assert len(self.nex.trees.taxa) == len(expected)
         for taxon in expected:
             assert taxon in self.nex.trees.taxa
@@ -357,7 +384,9 @@ class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
 
     def test_write(self):
         written = self.nex.trees.write()
-        expected = open(os.path.join(EXAMPLE_DIR, 'example.trees'), 'rU').read()
+        expected = open(
+            os.path.join(EXAMPLE_DIR, 'example.trees'), 'rU'
+        ).read()
         # remove leading header which isn't generated by .write()
         expected = expected.lstrip("#NEXUS\n\n")
         assert expected == written
@@ -365,7 +394,9 @@ class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
 
 class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        self.nex = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example-translated.trees')
+        )
 
     def test_block_find(self):
         # did we get a tree block?
@@ -373,36 +404,43 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
 
     def test_treecount(self):
         # did we find 3 trees?
-        assert len(self.nex.blocks['trees'].trees) == 3 == self.nex.blocks['trees'].ntrees
-        assert len(self.nex.trees.trees) == 3 == self.nex.trees.ntrees
+        assert len(self.nex.blocks['trees'].trees) == 3
+        assert self.nex.blocks['trees'].ntrees == 3
+        assert len(self.nex.trees.trees) == 3
+        assert self.nex.trees.ntrees == 3
 
     def test_iterable(self):
         for tree in self.nex.blocks['trees']:
-            tree # will raise something if unable to iterate
+            tree  # will raise something if unable to iterate
         for tree in self.nex.trees:
             tree
 
     def test_taxa(self):
-        expected = ['Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon', 'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David']
+        expected = [
+            'Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon',
+            'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David'
+        ]
         assert len(self.nex.trees.taxa) == len(expected)
         for taxon in expected:
             assert taxon in self.nex.trees.taxa
 
     def test_was_translated_flag_set(self):
-        assert self.nex.trees.was_translated == True
+        assert self.nex.trees.was_translated
 
     def test_parsing_sets_translators(self):
-        assert len(self.nex.trees.translators) == 13 # 13 taxa in example trees
+        assert len(self.nex.trees.translators) == 13
 
     def test_been_detranslated_flag_set(self):
-        assert self.nex.trees._been_detranslated == False
+        assert not self.nex.trees._been_detranslated
         self.nex.trees.detranslate()
-        assert self.nex.trees._been_detranslated == True
+        assert self.nex.trees._been_detranslated
 
     def test_write(self):
-        assert self.nex.trees._been_detranslated == False
+        assert not self.nex.trees._been_detranslated
         written = self.nex.trees.write()
-        expected = open(os.path.join(EXAMPLE_DIR, 'example-translated.trees'), 'rU').read()
+        expected = open(
+            os.path.join(EXAMPLE_DIR, 'example-translated.trees'), 'rU'
+        ).read()
         # remove leading header which isn't generated by .write()
         expected = expected.lstrip("#NEXUS\n\n")
         # remove tabs since we reformat things a bit
@@ -411,16 +449,18 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         assert expected == written, "%s\n----\n%s" % (expected, written)
 
     def test_no_error_on_multiple_translate(self):
-        assert self.nex.trees._been_detranslated == False
+        assert not self.nex.trees._been_detranslated
         self.nex.trees.detranslate()
-        assert self.nex.trees._been_detranslated == True
-        self.nex.trees.detranslate() # should not cause an error
+        assert self.nex.trees._been_detranslated
+        self.nex.trees.detranslate()  # should not cause an error
 
     def test_detranslate(self):
-        assert self.nex.trees._been_detranslated == False
+        assert not self.nex.trees._been_detranslated
         self.nex.trees.detranslate()
         # should NOW be the same as tree 0 in example.trees
-        other_tree_file = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
+        other_tree_file = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example.trees')
+        )
         assert other_tree_file.trees[0] == self.nex.trees[0]
 
 
@@ -428,7 +468,9 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
 class Test_TreeHandler_BEAST_Format(unittest.TestCase):
 
     def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-beast.trees'))
+        self.nex = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example-beast.trees')
+        )
 
     def test_read_BEAST_format(self):
         assert self.nex.trees[0].startswith('tree STATE_201000')
@@ -440,30 +482,33 @@ class Test_TreeHandler_BEAST_Format(unittest.TestCase):
     def test_taxa(self):
         expected = [
             "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11",
-            "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20", "V21",
-            "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29", "M30", "P31",
-            "T32", "R33", "P34", "R35", "W36", "F37", "F38"
+            "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20",
+            "V21", "R22", "M23", "H24", "M25", "M26", "M27", "R28", "T29",
+            "M30", "P31", "T32", "R33", "P34", "R35", "W36", "F37", "F38"
         ]
         assert len(self.nex.trees.taxa) == len(expected)
         for taxon in expected:
             assert taxon in self.nex.trees.taxa
 
     def test_treecount(self):
-        assert len(self.nex.blocks['trees'].trees) == 1 == self.nex.blocks['trees'].ntrees
-        assert len(self.nex.trees.trees) == 1 == self.nex.trees.ntrees
+        assert len(self.nex.blocks['trees'].trees) == 1
+        assert self.nex.blocks['trees'].ntrees == 1
+        assert len(self.nex.trees.trees) == 1
+        assert self.nex.trees.ntrees == 1
 
     def test_flag_set(self):
-        assert self.nex.trees.was_translated == True
+        assert self.nex.trees.was_translated
 
     def test_parsing_sets_translators(self):
-        assert len(self.nex.trees.translators) == 38 # 38 taxa in example trees
+        assert len(self.nex.trees.translators) == 38
 
     def test_detranslate_BEAST_format_extended(self):
         self.nex.trees.detranslate()
         for index, taxon in self.nex.trees.translators.items():
             # check if the taxon name is present in the tree...
-            assert taxon in self.nex.trees[0], "Expecting taxon %s in tree description" % taxon
-        assert self.nex.trees._been_detranslated == True
+            assert taxon in self.nex.trees[0], \
+                "Expecting taxon %s in tree description" % taxon
+        assert self.nex.trees._been_detranslated
 
 
 class Test_TreeHandler_translate_regex(unittest.TestCase):
@@ -501,8 +546,10 @@ class Test_TreeHandler_translate_regex(unittest.TestCase):
         for match in expected:
             for key in expected[match]:
                 if expected[match][key] != found[match][key]:
-                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
-
+                    raise AssertionError(
+                        "Expected %s for %s, got %s" %
+                        (expected[match][key], key, found[match][key])
+                    )
 
     def test_tree_digits(self):
         expected = {
@@ -533,7 +580,10 @@ class Test_TreeHandler_translate_regex(unittest.TestCase):
         for match in expected:
             for key in expected[match]:
                 if expected[match][key] != found[match][key]:
-                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
+                    raise AssertionError(
+                        "Expected %s for %s, got %s" %
+                        (expected[match][key], key, found[match][key])
+                    )
 
     def test_tree_with_branchlengths(self):
         expected = {
@@ -564,8 +614,10 @@ class Test_TreeHandler_translate_regex(unittest.TestCase):
         for match in expected:
             for key in expected[match]:
                 if expected[match][key] != found[match][key]:
-                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
-
+                    raise AssertionError(
+                        "Expected %s for %s, got %s" %
+                        (expected[match][key], key, found[match][key])
+                    )
 
     def test_tree_complex(self):
         expected = {
@@ -591,14 +643,17 @@ class Test_TreeHandler_translate_regex(unittest.TestCase):
                 'end': ')'
             },
         }
-        found = self.findall("tree a = ((1:[&var=1]0.1,2:[&var=2]0.2):[&var=3]0.9,3:[&var=4]0.3):[&var=5]0.9;")
+        found = self.findall(
+            "tree a = ((1:[&var=1]0.1,2:[&var=2]0.2):[&var=3]0.9,3:[&var=4]0.3):[&var=5]0.9;"
+        )
         assert len(found) == 3
         for match in expected:
             for key in expected[match]:
                 if expected[match][key] != found[match][key]:
-                    assert False, "Expected %s for %s, got %s" % (expected[match][key], key, found[match][key])
-
-
+                    raise AssertionError(
+                        "Expected %s for %s, got %s" %
+                        (expected[match][key], key, found[match][key])
+                    )
 
 
 class Test_TreeHandler__detranslate_tree(unittest.TestCase):
@@ -608,49 +663,57 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         oldtree = "tree a = ((Chris,Bruce),Tom);"
         newtree = "tree a = ((Chris,Bruce),Tom);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly NOT translate a simple tree"
+        assert trans == newtree, \
+            "Unable to correctly NOT translate a simple tree"
 
     def test_no_change_branchlengths(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree, "Unable to correctly NOT translate a tree with branchlengths"
+        assert trans == newtree, \
+            "Unable to correctly NOT translate a tree with branchlengths"
 
     def test_change(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((0,1),2);"
         newtree = "tree a = ((Chris,Bruce),Tom);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly detranslate a simple tree"
+        assert trans == newtree, \
+            "Unable to correctly detranslate a simple tree"
 
     def test_change_branchlengths(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((0:0.1,1:0.2):0.3,2:0.4);"
         newtree = "tree a = ((Chris:0.1,Bruce:0.2):0.3,Tom:0.4);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree,  "Unable to correctly detranslate a tree with branchlengths"
+        assert trans == newtree, \
+            "Unable to correctly detranslate a tree with branchlengths"
 
     def test_BEAST_format(self):
         translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
         oldtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
         newtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
-        assert trans == newtree, "Unable to correctly detranslate a BEAST tree"
+        assert trans == newtree, \
+            "Unable to correctly detranslate a BEAST tree"
 
 
-class Test_Inline_Comments(unittest.TestCase):
-    def setUp(self):
-        self.nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-comments.nex'))
-
-    def test_whole_file_comments(self):
-        assert self.nex.comments == ['[one]']
-
-    def test_taxa_comments(self):
-        assert self.nex.blocks['data'].comments == ['[two]'], self.nex.data.comments
-
-    def test_trees_comments(self):
-        assert self.nex.blocks['characters'].comments == ['[three]']
+#class Test_Inline_Comments(unittest.TestCase):
+    #def setUp(self):
+    #    self.nex = NexusReader(
+    #        os.path.join(EXAMPLE_DIR, 'example-comments.nex')
+    #    )
+    #
+    #def test_whole_file_comments(self):
+    #    assert self.nex.comments == ['[one]']
+    #
+    #def test_taxa_comments(self):
+    #    assert self.nex.blocks['data'].comments == ['[two]'], \
+    #        self.nex.data.comments
+    #
+    #def test_trees_comments(self):
+    #    assert self.nex.blocks['characters'].comments == ['[three]']
 
 if __name__ == '__main__':
     unittest.main()
