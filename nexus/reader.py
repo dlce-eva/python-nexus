@@ -20,13 +20,16 @@ COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
 QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
 MESQUITE_TITLE_PATTERN = re.compile(r"""^TITLE\s+(.*);$""", re.IGNORECASE)
-MESQUITE_LINK_PATTERN = re.compile(r"""^LINK\s+(.*?)\s+=\s+(.*);$""", re.IGNORECASE)
+MESQUITE_LINK_PATTERN = re.compile(
+    r"""^LINK\s+(.*?)\s+=\s+(.*);$""", re.IGNORECASE
+)
 
 
 class NexusFormatException(Exception):
     """Generic Exception for Nexus Format Errors"""
     def __init__(self, arg):
         self.value = arg
+    
     def __str__(self):
         return repr(self.value)
 
@@ -92,8 +95,12 @@ class GenericHandler(object):
 
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
-    is_dimensions = re.compile(r"""dimensions\s*ntax\s*=\s*(\d+)""", re.IGNORECASE)
-    is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
+    is_dimensions = re.compile(
+        r"""dimensions\s*ntax\s*=\s*(\d+)""", re.IGNORECASE
+    )
+    is_taxlabel_block = re.compile(
+        r"""\btaxlabels\b""", re.IGNORECASE
+    )
 
     def __init__(self):
         self.taxa = []
@@ -169,13 +176,15 @@ class TreeHandler(GenericHandler):
         ([A-Z0-9_\-\.]+)    # taxa-id
         :?                  # optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
-        (\d+(\.\d+)?)?         # optional branchlengths
-        (?=[),])?           # end bounday - n.b. lookahead stops the next pattern being consumed
+        (\d+(\.\d+)?)?      # optional branchlengths
+        (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
     def __init__(self):
-        self.was_translated = False # does the treefile have a translate block?
-        self._been_detranslated = False # has detranslate been called?
+        # does the treefile have a translate block?
+        self.was_translated = False
+        # has detranslate been called?
+        self._been_detranslated = False
         self.translators = {}
         self.attributes = []
         self.trees = []
@@ -230,9 +239,11 @@ class TreeHandler(GenericHandler):
                     lost_in_translation = False
 
             elif self.is_tree.search(line):
-                if lost_in_translation == True:
+                if lost_in_translation:
                     # can't find a tree if we're still in the translate block!
-                    raise NexusFormatException("Tree block has incomplete translate table")
+                    raise NexusFormatException(
+                        "Tree block has incomplete translate table"
+                    )
                 self.trees.append(line)
 
         # get taxa if not translated.
@@ -241,11 +252,9 @@ class TreeHandler(GenericHandler):
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
 
-
-
     def detranslate(self):
         """Detranslates all trees in the file"""
-        if self._been_detranslated == True:
+        if self._been_detranslated:
             return
         for idx, tree in enumerate(self.trees):
             self.trees[idx] = self._detranslate_tree(tree, self.translators)
@@ -296,7 +305,9 @@ class TreeHandler(GenericHandler):
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
                 if found['match'] not in tree:
-                    raise ValueError("Expected match for %s not in tree" % found['match'])
+                    raise ValueError(
+                        "Expected match for %s not in tree" % found['match']
+                    )
                 tree = tree.replace(found['match'], sub)
 
         return tree
@@ -309,14 +320,15 @@ class TreeHandler(GenericHandler):
         """
         out = ['begin trees;']
         for attr in self.attributes:
-            out.append("\t"+ attr)
-        if self.was_translated and self._been_detranslated == False:
+            out.append("\t" + attr)
+        if self.was_translated and not self._been_detranslated:
             out.append('\ttranslate')
             for index in sorted([int(k) for k in self.translators.keys()]):
                 out.append("\t%d %s," % (index, self.translators[str(index)]))
-            out[-1] = out[-1].replace(',', ';') # handle last taxa label in translate block
+            # handle last taxa label in translate block
+            out[-1] = out[-1].replace(',', ';')
         for tree in self.trees:
-            out.append("\t"+tree)
+            out.append("\t" + tree)
         out.append('end;\n')
         return "\n".join(out)
 
@@ -327,8 +339,15 @@ class TreeHandler(GenericHandler):
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
 
-    _character_block_pattern = re.compile(r"""CHARSTATELABELS(.*?);""", re.IGNORECASE | re.DOTALL)
-
+    _character_block_pattern = re.compile(
+        r"""charstatelabels(.*?);""",
+        re.IGNORECASE | re.DOTALL
+    )
+    _format_line_pattern = re.compile(
+        r"""format\b(.*?);""",
+        re.IGNORECASE | re.DOTALL | re.MULTILINE
+    )
+    
     def __init__(self):
         self.symbols = set()
         self.characters = {}
@@ -375,7 +394,7 @@ class DataHandler(GenericHandler):
         out = {}
 
         try:
-            line = re.findall(r'format\b(.*?);', data, re.IGNORECASE | re.DOTALL | re.MULTILINE)[0]
+            line = self._format_line_pattern.findall(data)[0]
         except IndexError:
             return None
 
@@ -422,7 +441,7 @@ class DataHandler(GenericHandler):
                 continue
             elif site == '(':
                 # read-ahead
-                site = '' # discard open bracket
+                site = ''  # discard open bracket
                 multistate = True
                 while multistate:
                     nextchar = sites.pop(0)
@@ -438,10 +457,12 @@ class DataHandler(GenericHandler):
 
         # check we're not in hanging multistate chunk
         if multistate:
-            raise NexusFormatException("Data Matrix contains incomplete multistate values")
+            raise NexusFormatException(
+                "Data Matrix contains incomplete multistate values"
+            )
         return out
 
-    def add_taxon(self, taxon, site_values = None):
+    def add_taxon(self, taxon, site_values=None):
         """
         Adds a `taxon` to the matrix with values from `site_values`
 
@@ -515,7 +536,7 @@ class DataHandler(GenericHandler):
             # ignore a few things..
             elif BEGIN_PATTERN.match(line):
                 continue
-            elif seen_matrix == True:
+            elif seen_matrix:
                 line = self.remove_comments(line)
 
                 # NORMALISE WHITESPACE
@@ -529,12 +550,16 @@ class DataHandler(GenericHandler):
 
         self._load_characters()
 
-        # Raise Warnings if ntaxa or nchar in format string does not give us the right answer
+        # Warn if format string (ntaxa or nchar) does not give the right answer
         if _dimensions_found_taxa is not None and self.ntaxa != _dimensions_found_taxa:
-            warnings.warn("Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa))
+            warnings.warn(
+                "Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa)
+            )
 
         if _dimensions_found_chars is not None and self.nchar != _dimensions_found_chars:
-            warnings.warn("Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars))
+            warnings.warn(
+                "Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars)
+            )
 
     def _load_characters(self):
         """Loads characters into self.characters section"""
@@ -546,7 +571,7 @@ class DataHandler(GenericHandler):
 
     def _parse_charstate_block(self, data):
         """
-        Extracts the character state block and returns the data matrix without it
+        Extracts the character state block and returns the remaining matrix
         """
         char_number_pattern = re.compile(r"""(\d+)\s+(.*)""")
         char_index = 0
@@ -600,15 +625,19 @@ class DataHandler(GenericHandler):
         out.append("matrix")
         for taxon in sorted(self.matrix):
             sites = self.matrix[taxon]
-            assert len(sites) == self.nchar, \
-                "Number of characters is wrong - expecting %d, got %d" % (self.nchar, len(sites))
+            if len(sites) != self.nchar:
+                raise NexusFormatException(
+                    "Number of characters is wrong - expecting %d, got %d" %
+                    (self.nchar, len(sites))
+                )
             out.append("%s %s" % (taxon.ljust(20), ''.join(sites)))
         out.append(" ;")
         out.append("end;")
         return "\n".join(out)
 
     def __repr__(self):
-        return "<NexusDataBlock: %d characters from %d taxa>" % (self.nchar, self.ntaxa)
+        return "<NexusDataBlock: %d characters from %d taxa>" % \
+            (self.nchar, self.ntaxa)
 
 
 class NexusReader(object):
@@ -630,7 +659,7 @@ class NexusReader(object):
         """Iterates over all nexus blocks and parses them appropriately"""
         for block, data in self.raw_blocks.items():
             if block == 'characters':
-                block = 'data' # override
+                block = 'data'  # override
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
             setattr(self, block, self.blocks[block])
@@ -649,7 +678,7 @@ class NexusReader(object):
         self.filename = filename
         self.short_filename = os.path.split(filename)[1]
 
-        if os.path.isfile(filename) == False:
+        if not os.path.isfile(filename):
             raise IOError("Unable To Read File %s" % filename)
 
         if filename.endswith('.gz'):

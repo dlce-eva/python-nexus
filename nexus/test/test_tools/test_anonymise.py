@@ -13,24 +13,34 @@ class Test_Anonymise(unittest.TestCase):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         nex = anonymise(nex)
         for old_taxon in ['Harry', 'Simon', 'Betty', 'Louise']:
-            assert old_taxon not in nex.data.matrix, '%s should have been anonymised' % old_taxon
+            assert old_taxon not in nex.data.matrix, \
+                '%s should have been anonymised' % old_taxon
 
-        assert nex.data.matrix['894a76c65225a9812d31ff75edf38feb'] == ['1', '0']
-        assert nex.data.matrix['a0434190848c0d64332dce12a8a27961'] == ['0', '0']
-        assert nex.data.matrix['bbf0da40d536d862e184a6eccb433a73'] == ['0', '1']
-        assert nex.data.matrix['d24eb4091c14b87b6cd0bd94fd0704be'] == ['1', '1']
+        assert nex.data.matrix['894a76c65225a9812d31ff75edf38feb'] == \
+            ['1', '0']
+        assert nex.data.matrix['a0434190848c0d64332dce12a8a27961'] == \
+            ['0', '0']
+        assert nex.data.matrix['bbf0da40d536d862e184a6eccb433a73'] == \
+            ['0', '1']
+        assert nex.data.matrix['d24eb4091c14b87b6cd0bd94fd0704be'] == \
+            ['1', '1']
 
     def test_anonymise_data_with_labels(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
         nex = anonymise(nex)
         for old_taxon in ['John', 'Paul', 'George', 'Ringo']:
-            assert old_taxon not in nex.data.matrix, '%s should have been anonymised' % old_taxon
+            assert old_taxon not in nex.data.matrix, \
+                '%s should have been anonymised' % old_taxon
 
         # check data block
-        assert nex.data.matrix['e5b17eef97cc46782008af612450c650'] == ['a', 'c', 't', 'g']
-        assert nex.data.matrix['fc38854f2edead0c7a799a35de58bd60'] == ['a', 'c', 't', 'g']
-        assert nex.data.matrix['c12b8557f6be8a49aef5fcee99c40724'] == ['a', 'c', 't', 'g']
-        assert nex.data.matrix['de57ceacb7eb62511210794be2cff5ab'] == ['a', 'c', 't', 'g']
+        assert nex.data.matrix['e5b17eef97cc46782008af612450c650'] == \
+            ['a', 'c', 't', 'g']
+        assert nex.data.matrix['fc38854f2edead0c7a799a35de58bd60'] == \
+            ['a', 'c', 't', 'g']
+        assert nex.data.matrix['c12b8557f6be8a49aef5fcee99c40724'] == \
+            ['a', 'c', 't', 'g']
+        assert nex.data.matrix['de57ceacb7eb62511210794be2cff5ab'] == \
+            ['a', 'c', 't', 'g']
 
         # check taxa block
         assert 'e5b17eef97cc46782008af612450c650' in nex.taxa.taxa
