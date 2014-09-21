@@ -6,7 +6,7 @@ from nexus.tools import combine_nexuses
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """combine-nexus - python-nexus tools v%(version)s
 combines a series of nexuses into one nexus.
-""" % {'version': VERSION,}
+""" % {'version': VERSION, }
 
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     options, nexuslist = parser.parse_args()
 
     if len(nexuslist) <= 1:
-        print __doc__
+        print(__doc__)
         parser.print_help()
         sys.exit()
 

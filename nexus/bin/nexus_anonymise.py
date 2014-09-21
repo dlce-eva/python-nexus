@@ -18,8 +18,9 @@ def anonymise(nexus_obj):
         elif block == 'trees':
             if nexus_obj.blocks[block].was_translated:
                 for idx in nexus_obj.blocks[block].translators:
-                    h = hash(nexus_obj.filename,
-                             nexus_obj.blocks[block].translators[idx]
+                    h = hash(
+                        nexus_obj.filename,
+                        nexus_obj.blocks[block].translators[idx]
                     )
                     nexus_obj.blocks[block].translators[idx] = h
             else:

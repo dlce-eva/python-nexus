@@ -31,7 +31,7 @@ class Test_FindUniqueSites(unittest.TestCase):
         # these should also NOT be in unique
         assert 0 not in unique
         assert 2 not in unique
-        assert 4 not in unique # constant
+        assert 4 not in unique  # constant
         # site 3 is a simple unique site - check we found it
         assert 3 in unique
         # sites 5 and 6 should also be unique

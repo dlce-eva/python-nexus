@@ -35,6 +35,8 @@ if __name__ == '__main__':
     elif len(new) > 1:
         newnexusname, ext = os.path.splitext(newnexusname)
         for nex in new:
-            nex.write_to_file("%s-%s%s" % (newnexusname, nex.clean(nex.characters[0]), ext))
+            nex.write_to_file("%s-%s%s" %
+                (newnexusname, nex.clean(nex.characters[0]), ext)
+            )
 
 

@@ -1,5 +1,4 @@
 import re
-import copy
 import unittest
 from nexus import NexusWriter
 
@@ -47,8 +46,10 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("French\s+14", n)
         assert re.search("English\s+25", n)
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
+        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+            == 'STANDARD'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+            == '123456'
 
     def test_nexus_charblock(self):
         """Test Nexus Generation - with characters block"""
@@ -64,8 +65,10 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("French\s+14", n)
         assert re.search("English\s+25", n)
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
+        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+            == 'STANDARD'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+            == '123456'
 
     def test_nexus_interleave(self):
         """Test Nexus Generation - Interleaved"""
@@ -84,14 +87,20 @@ class Test_NexusWriter_2(unittest.TestCase):
         assert re.search("English\s+5", n)
 
         assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == 'STANDARD'
-        assert re.search("FORMAT.*(INTERLEAVE)", n).groups()[0] == 'INTERLEAVE'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == '123456'
+        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == \
+            'STANDARD'
+        assert re.search("FORMAT.*(INTERLEAVE)", n).groups()[0] == \
+            'INTERLEAVE'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == \
+            '123456'
 
 
 class RegressionTests(unittest.TestCase):
     def test_regression_format_string_has_datatype_first(self):
-        """Regression: Format string should contain 'datatype' as the first element"""
+        """
+        Regression: Format string should contain 'datatype' as the first
+        element
+        """
         # SplitsTree complains otherwise.
         nex = NexusWriter()
         for char, b in data.items():

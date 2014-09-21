@@ -1,27 +1,25 @@
 #!/usr/bin/env python
-import os
-
+from __future__ import print_function
 from textwrap import TextWrapper
-
-from nexus import NexusReader, NexusWriter, NexusFormatException, VERSION
+from nexus import NexusReader, VERSION
 from nexus.tools import tally_by_taxon, tally_by_site
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexusmanip - python-nexus tools v%(version)s
 
 Performs a number of nexus counting/tallying methods.
-""" % {'version': VERSION,}
+""" % {'version': VERSION, }
 
 def print_tally(tally):
     wrapper = TextWrapper(initial_indent=" ", subsequent_indent="\t", width=65)
     for tkey in sorted(tally):
-        print tkey
+        print(tkey)
         for skey in sorted(tally[tkey]):
             s = " ".join(sorted(tally[tkey][skey]))
-            print " - %s: " % skey,
+            print(" - %s: " % skey, end="")
             for w in wrapper.wrap(s):
-                print w
-        print
+                print(w)
+        print("\n")
     return
 
 
@@ -31,7 +29,8 @@ if __name__ == '__main__':
     options, commands = parser.parse_args()
 
     if len(commands) != 2:
-        print __doc__
+        print(__doc__)
+        print("Author: %s\n" % __author__)
         parser.print_help()
         quit()
 

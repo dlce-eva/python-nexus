@@ -14,7 +14,7 @@ MATRIX
 ;
 END;
 """
-from reader import NexusReader
+from .reader import NexusReader
 
 class NexusWriter:
 
@@ -33,8 +33,11 @@ class NexusWriter:
 
     def clean(self, s):
         """Removes unsafe characters"""
-        replacements = {' ': '', '\\': '', '(':'_', ')':'', ':': '', '/':'', '?': '', '-': ''}
-        for f,t in replacements.items():
+        replacements = {
+            ' ': '', '\\': '', '(': '_', ')': '', ':': '',
+            '/': '', '?': '', '-': '',
+        }
+        for f, t in replacements.items():
             s = s.replace(f, t)
         return s
 
@@ -58,7 +61,7 @@ class NexusWriter:
         out = ["CHARSTATELABELS"]
         for i, c in enumerate(self.characters, 1):
             out.append("\t\t%d %s," % (i, self.clean_characters[c]))
-        out[-1] = out[-1].strip(',') # remove trailing comma
+        out[-1] = out[-1].strip(',')  # remove trailing comma
         out.append(";")
         return "\n".join(out)
 
@@ -70,14 +73,17 @@ class NexusWriter:
         if interleave:
             for c in self.characters:
                 for t in self.taxalist:
-                    out.append("%s %s" % (t.ljust(max_taxon_size), self.data[c].get(t, self.MISSING)))
+                    out.append(
+                        "%s %s" % (t.ljust(max_taxon_size),
+                                   self.data[c].get(t, self.MISSING))
+                    )
                 out.append("")
         else:
             for t in sorted(self.taxalist):
                 s = []
                 for c in self.characters:
                     value = self.data[c].get(t, self.MISSING)
-                    if len(value) > 1: # wrap equivocal states in ()'s
+                    if len(value) > 1:  # wrap equivocal states in ()'s
                         value = "(%s)" % value
                     s.append(value)
                 out.append("%s %s" % (t.ljust(max_taxon_size), ''.join(s)))
@@ -93,12 +99,12 @@ class NexusWriter:
 
     def add(self, taxon, character, value):
         """Adds a `character` for the given `taxon` and sets it to `value`"""
-        assert self.is_binary == False, "Unable to add data to a binarised nexus form"
+        assert self.is_binary is False, \
+            "Unable to add data to a binarised nexus form"
         character = self._add_char(character)
         taxon = self._add_taxa(taxon)
         value = str(value)
         # have multiple entries
-        #assert (taxon in self.data[character]) == False, "Duplicate entry for %s-%s" % (taxon, character)
         if taxon in self.data[character]:
             self.data[character][taxon] += value
         else:
@@ -150,7 +156,8 @@ class NexusWriter:
             'datatype': self.DATATYPE,
         }
 
-    def write_to_file(self, filename="output.nex", interleave=False, charblock=False):
+    def write_to_file(self, filename="output.nex", interleave=False,
+                      charblock=False):
         """
         Generates a string representation of the nexus
 
@@ -177,7 +184,7 @@ class NexusWriter:
             s = []
             for c in self.characters:
                 value = self.data[c].get(t, self.MISSING)
-                if len(value) > 1: # wrap equivocal states in ()'s
+                if len(value) > 1:  # wrap equivocal states in ()'s
                     value = "(%s)" % value
                 s.append(value)
             out.append("%s %s" % (t.ljust(25), ''.join(s)))
@@ -185,8 +192,9 @@ class NexusWriter:
 
     def _convert_to_reader(self):
         """
-        This is a hack to convert a NexusWriter object to a NexusReader instance
-
+        This is a hack to convert a NexusWriter object to a NexusReader
+        instance.
+        
         One day I'll refactor this all so Reader and Writer subclass something,
         which will make this unnecessary.
         """
