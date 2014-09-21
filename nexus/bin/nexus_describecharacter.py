@@ -5,19 +5,16 @@ from nexus import NexusReader, VERSION
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """describecharacter - python-nexus tools v%(version)s
 Describes the given character.
-""" % {'version': VERSION,}
-import sys
-
+""" % {'version': VERSION, }
 from textwrap import TextWrapper
-
-from nexus import NexusReader, NexusFormatException
 from nexus.tools import check_for_valid_NexusReader
 
 wrapper = TextWrapper(initial_indent="  ", subsequent_indent="  ")
 
 def print_character_stats(nexus_obj, character_index):
     """
-    Prints the character/site statistics for a given `nexus_obj` and character index
+    Prints the character/site statistics for a given `nexus_obj` and
+    character index
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
@@ -33,7 +30,7 @@ def print_character_stats(nexus_obj, character_index):
 
     index = None
     if character_index in nexus_obj.data.characters:
-        index = character_index # string index
+        index = character_index  # string index
     else:
         try:
             character_index = int(character_index)
@@ -52,13 +49,12 @@ def print_character_stats(nexus_obj, character_index):
         states[state].append(taxon)
 
     for state in sorted(states):
-        print 'State: %s (%d / %d = %0.2f)' % (state,
+        print('State: %s (%d / %d = %0.2f)' % (state,
             len(states[state]), nexus_obj.data.ntaxa,
             (len(states[state]) / nexus_obj.data.ntaxa * 100)
-        )
-        print "\n".join(wrapper.wrap(", ".join(states[state])))
-        print
-
+        ))
+        print("\n".join(wrapper.wrap(", ".join(states[state]))))
+        print("\n")
     return
 
 

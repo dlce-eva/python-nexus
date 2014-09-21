@@ -14,10 +14,12 @@ def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
     :raises TypeError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `required_block`
     """
-    if isinstance(nexus_obj, NexusReader) == False:
+    if isinstance(nexus_obj, NexusReader) is False:
         raise TypeError("Nexus_obj should be a NexusReader instance")
     for b in required_blocks:
-        if hasattr(nexus_obj, b) == False:
-            raise NexusFormatException("Requires a `%s` block, but one was not found in nexus" % b)
+        if hasattr(nexus_obj, b) is False:
+            raise NexusFormatException(
+                "Requires a `%s` block, but one was not found in nexus" % b
+            )
     return True
 
