@@ -7,18 +7,20 @@ __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexus_binary2multistate - python-nexus tools v%(version)s
 
 Converts binary nexuses to a multistate nexus.
-""" % {'version': VERSION,}
+""" % {'version': VERSION, }
 
 if __name__ == '__main__':
     from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog [-o output.nex] nex1.nex nex2.nex ... nexN.nex")
+    parser = OptionParser(
+        usage="usage: %prog [-o output.nex] nex1.nex nex2.nex ... nexN.nex"
+    )
     parser.add_option("-o", "--output", dest="output",
             action="store", default=None, type="string",
             help="output nexus file")
     options, nexuslist = parser.parse_args()
 
     if len(nexuslist) < 1:
-        print __doc__
+        print(__doc__)
         parser.print_help()
         sys.exit()
 

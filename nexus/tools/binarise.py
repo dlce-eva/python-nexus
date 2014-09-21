@@ -43,7 +43,7 @@ def _recode_to_binary(char, keep_zero=False):
     # preproccess taxa states and get unique states
     states = set()
     for taxon, value in char.items():
-        char[taxon] = [v for v in value.replace(" ", ",").split(",") \
+        char[taxon] = [v for v in value.replace(" ", ",").split(",")
                             if v not in unwanted_states]
         states.update(char[taxon])
 
@@ -52,7 +52,7 @@ def _recode_to_binary(char, keep_zero=False):
     for taxon, values in char.items():
         newdata[taxon] = ['0' for x in range(num_states)]
         for value in values:
-            if value not in unwanted_states: # ignore missing values
+            if value not in unwanted_states:  # ignore missing values
                 newdata[taxon][states.index(value)] = '1'
         newdata[taxon] = "".join(newdata[taxon])
         assert len(newdata[taxon]) == num_states
@@ -88,9 +88,9 @@ def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
     n = NexusWriter()
 
     for i in sorted(nexus_obj.data.charlabels):
-        label = nexus_obj.data.charlabels[i] # character label
-        char = nexus_obj.data.characters[label] # character dict (taxon->state)
-        recoding = _recode_to_binary(char, keep_zero) # recode
+        label = nexus_obj.data.charlabels[i]  # character label
+        char = nexus_obj.data.characters[label]  # character dict
+        recoding = _recode_to_binary(char, keep_zero)  # recode
 
         new_char_length = len(recoding[recoding.keys()[0]])
 

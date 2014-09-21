@@ -1,4 +1,5 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
+from collections import Iterable
 from nexus import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
@@ -78,14 +79,13 @@ def count_site_values(nexus_obj, characters=('-', '?')):
     :param characters: An iterable of the characters to count
     :type characters: tuple
 
-    :return: (A dictionary of taxa and missing counts, and a list of log comments)
+    :return: (A dictionary of taxa and missing counts, and a log)
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    try:
-        iter(characters) # just check it's iterable. Don't _change_ it to an
-            # iterable or we won't be able to compare the characters properly below.
-    except TypeError:
+    # just check it's iterable. Don't _change_ it to an iterable or we
+    # won't be able to compare the characters properly below.
+    if not isinstance(characters, Iterable):
         raise TypeError("characters should be iterable")
 
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
@@ -126,7 +126,7 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     new_sitepos = 0
     for sitepos in range(nexus_obj.data.nchar):
         if sitepos in sites_to_remove:
-            continue # skip!
+            continue  # skip!
         for taxon, data in nexus_obj.data:
             nexout.add(taxon, new_sitepos, data[sitepos])
         new_sitepos += 1
