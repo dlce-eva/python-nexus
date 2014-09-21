@@ -29,7 +29,8 @@ def multistatise(nexus_obj):
 
             if value == '1':
                 nexout.add(taxon, charlabel, multistate_value)
-                if taxon in missing: # remove taxon if we've seen a non-? entry
+                # remove taxon if we've seen a non-? entry
+                if taxon in missing:
                     missing.remove(taxon)
         site_idx += 1
         assert site_idx < 26, "Too many characters to handle! - run out of A-Z"
