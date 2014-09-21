@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys
-import os
 from random import sample
 
 from nexus import NexusReader, VERSION, NexusFormatException
@@ -10,14 +9,14 @@ from nexus.tools import check_for_valid_NexusReader
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """treemanip.py - python-nexus tools v%(version)s
 Performs some functions on trees
-""" % {'version': VERSION,}
+""" % {'version': VERSION, }
 
 __usage__ = """
 Deleting trees:
-    nexus_treemanip.py -d 1 old.trees new.trees   - delete tree #1
-    nexus_treemanip.py -d 1-5 old.trees new.trees - delete trees #1-5
-    nexus_treemanip.py -d 1,5 old.trees new.trees - delete trees #1 and #5
-    nexus_treemanip.py -d 1,4,20-30 old.trees new.trees - delete trees #1, #4, #20-30
+    nexus_treemanip.py -d 1 old.trees new.trees   - delete tree 1
+    nexus_treemanip.py -d 1-5 old.trees new.trees - delete trees 1-5
+    nexus_treemanip.py -d 1,5 old.trees new.trees - delete trees 1 and 5
+    nexus_treemanip.py -d 1,20-30 old.trees new.trees - delete trees 1,20-30
 
 Resampling trees:
     nexus_treemanip.py -r 10 old.trees new.trees   - resample every 10th tree
@@ -29,7 +28,7 @@ Remove comments:
     nexus_treemanip.py -c old.trees new.trees
 """
 
-class TreeListException(Exception):
+class TreeListException(NexusFormatException):
     """Generic Exception for Tree Lists"""
     def __init__(self, arg):
         Exception.__init__(self, arg)
@@ -44,42 +43,26 @@ def parse_deltree(dstring):
 
     :return: A list of trees to be deleted.
     :raises TreeListException: if dstring is invalid.
-
-    >>> parse_deltree('1')
-    [1]
-    >>> parse_deltree('1,2,3')
-    [1, 2, 3]
-    >>> parse_deltree('1,3,5')
-    [1, 3, 5]
-    >>> parse_deltree('1-10')
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    >>> parse_deltree('1,3,4-6')
-    [1, 3, 4, 5, 6]
-    >>> parse_deltree('1,3,4-6,8,9-10')
-    [1, 3, 4, 5, 6, 8, 9, 10]
-
-    # alternate syntax
-    >>> parse_deltree('1:10')
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    >>> parse_deltree('1,3,4:6')
-    [1, 3, 4, 5, 6]
-    >>> parse_deltree('1,3,4:6,8,9:10')
-    [1, 3, 4, 5, 6, 8, 9, 10]
-    """
+    
+   """
     out = []
     for token in dstring.split(','):
         token = token.replace(':', '-')
         if '-' in token:
             try:
                 start, stop = token.split("-")
-                out.extend([x for x in range(int(start), int(stop)+1)])
+                out.extend([x for x in range(int(start), int(stop) + 1)])
             except (ValueError, IndexError):
-                raise TreeListException("'%s' is not a valid token for a tree list" % token)
+                raise TreeListException(
+                    "'%s' is not a valid token for a tree list" % token
+                )
         else:
             try:
                 out.append(int(token))
             except (ValueError):
-                raise TreeListException("'%s' is not a valid token for a tree list" % token)
+                raise TreeListException(
+                    "'%s' is not a valid token for a tree list" % token
+                )
     return sorted(out)
 
 
@@ -111,7 +94,8 @@ def run_deltree(deltree, nexus_obj, do_print=False):
 
     for index, tree in enumerate(nexus_obj.trees, 1):
         if index in delitems:
-            if do_print: print('Deleting tree %d' % index)
+            if do_print:
+                print('Deleting tree %d' % index)
         else:
             new.append(tree)
     nexus_obj.trees.trees = new
@@ -142,7 +126,9 @@ def run_resample(resample, nexus_obj, do_print=False):
     try:
         every = int(resample)
     except ValueError:
-        sys.exit("Invalid resample option %s - should be an integer" % resample)
+        sys.exit(
+            "Invalid resample option %s - should be an integer" % resample
+        )
 
     if do_print:
         print('Resampling ever %d trees' % every)
@@ -208,7 +194,7 @@ def run_detranslate(nexus_obj, do_print=False):
 
 def run_random(num_trees, nexus_obj, do_print=False):
     """
-    Returns a specified number (`num_trees`) of random trees from the nexus file.
+    Returns a specified number (`num_trees`) of random trees from the nexus.
 
     :param num_trees: The number of trees to resample
     :type num_trees: Integer
@@ -231,16 +217,19 @@ def run_random(num_trees, nexus_obj, do_print=False):
         raise ValueError("num_trees should be an integer")
 
     if num_trees > nexus_obj.trees.ntrees:
-        raise ValueError("Treefile only has %d trees in it." % nexus_obj.trees.ntrees)
+        raise ValueError(
+            "Treefile only has %d trees in it." % nexus_obj.trees.ntrees
+        )
     elif num_trees == nexus_obj.trees.ntrees:
-        return nexus_obj # um. ok.
+        return nexus_obj  # um. ok.
     else:
         if do_print:
-            print("%d trees read... sampling %d" % (nexus_obj.trees.ntrees, num_trees))
+            print(
+                "%d trees read. Sampling %d" %
+                (nexus_obj.trees.ntrees, num_trees)
+            )
         nexus_obj.trees.trees = sample(nexus_obj.trees.trees, num_trees)
     return nexus_obj
-
-
 
 
 if __name__ == '__main__':
@@ -270,9 +259,9 @@ if __name__ == '__main__':
     try:
         nexusname = args[0]
     except IndexError:
-        print __doc__
-        print __usage__
-        print "Author: %s\n" % __author__
+        print(__doc__)
+        print(__usage__)
+        print("Author: %s\n" % __author__)
         parser.print_help()
         sys.exit()
 
@@ -287,8 +276,9 @@ if __name__ == '__main__':
     if nexus.trees.ntrees == 0:
         sys.exit("No trees found in found %s!" % nexusname)
     if options.quiet is False:
-        print "%d trees found with %d translated taxa" % \
+        print("%d trees found with %d translated taxa" %
             (nexus.trees.ntrees, len(nexus.trees.translators))
+        )
 
     # Delete trees
     if options.deltree:
@@ -312,8 +302,11 @@ if __name__ == '__main__':
 
     if newnexus is not None:
         nexus.write_to_file(newnexus)
-        if options.quiet is False:
-            print "New nexus with %d trees written to %s" % (nexus.trees.ntrees, newnexus)
+        if not options.quiet:
+            print(
+                "New nexus with %d trees written to %s" %
+                (nexus.trees.ntrees, newnexus)
+            )
     else:
-        print nexus.write()
+        print(nexus.write())
 

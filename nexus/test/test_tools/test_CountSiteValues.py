@@ -17,7 +17,9 @@ class Test_CountSiteValues(unittest.TestCase):
             assert missing[taxon] == 0
 
     def test_count_missing_two(self):
-        expected = {'Harry': 0, 'Simon': 1, 'Peter': 1, 'Betty': 2, 'Louise': 3}
+        expected = {
+            'Harry': 0, 'Simon': 1, 'Peter': 1, 'Betty': 2, 'Louise': 3
+        }
         nexus = NexusReader()
         nexus.read_string("""#NEXUS
         Begin data;
@@ -37,7 +39,9 @@ class Test_CountSiteValues(unittest.TestCase):
             assert missing[taxon] == expected[taxon]
 
     def test_count_other_values_one(self):
-        expected = {'Harry': 1, 'Simon': 1, 'Peter': 0, 'Betty': 0, 'Louise': 0}
+        expected = {
+            'Harry': 1, 'Simon': 1, 'Peter': 0, 'Betty': 0, 'Louise': 0
+        }
         nexus = NexusReader()
         nexus.read_string("""#NEXUS
         Begin data;
@@ -57,7 +61,9 @@ class Test_CountSiteValues(unittest.TestCase):
             assert count[taxon] == expected[taxon]
 
     def test_count_other_values_two(self):
-        expected = {'Harry': 1, 'Simon': 2, 'Peter': 1, 'Betty': 0, 'Louise': 0}
+        expected = {
+            'Harry': 1, 'Simon': 2, 'Peter': 1, 'Betty': 0, 'Louise': 0
+        }
         nexus = NexusReader()
         nexus.read_string("""#NEXUS
         Begin data;

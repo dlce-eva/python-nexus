@@ -13,13 +13,16 @@ class Test_CheckForValidNexusReader(unittest.TestCase):
         check_for_valid_NexusReader(NexusReader())
     
     def test_failure_on_nonnexus_1(self):
-        self.assertRaises(TypeError, check_for_valid_NexusReader, "I am not a nexus")
+        self.assertRaises(TypeError,
+            check_for_valid_NexusReader, "I am not a nexus")
     
     def test_failure_on_nonnexus_2(self):
-        self.assertRaises(TypeError, check_for_valid_NexusReader, 1)
+        self.assertRaises(TypeError,
+            check_for_valid_NexusReader, 1)
         
     def test_failure_on_nonnexus_3(self):
-        self.assertRaises(TypeError, check_for_valid_NexusReader, [1, 2 ,3])
+        self.assertRaises(TypeError,
+            check_for_valid_NexusReader, [1, 2, 3])
     
     def test_failure_on_required_block_one(self):
         nexus_obj = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))

@@ -9,12 +9,12 @@ class Test_Recode_To_Binary(unittest.TestCase):
     def test_error_on_integer(self):
         orig = {'Maori': 1, 'Dutch': '1', 'Latin': '1'}
         with self.assertRaises(ValueError):
-            recoded = _recode_to_binary(orig)
+            _recode_to_binary(orig)
             
     def test_error_on_badvalue(self):
         orig = {'Maori': None, 'Dutch': '1', 'Latin': '1'}
         with self.assertRaises(ValueError):
-            recoded = _recode_to_binary(orig)
+            _recode_to_binary(orig)
     
     def test_one(self):
         orig = {'Maori': '1', 'Dutch': '1', 'Latin': '1'}
@@ -90,8 +90,8 @@ class Test_Recode_To_Binary(unittest.TestCase):
 class Test_Binarise(unittest.TestCase):
     def setUp(self):
         self.nex = NexusReader()
-        self.nex.read_string(
-        """Begin data;
+        self.nex.read_string("""
+        Begin data;
         Dimensions ntax=3 nchar=2;
         Format datatype=standard symbols="01" gap=-;
         Charstatelabels

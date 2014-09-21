@@ -31,8 +31,8 @@ Reading a Nexus
 >>> n.data.format
 {'datatype': 'standard', 'symbols': '01', 'gap': '-'}
 
->>> n.data.matrix
-{'Simon': ['0', '1'], 'Louise': ['1', '1'], 'Betty': ['1', '0'], 'Harry': ['0', '0']}
+>>> n.data.matrix.keys()
+['Simon', 'Louise', 'Betty', 'Harry']
 
 >>> n.data.matrix['Simon']
 ['0', '1']
@@ -52,8 +52,8 @@ Reading a Nexus
 >>> n = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
 >>> n.trees.ntrees
 3
->>> n.trees.trees[0]
-'tree tree.0.1065.603220 = (((((((Chris:0.0668822155,Bruce:0.0173144449):0.0062091603,Tom:0.0523825242):0.0206190840,(Henry:0.0482653647,Timothy:0.0744964092):0.0183093750):0.0401805957,(Mark:0.0066961591,Simon:0.0755275882):0.0264078188):0.0536464636,((Fred:0.0428499135,Kevin:0.0734738565):0.0937536292,Roger:0.0538708492):0.0438297939):0.0453008384,(Michael:0.0953237112,Andrew:0.0654710419):0.0803079594):0.0630363263,David:0.0855948485);'
+>>> n.trees.trees[0][0:60]
+'tree tree.0.1065.603220 = (((((((Chris:0.0668822155,Bruce:0.'
 
 >>> for tree in n.trees: #doctest: +SKIP
 
@@ -85,17 +85,18 @@ NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
 >>> n.add('taxon1', "Char3", '4')
 >>> n.add('taxon3', "Char3", '4')
 
-... when you're ready, you can generate the nexus using `make_nexus` or `write_to_file`:
+... when you're ready, you can generate the nexus using `make_nexus`
+or `write_to_file`:
 n.make_nexus(interleave=True, charblock=True)
 n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 
-from reader import *
-from writer import NexusWriter
+from .reader import *
+from .writer import NexusWriter
 
-__version__ = "0.87"
+__version__ = "0.9"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__
@@ -105,7 +106,7 @@ PACKAGE_LICENSE = """
 Copyright (c) 2009-2011, Simon J. Greenhill
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
+Redistribution and use in source and binary forms, with or without modification
 are permitted provided that the following conditions are met:
 
     1. Redistributions of source code must retain the above copyright notice,
@@ -115,9 +116,9 @@ are permitted provided that the following conditions are met:
        notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
 
-    3. Neither the name of python-nexus nor the names of its contributors may be
-       used to endorse or promote products derived from this software without
-       specific prior written permission.
+    3. Neither the name of python-nexus nor the names of its contributors may
+       be used to endorse or promote products derived from this software
+       without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED

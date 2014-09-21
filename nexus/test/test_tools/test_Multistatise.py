@@ -10,8 +10,8 @@ class Test_Multistatise(unittest.TestCase):
     """Test multistatise"""
     def setUp(self):
         self.nex = NexusReader()
-        self.nex.read_string(
-        """Begin data;
+        self.nex.read_string("""
+        Begin data;
         Dimensions ntax=4 nchar=4;
         Format datatype=standard symbols="01" gap=-;
         Matrix
@@ -23,7 +23,8 @@ class Test_Multistatise(unittest.TestCase):
         self.nex = multistatise(self.nex)
         
     def test_nexusreader_transformation(self):
-        assert isinstance(self.nex, NexusReader), "Nexus_obj should be a NexusReader instance"
+        assert isinstance(self.nex, NexusReader), \
+            "Nexus_obj should be a NexusReader instance"
 
     def test_block_find(self):
         assert 'data' in self.nex.blocks
@@ -74,12 +75,13 @@ class Test_Multistatise(unittest.TestCase):
         nex.read_string(data)
         msnex = multistatise(nex)
         
-        for taxon,sites in msnex.data.matrix.items():
+        for taxon, sites in msnex.data.matrix.items():
             if taxon[0] == 'Z':
-                continue # will check later
+                continue  # will check later
             
             # first letter of taxa name is the expected character state
-            assert taxon[0] == sites[0], "%s should be %s not %s" % (taxon, taxon[0], sites[0])
+            assert taxon[0] == sites[0], \
+                "%s should be %s not %s" % (taxon, taxon[0], sites[0])
         # deal with completely missing taxa
         assert 'Zarathrustra' in msnex.data.matrix
         assert msnex.data.matrix['Zarathrustra'][0] == '?'

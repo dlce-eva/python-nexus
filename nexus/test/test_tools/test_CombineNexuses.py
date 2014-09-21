@@ -46,7 +46,7 @@ class Test_CombineNexuses(unittest.TestCase):
         self.assertRaises(TypeError, combine_nexuses, "I am not a list")
 
     def test_failure_on_nonlist_2(self):
-        self.assertRaises(TypeError, combine_nexuses, ["hello",]) # should be NexusReader instances
+        self.assertRaises(TypeError, combine_nexuses, ["hello"])
 
     def test_combine_simple(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
@@ -94,9 +94,9 @@ class Test_CombineNexuses(unittest.TestCase):
                 DIMENSIONS NTAX=3 NCHAR=3;
                 FORMAT DATATYPE=STANDARD MISSING=0 GAP=-  SYMBOLS="123";
                 CHARSTATELABELS
-            		1 char1,
-            		2 char2,
-            		3 char3
+                    1 char1,
+                    2 char2,
+                    3 char3
             ;
             MATRIX
             Tax1         123
@@ -112,9 +112,9 @@ class Test_CombineNexuses(unittest.TestCase):
                 DIMENSIONS NTAX=3 NCHAR=3;
                 FORMAT DATATYPE=STANDARD MISSING=0 GAP=-  SYMBOLS="456";
                 CHARSTATELABELS
-            		1 char1,
-            		2 char2,
-            		3 char3
+                    1 char1,
+                    2 char2,
+                    3 char3
             ;
             MATRIX
             Tax1         456
@@ -128,12 +128,12 @@ class Test_CombineNexuses(unittest.TestCase):
         assert re.search(r"""\bNCHAR=6\b""", newnex.write())
         assert re.search(r'\sSYMBOLS="123456"[\s;]', newnex.write())
 
-        for tax in [1,2,3]:
+        for tax in [1, 2, 3]:
             assert re.search(r"""\bTax%d\s+123456\b""" % tax, newnex.write())
 
         counter = 1
-        for nex_id in [1,2]:
-            for char_id in [1,2,3]:
+        for nex_id in [1, 2]:
+            for char_id in [1, 2, 3]:
                 assert re.search(
                     r"""\b%d\s+%d.char%d\b""" % (counter, nex_id, char_id),
                     newnex.write(charblock=True)
