@@ -3,14 +3,47 @@ import os
 import unittest
 
 from nexus import NexusReader
-from nexus.bin.nexus_treemanip import TreeListException
 from nexus.bin.nexus_treemanip import parse_deltree, run_deltree
-from nexus.bin.nexus_treemanip import run_resample
-from nexus.bin.nexus_treemanip import run_removecomments
-from nexus.bin.nexus_treemanip import run_detranslate
 from nexus.bin.nexus_treemanip import run_random
+from nexus.bin.nexus_treemanip import run_removecomments
+from nexus.bin.nexus_treemanip import run_resample
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
+
+class test_parse_deltree(unittest.TestCase):
+    def test_1(self):
+        assert parse_deltree('1') == [1]
+    
+    def test_2(self):
+        assert parse_deltree('1,2,3') == [1, 2, 3]
+    
+    def test_3(self):
+        assert parse_deltree('1,3,5') == [1, 3, 5]
+    
+    def test_4(self):
+        assert parse_deltree('1-10') == \
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    
+    def test_5(self):
+        assert parse_deltree('1,3,4-6') == \
+            [1, 3, 4, 5, 6]
+    
+    def test_6(self):
+        assert parse_deltree('1,3,4-6,8,9-10') == \
+            [1, 3, 4, 5, 6, 8, 9, 10]
+    
+    def test_alternate_1(self):
+        assert parse_deltree('1:10') == \
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    
+    def test_alternate_2(self):
+        assert parse_deltree('1,3,4:6') == \
+            [1, 3, 4, 5, 6]
+    
+    def test_alternate_3(self):
+        assert parse_deltree('1,3,4:6,8,9:10') == \
+            [1, 3, 4, 5, 6, 8, 9, 10]
+ 
 
 class Test_TreeManip_run_deltree(unittest.TestCase):
     
@@ -43,26 +76,28 @@ class Test_TreeManip_run_removecomments(unittest.TestCase):
         new_nex = run_removecomments(nex, do_print=False)
         assert '[&lnP=-15795.47019648783]' not in new_nex.trees[0]
 
-        
+
 class Test_TreeManip_run_randomise(unittest.TestCase):
-    
+    def setUp(self):
+        self.filename = os.path.join(EXAMPLE_DIR, 'example-translated.trees')
+        
     def test_failure_on_nonint(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        nex = NexusReader(self.filename)
         self.assertRaises(ValueError, run_random, 'fudge', nex)
         
     def test_run_randomise_sample1(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        nex = NexusReader(self.filename)
         new_nex = run_random(1, nex)
         assert new_nex.trees.ntrees == len(new_nex.trees.trees) == 1
         
     def test_run_randomise_sample2(self):
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        nex = NexusReader(self.filename)
         new_nex = run_random(2, nex)
         assert new_nex.trees.ntrees == len(new_nex.trees.trees) == 2
     
     def test_run_randomise_sample_toobig(self):
         # raises ValueError, sample size too big (only 3 trees in this file)
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        nex = NexusReader(self.filename)
         self.assertRaises(ValueError, run_random, 10, nex)
         
         

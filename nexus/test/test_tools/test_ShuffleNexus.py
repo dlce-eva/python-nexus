@@ -24,17 +24,20 @@ class Test_ShuffleNexus(unittest.TestCase):
     def test_resample_1(self):
         nexus_obj = shufflenexus(self.nexus_obj, 1)
         assert len(nexus_obj.characters) == 1
-        assert sorted(nexus_obj.taxalist) == ['George', 'John', 'Paul', 'Ringo']
+        assert sorted(nexus_obj.taxalist) == \
+            ['George', 'John', 'Paul', 'Ringo']
 
     def test_resample_10(self):
         nexus_obj = shufflenexus(self.nexus_obj, 10)
         assert len(nexus_obj.characters) == 10
-        assert sorted(nexus_obj.taxalist) == ['George', 'John', 'Paul', 'Ringo']
+        assert sorted(nexus_obj.taxalist) == \
+            ['George', 'John', 'Paul', 'Ringo']
 
     def test_resample_100(self):
         nexus_obj = shufflenexus(self.nexus_obj, 100)
         assert len(nexus_obj.characters) == 100
-        assert sorted(nexus_obj.taxalist) == ['George', 'John', 'Paul', 'Ringo']
+        assert sorted(nexus_obj.taxalist) == \
+            ['George', 'John', 'Paul', 'Ringo']
 
 
 
