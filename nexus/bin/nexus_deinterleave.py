@@ -4,7 +4,7 @@ from nexus import NexusReader, VERSION
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """deinterleave - python-nexus tools v%(version)s
 Converts an interleaved nexus to a simple nexus.
-""" % {'version': VERSION,}
+""" % {'version': VERSION, }
 
 if __name__ == '__main__':
     #set up command-line options
@@ -15,8 +15,8 @@ if __name__ == '__main__':
     try:
         nexusname = args[0]
     except IndexError:
-        print __doc__
-        print "Author: %s\n" % __author__
+        print(__doc__)
+        print("Author: %s\n" % __author__)
         parser.print_help()
         sys.exit()
 
@@ -29,6 +29,6 @@ if __name__ == '__main__':
 
     if newnexus is not None:
         nexus.write_to_file(newnexus)
-        print "New nexus written to %s" % newnexus
+        print("New nexus written to %s" % newnexus)
     else:
-        print nexus.write()
+        print(nexus.write())

@@ -154,19 +154,17 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         assert f['gap'] == '-', \
             "Expected 'gap', but got '%s'" % f['gap']
         
-        fmt = 'FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;'
+        fmt = 'FORMAT datatype=RNA missing=? symbols="ACGU" labels interleave;'
         f = d.parse_format_line(fmt)
         assert f['datatype'] == 'rna', \
             "Expected 'rna', but got '%s'" % f['datatype']
         assert f['missing'] == '?', \
             "Expected '?', but got '%s'" % f['missing']
-        assert f['gap'] == '-', \
-            "Expected '-', but got '%s'" % f['gap']
         assert f['symbols'] == 'acgu', \
             "Expected 'acgu', but got '%s'" % f['symbols']
-        assert f['labels'] == True, \
+        assert f['labels'] is True, \
             "Expected <True>, but got '%s'" % f['labels']
-        assert f['interleave'] == True, \
+        assert f['interleave'] is True, \
             "Expected <True>, but got '%s'" % f['interleave']
 
     def test_write(self):
@@ -185,7 +183,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         written = self.nex.write()
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE), \
-               'Expected "%s"' % expected
+                'Expected "%s"' % expected
 
     def test__load_characters(self):
         for site, data in self.nex.data.characters.items():

@@ -6,9 +6,10 @@ import os
 import warnings
 
 try:
-    import io
-except ImportError:
     import StringIO as io
+except ImportError:
+    pass  # Python >= 3
+import StringIO as io  # flake8: noqa
 
 DEBUG = False
 
@@ -268,7 +269,9 @@ class TreeHandler(GenericHandler):
             match = self.translate_regex.search(tree, index)
             if not match:
                 break
-            m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))
+            m = dict(zip(
+                ['start', 'taxon', 'comment', 'branch'], match.groups()
+            ))
             m['match'] = tree[match.start():match.end() + 1]
             m['end'] = tree[match.end()]
             matches.append(m)
@@ -293,7 +296,8 @@ class TreeHandler(GenericHandler):
                 taxon = translatetable[found['taxon']]
                 if found['comment'] and found['branch']:
                     # comment and branch
-                    sub = "%s:%s%s" % (taxon, found['comment'], found['branch'])
+                    sub = "%s:%s%s" % \
+                        (taxon, found['comment'], found['branch'])
                 elif found['comment']:
                     # comment only
                     sub = "%s%s" % (taxon, found['comment'])
@@ -431,7 +435,8 @@ class DataHandler(GenericHandler):
         :type sites: string
 
         :return: Returns a list of site values
-        :raises NexusFormatException: If data matrix contains incomplete multistate values
+        :raises NexusFormatException: If data matrix contains incomplete
+            multistate values
         """
         out = []
         multistate = False
@@ -494,13 +499,13 @@ class DataHandler(GenericHandler):
 
         :return: None
         :raises NexusFormatException: If parsing fails
-        :raises NotImplementedError: If parsing encounters a not implemented section
+        :raises NotImplementedError: If parsing encounters an unknown section
         """
         super(DataHandler, self).parse(data)
         self.format = self.parse_format_line("\n".join(data))
         data = self._parse_charstate_block(data)
 
-        _dimensions_found_taxa, _dimensions_found_chars = None, None
+        _dim_taxa, _dim_chars = None, None
 
         seen_matrix = False
         for line in data:
@@ -509,12 +514,12 @@ class DataHandler(GenericHandler):
             if lline.startswith('dimensions '):
                 # try for ntaxa
                 try:
-                    _dimensions_found_taxa = int(NTAX_PATTERN.findall(line)[0])
+                    _dim_taxa = int(NTAX_PATTERN.findall(line)[0])
                 except IndexError:
                     pass
                 # and nchar
                 try:
-                    _dimensions_found_chars = int(NCHAR_PATTERN.findall(line)[0])
+                    _dim_chars = int(NCHAR_PATTERN.findall(line)[0])
                 except IndexError:
                     pass
 
@@ -548,14 +553,14 @@ class DataHandler(GenericHandler):
         self._load_characters()
 
         # Warn if format string (ntaxa or nchar) does not give the right answer
-        if _dimensions_found_taxa is not None and self.ntaxa != _dimensions_found_taxa:
+        if _dim_taxa is not None and self.ntaxa != _dim_taxa:
             warnings.warn(
-                "Expected %d taxa, got %d" % (self.ntaxa, _dimensions_found_taxa)
+                "Expected %d taxa, got %d" % (self.ntaxa, _dim_taxa)
             )
 
-        if _dimensions_found_chars is not None and self.nchar != _dimensions_found_chars:
+        if _dim_chars is not None and self.nchar != _dim_chars:
             warnings.warn(
-                "Expected %d characters, got %d" % (self.nchar, _dimensions_found_chars)
+                "Expected %d characters, got %d" % (self.nchar, _dim_chars)
             )
 
     def _load_characters(self):
@@ -689,7 +694,7 @@ class NexusReader(object):
         """
         Loads and Parses a Nexus from a string
 
-        :param contents: string or string-like object containing a nexus to parse
+        :param contents: string or string-like object containing a nexus
         :type contents: string
 
         :return: None
@@ -748,7 +753,6 @@ class NexusReader(object):
         handle = open(filename, 'w')
         handle.writelines(self.write())
         handle.close()
-
 
 
 if __name__ == '__main__':

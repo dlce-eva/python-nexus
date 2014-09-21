@@ -24,8 +24,8 @@ def print_taxa_stats(nexus_obj):
         for site in nexus_obj.data.matrix[taxon]:
             tally[site] = tally.get(site, 0) + 1
 
-        tally = ", ".join(['%s x %s' % (k,tally[k]) for k in sorted(tally)])
-        print taxon.ljust(20), tally
+        tally = ", ".join(['%s x %s' % (k, tally[k]) for k in sorted(tally)])
+        print("%s\t%s" % (taxon.ljust(20), tally))
     return
 
 if __name__ == '__main__':
@@ -41,9 +41,8 @@ if __name__ == '__main__':
         sys.exit()
 
     n = NexusReader(nexusname)
-    print n
+    print(n)
     for k, v in n.blocks.items():
-        print ' ', k, v
-
+        print(' %s: %s' % (k, v))
         if k == 'data':
             print_taxa_stats(n)

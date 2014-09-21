@@ -92,10 +92,6 @@ n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
-
-from .reader import *
-from .writer import NexusWriter
-
 __version__ = "0.9"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
@@ -132,3 +128,12 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+
+from .reader import NexusFormatException, NexusReader
+from .writer import NexusWriter
+
+__all__ = [
+    "NexusWriter",
+    "NexusFormatException",
+    "NexusReader",
+]

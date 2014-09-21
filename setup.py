@@ -1,11 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from nexus import __version__ as version
 from nexus import __doc__ as long_desc
 
 setup(
     name="python-nexus",
     version=version,
-    description="A generic nexus (phylogenetics) file format (.nex, .trees) reader for python",
+    description="A nexus (phylogenetics) file reader (.nex, .trees)",
     long_description=long_desc,
     classifiers=[
         "Programming Language :: Python",
