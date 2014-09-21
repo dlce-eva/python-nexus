@@ -22,7 +22,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=5 nchar=2;$',
-            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^\s+format datatype=standard symbols="012" gap=-;$',
             '^matrix$',
             '^Simon\s+01$',
             '^Louise\s+11$',
@@ -90,7 +90,6 @@ class Test_Manipulation_Data(unittest.TestCase):
         assert self.nex.data.nchar == 2
         for taxon in self.nex.data.matrix:
             self.nex.data.matrix[taxon].pop()
-        print self.nex.data.matrix
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=4 nchar=1;$',
@@ -107,6 +106,3 @@ class Test_Manipulation_Data(unittest.TestCase):
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
-
-    def test_edit_charlabels(self):
-        pass

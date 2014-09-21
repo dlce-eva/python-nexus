@@ -349,7 +349,6 @@ class DataHandler(GenericHandler):
     )
     
     def __init__(self):
-        self.symbols = set()
         self.characters = {}
         self.charlabels = {}
         self.attributes = []
@@ -371,20 +370,22 @@ class DataHandler(GenericHandler):
     def nchar(self):
         """Number of Characters"""
         return len(self.matrix[self.matrix.keys()[0]])
-
+    
     @property
     def taxa(self):
         """Taxa list"""
         return self.matrix.keys()
+    
+    @property
+    def symbols(self):
+        """Distinct symbols in matrix"""
+        symbols = set()
+        [symbols.update(vals) for vals in self.matrix.values()]
+        return symbols
 
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
-
-        >>> d = DataHandler().parse_format_line('Format datatype=standard symbols="01" gap=-;')
-        ...
-        >>> d = DataHandler().parse_format_line('FORMAT datatype=RNA missing=? gap=- symbols="ACGU" labels interleave;')
-        ...
 
         :param data: string
         :type data: string
@@ -450,11 +451,7 @@ class DataHandler(GenericHandler):
                     else:
                         site += nextchar
             out.append(site)
-
-            # add to symbol list
-            if site not in self.symbols:
-                self.symbols.update(set(site))
-
+            
         # check we're not in hanging multistate chunk
         if multistate:
             raise NexusFormatException(
@@ -587,8 +584,7 @@ class DataHandler(GenericHandler):
                 self.charlabels[char_index] = char
                 char_index += 1
         return new_data.split("\n")
-
-
+    
     def write(self):
         """
         Generates a string containing a nexus data block.
@@ -615,7 +611,7 @@ class DataHandler(GenericHandler):
                         value = '"%s"' % "".join(sorted(self.symbols))
                     fstring.append("%s=%s" % (key, value))
             return " ".join(fstring) + ";"
-
+        
         out = []
         out.append('begin data;')
         for att in self.attributes:
