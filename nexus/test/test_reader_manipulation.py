@@ -3,7 +3,6 @@ import os
 import re
 import unittest
 from nexus import NexusReader
-from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -35,7 +34,8 @@ class Test_Manipulation_Data(unittest.TestCase):
         ]
         written = self.nex.write()
         for expected in expected_patterns:
-            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
 
     def test_delete_taxa(self):
         assert self.nex.data.ntaxa == 4
@@ -58,26 +58,55 @@ class Test_Manipulation_Data(unittest.TestCase):
         ]
         written = self.nex.write()
         for expected in expected_patterns:
-            assert re.search(expected, written, re.MULTILINE), 'Expected "%s"' % expected
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
 
         # should NOT be here
-        assert re.search('^Simon\s+01$', written, re.MULTILINE) == None, \
+        assert re.search('^Simon\s+01$', written, re.MULTILINE) is None, \
             'Expected Taxon "Simon" to be Deleted'
 
     def test_add_character(self):
-        pass
-
+        assert self.nex.data.nchar == 2
+        for taxon in self.nex.data.matrix:
+            self.nex.data.matrix[taxon].append('9')
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+dimensions ntax=4 nchar=3;$',
+            '^\s+format datatype=standard symbols="019" gap=-;$',
+            '^matrix$',
+            '^Simon\s+019$',
+            '^Louise\s+119$',
+            '^Betty\s+109$',
+            '^Harry\s+009$',
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
+            
     def test_delete_character(self):
-        pass
+        assert self.nex.data.nchar == 2
+        for taxon in self.nex.data.matrix:
+            self.nex.data.matrix[taxon].pop()
+        print self.nex.data.matrix
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+dimensions ntax=4 nchar=1;$',
+            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^matrix$',
+            '^Simon\s+0$',
+            '^Louise\s+1$',
+            '^Betty\s+1$',
+            '^Harry\s+0$',
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
 
     def test_edit_charlabels(self):
         pass
-
-
-
-# TreeHandler
-# self.translators = {}
-# self.attributes = []
-# self.taxa = []
-# self.trees = []
-# ntrees
