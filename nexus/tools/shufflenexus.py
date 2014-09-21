@@ -10,9 +10,9 @@ def shufflenexus(nexus_obj, resample=False):
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
 
-    :param resample: The number of characters to resample. If set to False, then
-        the number of characters will equal the number of characters in the
-        original data file.
+    :param resample: The number of characters to resample. If set to False,
+        then the number of characters will equal the number of characters
+        in the original data file.
     :type resample: Integer
 
     :return: A shuffled NexusReader instance
@@ -34,7 +34,9 @@ def shufflenexus(nexus_obj, resample=False):
         raise ValueError('resample must be a positive integer or False!')
 
     newnexus = NexusWriter()
-    newnexus.add_comment("Randomised Nexus generated from %s" % nexus_obj.filename)
+    newnexus.add_comment(
+        "Randomised Nexus generated from %s" % nexus_obj.filename
+    )
 
     for i in range(resample):
         # pick existing character
