@@ -2,7 +2,7 @@
 import sys
 import os
 from nexus import NexusReader, NexusWriter, VERSION
-from nexus.tools import binarise
+from nexus.tools.binarise import binarise
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexus_multistate2binary - python-nexus tools v%(version)s
 
@@ -26,10 +26,8 @@ if __name__ == '__main__':
         print("Author: %s\n" % __author__)
         parser.print_help()
         sys.exit()
-
-    nexus = NexusReader(nexusname)
-
-    new = binarise(nexus, one_nexus_per_block=options.onefile)
+        
+    new = binarise(NexusReader(nexusname), one_nexus_per_block=options.onefile)
     if isinstance(new, NexusWriter):
         new.write_to_file(newnexusname)
     elif len(new) > 1:
