@@ -23,6 +23,7 @@ setup(
     packages=['nexus'],
     package_dir={'nexus': 'nexus'},
     package_data={'nexus/examples': ['*.nex', '*.trees']},
+    test_suite="nexus.test",
     scripts=[
         'nexus/bin/nexus_anonymise.py',
         'nexus/bin/nexus_binary2multistate.py',
