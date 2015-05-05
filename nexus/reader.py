@@ -699,7 +699,7 @@ class NexusReader(object):
         :return: None
         """
         self.filename = "<String>"
-        self._read(io.StringIO(unicode(contents)))
+        self._read(StringIO(unicode(contents)))
 
     def _read(self, handle):
         """Reads from a iterable object"""
