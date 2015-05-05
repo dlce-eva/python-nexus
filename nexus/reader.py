@@ -6,10 +6,9 @@ import os
 import warnings
 
 try:
-    import StringIO as io
+    from StringIO import StringIO
 except ImportError:
-    pass  # Python >= 3
-import StringIO as io  # flake8: noqa
+    from io import StringIO
 
 DEBUG = False
 
