@@ -362,7 +362,7 @@ class DataHandler(GenericHandler):
         super(DataHandler, self).__init__()
 
     def __getitem__(self, index):
-        return (self.taxa[index], self.matrix[self.taxa[index]])
+        return (self.taxa[index], self.matrix.get(self.taxa[index]))
 
     @property
     def ntaxa(self):
@@ -372,7 +372,7 @@ class DataHandler(GenericHandler):
     @property
     def nchar(self):
         """Number of Characters"""
-        return len(self.matrix[self.matrix.keys()[0]])
+        return len(self.matrix[list(self.matrix.keys())[0]])
     
     @property
     def taxa(self):
@@ -699,7 +699,7 @@ class NexusReader(object):
         :return: None
         """
         self.filename = "<String>"
-        self._read(StringIO(unicode(contents)))
+        self._read(StringIO(contents))
 
     def _read(self, handle):
         """Reads from a iterable object"""
