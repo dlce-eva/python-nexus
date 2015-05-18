@@ -377,7 +377,7 @@ class DataHandler(GenericHandler):
     @property
     def taxa(self):
         """Taxa list"""
-        return self.matrix.keys()
+        return list(self.matrix.keys())
     
     @property
     def symbols(self):
