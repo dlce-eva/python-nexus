@@ -40,7 +40,7 @@ def anonymise(nexus_obj):
 
 
 def hash(salt, taxon):
-    return hashlib.md5("%s-%s" % (salt, taxon)).hexdigest()
+    return hashlib.md5(("%s-%s" % (salt, taxon)).encode('ascii')).hexdigest()
 
 if __name__ == '__main__':
     from optparse import OptionParser
