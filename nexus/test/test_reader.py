@@ -8,7 +8,7 @@ from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
-warnings.simplefilter("always")
+#warnings.simplefilter("always")
 
 class Test_NexusReader_Core(unittest.TestCase):
     """Test the Core functionality of NexusReader"""
@@ -24,7 +24,7 @@ class Test_NexusReader_Core(unittest.TestCase):
         tmp = NamedTemporaryFile(delete=False, suffix=".gz")
         tmp.close()
         with open(os.path.join(EXAMPLE_DIR, 'example.nex'), 'rU') as f_in:
-            with gzip.open(tmp.name, 'wb') as f_out:
+            with gzip.open(tmp.name, 'wt') as f_out:
                 f_out.writelines(f_in)
         # test it's ok
         nex = NexusReader(tmp.name)
@@ -104,6 +104,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         assert self.nex.data == self.nex.data
 
     def test_raw(self):
+        print(self.nex.data.block)
         assert self.nex.data.block == [
             'Begin data;',
             'Dimensions ntax=4 nchar=2;',
@@ -146,7 +147,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
 
     def test_parse_format_line(self):
         d = DataHandler()
-        f = d.parse_format_line('Format datatype=standard symbols="01" gap=-;')
+        f = d.parse_format_line('Format datatype=standard gap=- symbols="01";')
         assert f['datatype'] == 'standard', \
             "Expected 'standard', but got '%s'" % f['datatype']
         assert f['symbols'] == '01', \
@@ -171,7 +172,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=4 nchar=2;$',
-            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="01";$',
             '^matrix$',
             '^Simon\s+01$',
             '^Louise\s+11$',

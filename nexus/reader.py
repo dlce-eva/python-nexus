@@ -603,7 +603,8 @@ class DataHandler(GenericHandler):
             :return: String
             """
             fstring = ['\tformat']
-            for key, value in self.format.items():
+            for key in sorted(self.format):
+                value = self.format[key]
                 if key == 'datatype':
                     # Datatype must come first!
                     fstring.insert(1, "%s=%s" % (key, value))
@@ -623,6 +624,7 @@ class DataHandler(GenericHandler):
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
         out.append(_make_format_line(self))
         out.append("matrix")
+        max_taxon_len = max([len(_) for _ in self.matrix])
         for taxon in sorted(self.matrix):
             sites = self.matrix[taxon]
             if len(sites) != self.nchar:
@@ -630,7 +632,7 @@ class DataHandler(GenericHandler):
                     "Number of characters is wrong - expecting %d, got %d" %
                     (self.nchar, len(sites))
                 )
-            out.append("%s %s" % (taxon.ljust(20), ''.join(sites)))
+            out.append("%s %s" % (taxon.ljust(max_taxon_len), ''.join(sites)))
         out.append(" ;")
         out.append("end;")
         return "\n".join(out)
