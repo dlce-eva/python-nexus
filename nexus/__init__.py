@@ -92,14 +92,14 @@ n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
-__version__ = "0.9"
+__version__ = "1.0"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__
 PACKAGE_AUTHOR = "Simon J. Greenhill"
-PACKAGE_COPYRIGHT = "Copyright 2009-2011 Simon J. Greenhill"
+PACKAGE_COPYRIGHT = "Copyright 2009-2015 Simon J. Greenhill"
 PACKAGE_LICENSE = """
-Copyright (c) 2009-2011, Simon J. Greenhill
+Copyright (c) 2009-2015, Simon J. Greenhill
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification

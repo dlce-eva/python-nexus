@@ -59,7 +59,7 @@ class NexusWriter:
     def _make_charlabel_block(self):
         """Generates a character label block"""
         out = ["CHARSTATELABELS"]
-        for i, c in enumerate(self.characters, 1):
+        for i, c in enumerate(sorted(self.characters), 1):
             out.append("\t\t%d %s," % (i, self.clean_characters[c]))
         out[-1] = out[-1].strip(',')  # remove trailing comma
         out.append(";")
@@ -68,10 +68,10 @@ class NexusWriter:
     def _make_matrix_block(self, interleave):
         """Generates a matrix block"""
         max_taxon_size = max([len(t) for t in self.taxalist]) + 3
-
+        
         out = []
         if interleave:
-            for c in self.characters:
+            for c in sorted(self.characters):
                 for t in self.taxalist:
                     out.append(
                         "%s %s" % (t.ljust(max_taxon_size),
@@ -81,7 +81,7 @@ class NexusWriter:
         else:
             for t in sorted(self.taxalist):
                 s = []
-                for c in self.characters:
+                for c in sorted(self.characters):
                     value = self.data[c].get(t, self.MISSING)
                     if len(value) > 1:  # wrap equivocal states in ()'s
                         value = "(%s)" % value

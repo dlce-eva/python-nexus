@@ -22,7 +22,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=5 nchar=2;$',
-            '^\s+format datatype=standard symbols="012" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="012";$',
             '^matrix$',
             '^Simon\s+01$',
             '^Louise\s+11$',
@@ -36,7 +36,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
-
+        
     def test_delete_taxa(self):
         assert self.nex.data.ntaxa == 4
         self.nex.data.del_taxon('Simon')
@@ -48,7 +48,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=3 nchar=2;$',
-            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="01";$',
             '^matrix$',
             '^Louise\s+11$',
             '^Betty\s+10$',
@@ -72,7 +72,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=4 nchar=3;$',
-            '^\s+format datatype=standard symbols="019" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="019";$',
             '^matrix$',
             '^Simon\s+019$',
             '^Louise\s+119$',
@@ -93,7 +93,7 @@ class Test_Manipulation_Data(unittest.TestCase):
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=4 nchar=1;$',
-            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="01";$',
             '^matrix$',
             '^Simon\s+0$',
             '^Louise\s+1$',

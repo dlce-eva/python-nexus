@@ -158,7 +158,7 @@ class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
         Begin data;
         TITLE something;
         Dimensions ntax=2 nchar=2;
-        Format datatype=standard symbols="01" gap=-;
+        Format datatype=standard gap=- symbols="01";
         Matrix
         Harry              00
         Simon              01
@@ -174,7 +174,7 @@ class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
             '^begin data;$',
             '^\s+TITLE something;$',
             '^\s+dimensions ntax=2 nchar=2;$',
-            '^\s+format datatype=standard symbols="01" gap=-;$',
+            '^\s+format datatype=standard gap=- symbols="01";$',
             "^matrix$",
             "^Harry\s+00",
             "^Simon\s+01$",
