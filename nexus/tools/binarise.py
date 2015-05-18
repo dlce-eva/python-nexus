@@ -101,9 +101,9 @@ def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
         label = nexus_obj.data.charlabels[i]  # character label
         char = nexus_obj.data.characters[label]  # character dict
         recoding = _recode_to_binary(char, keep_zero)  # recode
-
-        new_char_length = len(recoding[recoding.keys()[0]])
-
+        
+        new_char_length = len(recoding[list(recoding.keys())[0]])
+        
         # loop over recoded data
         for j in range(new_char_length):
             for taxon, state in recoding.items():
