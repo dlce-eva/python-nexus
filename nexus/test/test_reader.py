@@ -23,9 +23,12 @@ class Test_NexusReader_Core(unittest.TestCase):
         from tempfile import NamedTemporaryFile
         tmp = NamedTemporaryFile(delete=False, suffix=".gz")
         tmp.close()
-        with open(os.path.join(EXAMPLE_DIR, 'example.nex'), 'rU') as f_in:
-            with gzip.open(tmp.name, 'wt') as f_out:
-                f_out.writelines(f_in)
+        with open(os.path.join(EXAMPLE_DIR, 'example.nex'), 'rb') as h:
+            content = h.read()
+        
+        with gzip.open(tmp.name, 'wb') as h:
+            h.write(content)
+        
         # test it's ok
         nex = NexusReader(tmp.name)
         assert 'data' in nex.blocks
