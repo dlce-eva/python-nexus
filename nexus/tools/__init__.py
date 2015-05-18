@@ -5,7 +5,7 @@ from nexus.tools.sites import count_site_values
 from nexus.tools.sites import new_nexus_without_sites
 from nexus.tools.sites import tally_by_site
 from nexus.tools.sites import tally_by_taxon
-from combine_nexuses import combine_nexuses
+from nexus.tools.combine_nexuses import combine_nexuses
 
 __all__ = [
     "check_for_valid_NexusReader",

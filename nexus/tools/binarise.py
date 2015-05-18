@@ -1,6 +1,16 @@
 from nexus import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
+# set isstr in a python 2 vs python 3 safe way
+try:
+    basestring  # attempt to evaluate basestring
+    def isstr(s):  # py2
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):  # py3
+        return isinstance(s, str)
+
+
 def _recode_to_binary(char, keep_zero=False):
     """
     Recodes a dictionary to binary data.
@@ -36,8 +46,8 @@ def _recode_to_binary(char, keep_zero=False):
     unwanted_states = ['-', '?']
     if not keep_zero:
         unwanted_states.append('0')
-
-    if not all(isinstance(v, basestring) for v in char.values()):
+    
+    if not all(isstr(v) for v in char.values()):
         raise ValueError('Data must be strings')
 
     # preproccess taxa states and get unique states
