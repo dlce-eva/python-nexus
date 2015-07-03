@@ -26,7 +26,6 @@ class NexusWriter:
 
     def __init__(self):
         self.comments = []
-        self.symbols = set()
         self.data = collections.defaultdict(dict)
         self.is_binary = False
 
@@ -52,11 +51,18 @@ class NexusWriter:
         [t.update(self.data[c].keys()) for c in self.data]
         return t
     
+    @property
+    def symbols(self):
+        symbols = set()
+        [symbols.update(self.data[c].values()) for c in self.data]
+        symbols = [s for s in symbols if s not in ('-', '?')]
+        return symbols
+    
     def _make_charlabel_block(self):
         """Generates a character label block"""
         out = ["CHARSTATELABELS"]
         for i, char in enumerate(sorted(self.characters), 1):
-            out.append("\t\t%d %s," % (i, self.clean(char)))
+            out.append("\t\t%d %s," % (i, self.clean(str(char))))
         out[-1] = out[-1].strip(',')  # remove trailing comma
         out.append(";")
         return "\n".join(out)
@@ -97,17 +103,12 @@ class NexusWriter:
         """Adds a `character` for the given `taxon` and sets it to `value`"""
         assert self.is_binary is False, \
             "Unable to add data to a binarised nexus form"
-        character = str(character)
         value = str(value)
         # have multiple entries
         if taxon in self.data[character]:
             self.data[character][taxon] += value
         else:
             self.data[character][taxon] = value
-            
-        # add to symbols
-        if value not in ['?', '-']:
-            [self.symbols.add(v) for v in value]
 
     def write(self, interleave=False, charblock=False):
         """
