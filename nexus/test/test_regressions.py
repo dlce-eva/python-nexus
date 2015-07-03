@@ -222,3 +222,6 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
         written = self.nex.write()
         assert """Title 'Trees from "temp.trees"';""" in written
         assert """LINK Taxa = Untitled_Block_of_Taxa;""" in written
+
+if __name__ == '__main__':
+    unittest.main()
