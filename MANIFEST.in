@@ -1,5 +1,7 @@
 include readme.txt 
 include LICENSE
+recursive-include nexus/bin *.py
+recursive-include nexus/tools *.py
 recursive-include nexus/test *.py
 recursive-include nexus/examples *.nex
 recursive-include nexus/examples *.trees

@@ -92,7 +92,7 @@ n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
-__version__ = "1.0"
+__version__ = "1.01"
 PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__
@@ -131,9 +131,3 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from .reader import NexusFormatException, NexusReader
 from .writer import NexusWriter
-
-__all__ = [
-    "NexusWriter",
-    "NexusFormatException",
-    "NexusReader",
-]
