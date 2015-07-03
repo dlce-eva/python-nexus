@@ -3,7 +3,6 @@ Tools for writing a nexus file
 """
 
 import collections
-from .reader import NexusReader
 
 TEMPLATE = """
 #NEXUS
@@ -53,11 +52,6 @@ class NexusWriter:
         [t.update(self.data[c].keys()) for c in self.data]
         return t
     
-    def _add_taxa(self, taxon):
-        """Adds a taxa"""
-        self.taxalist.add(taxon)
-        return taxon
-
     def _make_charlabel_block(self):
         """Generates a character label block"""
         out = ["CHARSTATELABELS"]
@@ -104,7 +98,6 @@ class NexusWriter:
         assert self.is_binary is False, \
             "Unable to add data to a binarised nexus form"
         character = str(character)
-        taxon = self._add_taxa(taxon)
         value = str(value)
         # have multiple entries
         if taxon in self.data[character]:
@@ -200,6 +193,7 @@ class NexusWriter:
         One day I'll refactor this all so Reader and Writer subclass something,
         which will make this unnecessary.
         """
+        from .reader import NexusReader
         n = NexusReader()
         out = self.make_nexus(interleave=False, charblock=True)
         n.read_string(out)
