@@ -10,7 +10,7 @@ data = {
 class Test_NexusWriter_1(unittest.TestCase):
     def setUp(self):
         self.nex = NexusWriter()
-
+    
     def test_char_adding1(self):
         """Test Character Addition 1"""
         for tx, value in data['char1'].items():

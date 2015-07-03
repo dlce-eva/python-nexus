@@ -2,6 +2,9 @@
 Tools for writing a nexus file
 """
 
+import collections
+from .reader import NexusReader
+
 TEMPLATE = """
 #NEXUS
 %(comments)s
@@ -14,7 +17,7 @@ MATRIX
 ;
 END;
 """
-from .reader import NexusReader
+
 
 class NexusWriter:
 
@@ -26,7 +29,7 @@ class NexusWriter:
         self.taxalist = set()
         self.comments = []
         self.symbols = set()
-        self.data = {}
+        self.data = collections.defaultdict(dict)
         self.is_binary = False
 
     def clean(self, s):
@@ -45,12 +48,6 @@ class NexusWriter:
     def characters(self):
         return self.data.keys()
     
-    def _add_char(self, charlabel):
-        """Adds a character"""
-        charlabel = str(charlabel)
-        self.data[charlabel] = self.data.get(charlabel, {})
-        return charlabel
-
     def _add_taxa(self, taxon):
         """Adds a taxa"""
         self.taxalist.add(taxon)
@@ -96,12 +93,12 @@ class NexusWriter:
     def add_comment(self, comment):
         """Adds a `comment` into the nexus file"""
         self.comments.append(comment)
-
+    
     def add(self, taxon, character, value):
         """Adds a `character` for the given `taxon` and sets it to `value`"""
         assert self.is_binary is False, \
             "Unable to add data to a binarised nexus form"
-        character = self._add_char(character)
+        character = str(character)
         taxon = self._add_taxa(taxon)
         value = str(value)
         # have multiple entries
