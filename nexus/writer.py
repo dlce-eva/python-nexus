@@ -26,7 +26,6 @@ class NexusWriter:
     DATATYPE = 'STANDARD'
 
     def __init__(self):
-        self.taxalist = set()
         self.comments = []
         self.symbols = set()
         self.data = collections.defaultdict(dict)
@@ -38,7 +37,7 @@ class NexusWriter:
         replacements = {
             ' ': _EMPTY, '\\': _EMPTY, ':': _EMPTY,
             '/': _EMPTY, '?': _EMPTY, '-': _EMPTY,
-            '(': '_', ')': _EMPTY, 
+            '(': '_', ')': _EMPTY,
         }
         for f, t in replacements.items():
             s = s.replace(f, t)
@@ -47,6 +46,12 @@ class NexusWriter:
     @property
     def characters(self):
         return self.data.keys()
+    
+    @property
+    def taxalist(self):
+        t = set()
+        [t.update(self.data[c].keys()) for c in self.data]
+        return t
     
     def _add_taxa(self, taxon):
         """Adds a taxa"""

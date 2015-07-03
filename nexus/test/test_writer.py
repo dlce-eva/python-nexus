@@ -7,7 +7,8 @@ data = {
     'char2': {'French': 4, 'English': 5, 'Latin': 6},
 }
 
-class Test_NexusWriter_1(unittest.TestCase):
+
+class Test_NexusWriter(unittest.TestCase):
     def setUp(self):
         self.nex = NexusWriter()
     
@@ -34,7 +35,16 @@ class Test_NexusWriter_2(unittest.TestCase):
         for char, b in data.items():
             for taxon, value in b.items():
                 self.nex.add(taxon, char, value)
-
+    
+    def test_characters(self):
+        assert 'char1' in self.nex.characters
+        assert 'char2' in self.nex.characters
+        
+    def test_taxalist(self):
+        assert 'French' in self.nex.taxalist
+        assert 'English' in self.nex.taxalist
+        assert 'Latin' in self.nex.taxalist
+    
     def test_nexus_noninterleave(self):
         """Test Nexus Generation - Non-Interleaved"""
         n = self.nex.make_nexus(interleave=False)
