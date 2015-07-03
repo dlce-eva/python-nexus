@@ -23,44 +23,44 @@ class NexusWriter:
     DATATYPE = 'STANDARD'
 
     def __init__(self):
-        self.taxalist = []
+        self.taxalist = set()
         self.comments = []
-        self.characters = []
-        self.clean_characters = {}
         self.symbols = set()
         self.data = {}
         self.is_binary = False
 
     def clean(self, s):
         """Removes unsafe characters"""
+        _EMPTY = ''
         replacements = {
-            ' ': '', '\\': '', '(': '_', ')': '', ':': '',
-            '/': '', '?': '', '-': '',
+            ' ': _EMPTY, '\\': _EMPTY, ':': _EMPTY,
+            '/': _EMPTY, '?': _EMPTY, '-': _EMPTY,
+            '(': '_', ')': _EMPTY, 
         }
         for f, t in replacements.items():
             s = s.replace(f, t)
         return s
-
+    
+    @property
+    def characters(self):
+        return self.data.keys()
+    
     def _add_char(self, charlabel):
         """Adds a character"""
         charlabel = str(charlabel)
-        if charlabel not in self.characters:
-            self.characters.append(charlabel)
-            self.data[charlabel] = {}
-            self.clean_characters[charlabel] = self.clean(charlabel)
+        self.data[charlabel] = self.data.get(charlabel, {})
         return charlabel
 
     def _add_taxa(self, taxon):
         """Adds a taxa"""
-        if taxon not in self.taxalist:
-            self.taxalist.append(taxon)
+        self.taxalist.add(taxon)
         return taxon
 
     def _make_charlabel_block(self):
         """Generates a character label block"""
         out = ["CHARSTATELABELS"]
-        for i, c in enumerate(sorted(self.characters), 1):
-            out.append("\t\t%d %s," % (i, self.clean_characters[c]))
+        for i, char in enumerate(sorted(self.characters), 1):
+            out.append("\t\t%d %s," % (i, self.clean(char)))
         out[-1] = out[-1].strip(',')  # remove trailing comma
         out.append(";")
         return "\n".join(out)
@@ -109,7 +109,7 @@ class NexusWriter:
             self.data[character][taxon] += value
         else:
             self.data[character][taxon] = value
-
+            
         # add to symbols
         if value not in ['?', '-']:
             [self.symbols.add(v) for v in value]
