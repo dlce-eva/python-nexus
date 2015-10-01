@@ -138,12 +138,16 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         assert self.nex.data.ntaxa == len(self.expected)
         assert self.nex.data.ntaxa == len(self.nex.data.taxa)
 
-    def test_characters(self):
-        # did we parse the characters properly?
+    def test_matrix(self):
         assert self.nex.data.nchar == 2
         for taxon, expected in self.expected.items():
             assert self.nex.data.matrix[taxon] == expected
-
+            
+    def test_characters(self):
+        for site, data in self.nex.data.characters.items():
+            for taxon, value in data.items():
+                assert value == self.expected[taxon][site]
+                
     def test_iterable(self):
         for taxon, block in self.nex.data:
             assert block == self.expected[taxon]
@@ -188,11 +192,6 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
-
-    def test__load_characters(self):
-        for site, data in self.nex.data.characters.items():
-            for taxon, value in data.items():
-                assert value == self.expected[taxon][site]
 
     def test_get_site(self):
         for i in (0, 1):
