@@ -4,6 +4,8 @@ Tools for reading a nexus file
 import re
 import os
 import warnings
+import pickle
+from hashlib import md5
 
 try:
     from StringIO import StringIO
@@ -352,13 +354,15 @@ class DataHandler(GenericHandler):
     )
     
     def __init__(self):
-        self.characters = {}
         self.charlabels = {}
         self.attributes = []
         self.format = {}
         self.gaps = None
         self.missing = None
         self.matrix = {}
+        # private
+        self._characters = None  # precalculated/cached characters block
+        self.__matrix_hash = None  # hash of the data matrix to identify changes
         super(DataHandler, self).__init__()
 
     def __getitem__(self, index):
@@ -385,7 +389,23 @@ class DataHandler(GenericHandler):
         symbols = set()
         [symbols.update(vals) for vals in self.matrix.values()]
         return symbols
-
+    
+    @property
+    def characters(self):
+        current = self.hash()
+        if self.__matrix_hash != current:
+            self._characters = {}
+            for taxon in self.taxa:
+                for index, char in enumerate(self.matrix[taxon]):
+                    label = self.charlabels.get(index, index)
+                    self._characters[label] = self._characters.get(label, {})
+                    self._characters[label][taxon] = self.matrix[taxon][index]
+            self.__matrix_hash = current
+        return self._characters
+    
+    def hash(self):
+        return md5(pickle.dumps(self.matrix)).hexdigest()
+    
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
@@ -549,8 +569,6 @@ class DataHandler(GenericHandler):
                 taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
                 self.add_taxon(taxon, self._parse_sites(sites.strip()))
 
-        self._load_characters()
-
         # Warn if format string (ntaxa or nchar) does not give the right answer
         if _dim_taxa is not None and self.ntaxa != _dim_taxa:
             warnings.warn(
@@ -561,14 +579,6 @@ class DataHandler(GenericHandler):
             warnings.warn(
                 "Expected %d characters, got %d" % (self.nchar, _dim_chars)
             )
-
-    def _load_characters(self):
-        """Loads characters into self.characters section"""
-        for taxon in self.taxa:
-            for index, char in enumerate(self.matrix[taxon]):
-                label = self.charlabels.get(index, index)
-                self.characters[label] = self.characters.get(label, {})
-                self.characters[label][taxon] = self.matrix[taxon][index]
 
     def _parse_charstate_block(self, data):
         """
