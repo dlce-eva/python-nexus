@@ -36,11 +36,10 @@ class Test_Multistatise(unittest.TestCase):
         assert self.nex.data.nchar == 1
         
     def test_matrix(self):
-        assert self.nex.data.matrix['Harry'][0] == 'A'
-        assert self.nex.data.matrix['Simon'][0] == 'B'
-        assert self.nex.data.matrix['Betty'][0] == 'C'
-        assert self.nex.data.matrix['Louise'][0] == 'D'
-    
+        assert self.nex.data.matrix['Harry'] == ['A'], self.nex.data.matrix
+        assert self.nex.data.matrix['Simon'] == ['B'], self.nex.data.matrix
+        assert self.nex.data.matrix['Betty'] == ['C'], self.nex.data.matrix
+        assert self.nex.data.matrix['Louise'] == ['D'], self.nex.data.matrix
     
     def test_regression_include_invisible_taxa(self):
         """Include taxa that have no entries"""
