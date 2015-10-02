@@ -1,10 +1,15 @@
 from collections import Counter
 
 from nexus.tools import check_for_valid_NexusReader
+from nexus.tools import new_nexus_without_sites
 
 def check_zeros(nexus_obj, absences=None, missing=None):
     """
     Checks for sites in the nexus that are coded as all empty.
+
+    Returns a list of sites that are completely empty. Note that
+    this is zero-indexed (i.e. the first site is site 0 not 1)
+    to enable indexing of nexus.data.matrix/.character lists
     
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
@@ -40,4 +45,23 @@ def check_zeros(nexus_obj, absences=None, missing=None):
             bad.append(site_idx)
     return bad
 
+def remove_zeros(nexus_obj, absences=None, missing=None):
+    """
+    Removes sites in the nexus that are coded as all empty.
+   
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader
+    
+    :param absences: A list of values to be marked as absent.
+        Defacult = ["0"]
+    :type char: list
+    
+    :param missing: A list of values to be marked as missing.
+        Default = ["-", "?"]
+    :type char: list
+    h
+    :return: a new nexus
+    """
+    zeros = check_zeros(nexus_obj, absences=absences, missing=missing)
+    return new_nexus_without_sites(nexus_obj, zeros)
 
