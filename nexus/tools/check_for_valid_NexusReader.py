@@ -1,4 +1,4 @@
-from nexus import NexusReader, NexusFormatException
+from ..reader import NexusReader, NexusFormatException
 
 def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
     """

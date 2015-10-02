@@ -1,6 +1,6 @@
 from random import shuffle, randrange
 
-from nexus import NexusWriter
+from nexus.writer import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
 def shufflenexus(nexus_obj, resample=False):

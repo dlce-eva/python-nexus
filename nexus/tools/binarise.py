@@ -1,4 +1,4 @@
-from nexus import NexusWriter
+from nexus.writer import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
 # set isstr in a python 2 vs python 3 safe way
