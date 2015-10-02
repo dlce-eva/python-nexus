@@ -1,4 +1,4 @@
-from nexus import NexusWriter
+from nexus.writer import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
 def multistatise(nexus_obj, charlabel=None):

@@ -1,6 +1,6 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
 from collections import Iterable
-from nexus import NexusWriter
+from nexus.writer import NexusWriter
 from nexus.tools import check_for_valid_NexusReader
 
 
