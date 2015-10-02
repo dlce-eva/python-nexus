@@ -59,9 +59,9 @@ def remove_zeros(nexus_obj, absences=None, missing=None):
     :param missing: A list of values to be marked as missing.
         Default = ["-", "?"]
     :type char: list
-    h
+    
     :return: a new nexus
     """
     zeros = check_zeros(nexus_obj, absences=absences, missing=missing)
-    return new_nexus_without_sites(nexus_obj, zeros)
+    return new_nexus_without_sites(nexus_obj, zeros)._convert_to_reader()
 
