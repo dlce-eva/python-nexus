@@ -1,7 +1,7 @@
 from random import shuffle, randrange
 
 from nexus.writer import NexusWriter
-from nexus.tools import check_for_valid_NexusReader
+from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 def shufflenexus(nexus_obj, resample=False):
     """

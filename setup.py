@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from setuptools import setup
 from nexus import __version__ as version
 from nexus import __doc__ as long_desc
@@ -22,7 +23,7 @@ setup(
     author_email="simon@simon.net.nz",
     url="http://simon.net.nz/articles/python-nexus",
     license="BSD",
-    packages=['nexus'],
+    packages=['nexus', 'nexus.tools'],
     package_dir={'nexus': 'nexus'},
     package_data={'nexus/examples': ['*.nex', '*.trees']},
     test_suite="nexus.test.nexus_suite",
