@@ -1,7 +1,7 @@
 from collections import Counter
 
-from nexus.tools import check_for_valid_NexusReader
-from nexus.tools import new_nexus_without_sites
+from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
+from nexus.tools.sites import new_nexus_without_sites
 
 def check_zeros(nexus_obj, absences=None, missing=None):
     """

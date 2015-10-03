@@ -1,6 +1,6 @@
 import os
 from nexus.writer import NexusWriter
-from nexus.tools import check_for_valid_NexusReader
+from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 def combine_nexuses(nexuslist):
     """
