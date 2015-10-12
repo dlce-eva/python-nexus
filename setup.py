@@ -21,7 +21,7 @@ setup(
     keywords="phylogenetics nexus newick paup splitstree",
     author="Simon Greenhill",
     author_email="simon@simon.net.nz",
-    url="http://simon.net.nz/articles/python-nexus",
+    url="https://github.com/SimonGreenhill/python-nexus",
     license="BSD",
     packages=['nexus', 'nexus.tools'],
     package_dir={'nexus': 'nexus'},
