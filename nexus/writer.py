@@ -171,17 +171,16 @@ class NexusWriter:
                       charblock=False):
         """
         Generates a string representation of the nexus
-
+        
         :param filename: Filename to store nexus as
         :type filename: String
         :param interleave: Generate interleaved matrix or not
         :type interleave: Boolean
         :param charblock: Include a characters block or not
         :type charblock: Boolean
-
+        
         :return: None
         """
-        # do this first, so we don't make an empty file if make_nexus fails
         nexus = self.make_nexus(interleave, charblock)
         with open(filename, 'w+') as handle:
             handle.write(nexus)
