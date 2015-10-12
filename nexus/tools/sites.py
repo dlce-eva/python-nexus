@@ -83,8 +83,6 @@ def count_site_values(nexus_obj, characters=('-', '?')):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    # just check it's iterable. Don't _change_ it to an iterable or we
-    # won't be able to compare the characters properly below.
     if not isinstance(characters, Iterable):
         raise TypeError("characters should be iterable")
 
