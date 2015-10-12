@@ -1,5 +1,8 @@
 # python-nexus
-## Generic nexus (.nex, .trees) reader/writer for python
+
+A Generic nexus (.nex, .trees) reader/writer for python.
+
+[![Build Status](https://travis-ci.org/SimonGreenhill//python-nexus.svg?branch=master)](https://travis-ci.org/SimonGreenhill//python-nexus)
 
 Copyright (c) 2009-2015, Simon J. Greenhill <simon@simon.net.nz>
 
