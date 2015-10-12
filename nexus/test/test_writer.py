@@ -11,40 +11,50 @@ data = {
 class Test_NexusWriter(unittest.TestCase):
     def setUp(self):
         self.nex = NexusWriter()
+        for char in data:
+            for taxon, value in data[char].items():
+                self.nex.add(taxon, char, value)
     
     def test_char_adding1(self):
         """Test Character Addition 1"""
-        for tx, value in data['char1'].items():
-            self.nex.add(tx, 'char1', value)
         assert self.nex.data['char1']['French'] == '1'
         assert self.nex.data['char1']['English'] == '2'
         assert self.nex.data['char1']['Latin'] == '3'
 
     def test_char_adding2(self):
         """Test Character Addition 2"""
-        for tx, value in data['char2'].items():
-            self.nex.add(tx, 'char2', value)
         assert self.nex.data['char2']['French'] == '4'
         assert self.nex.data['char2']['English'] == '5'
         assert self.nex.data['char2']['Latin'] == '6'
-
-
-class Test_NexusWriter_2(unittest.TestCase):
-    def setUp(self):
-        self.nex = NexusWriter()
-        for char, b in data.items():
-            for taxon, value in b.items():
-                self.nex.add(taxon, char, value)
     
     def test_characters(self):
         assert 'char1' in self.nex.characters
         assert 'char2' in self.nex.characters
         
-    def test_taxalist(self):
-        assert 'French' in self.nex.taxalist
-        assert 'English' in self.nex.taxalist
-        assert 'Latin' in self.nex.taxalist
+    def test_taxa(self):
+        assert 'French' in self.nex.taxa
+        assert 'English' in self.nex.taxa
+        assert 'Latin' in self.nex.taxa
     
+    def test_remove(self):
+        self.nex.remove("French", "char2")
+        assert 'French' not in self.nex.data['char2']
+        assert 'French' in self.nex.taxa
+        
+    def test_remove_character(self):
+        self.nex.remove_character("char2")
+        assert len(self.nex.characters) == 1
+        assert 'char2' not in self.nex.data
+        
+    def test_remove_taxon(self):
+        self.nex.remove_taxon("French")
+        assert 'French' not in self.nex.taxa
+        for char in self.nex.data:
+            assert 'French' not in self.nex.data[char]
+        n = self.nex.make_nexus(interleave=False)
+        assert re.search("DIMENSIONS NTAX=2 NCHAR=2;", n)
+        assert 'French' not in n
+        
     def test_nexus_noninterleave(self):
         """Test Nexus Generation - Non-Interleaved"""
         n = self.nex.make_nexus(interleave=False)
