@@ -27,6 +27,13 @@ class Test_NexusWriter(unittest.TestCase):
         assert self.nex.data['char2']['English'] == '5'
         assert self.nex.data['char2']['Latin'] == '6'
     
+    def test_char_adding_integer(self):
+        """Test Character Addition as integer"""
+        self.nex.add('French', 'char3', 9)
+        self.nex.add('English', 'char3', '9')
+        assert self.nex.data['char3']['French'] == '9'
+        assert self.nex.data['char3']['French'] == '9'
+    
     def test_characters(self):
         assert 'char1' in self.nex.characters
         assert 'char2' in self.nex.characters
@@ -113,7 +120,14 @@ class Test_NexusWriter(unittest.TestCase):
             'INTERLEAVE'
         assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == \
             '123456'
-
+            
+    def test_polymorphic_characters(self):
+        self.nex.add("French", "char1", 2)
+        self.assertEqual(self.nex.data['char1']['French'], "12")
+        n = self.nex.make_nexus(charblock=True)
+        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)  # no change
+        assert re.search("French\s+\(12\)4", n)
+        
 
 class RegressionTests(unittest.TestCase):
     def test_regression_format_string_has_datatype_first(self):
