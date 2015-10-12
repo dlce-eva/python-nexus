@@ -53,7 +53,7 @@ def find_unique_sites(nexus_obj):
         missing = 0
         for taxa, characters in nexus_obj.data:
             c = characters[i]
-            if c in (u'?', u'-'):
+            if c in ('?', '-'):
                 missing += 1
             else:
                 members[c] = members.get(c, 0) + 1

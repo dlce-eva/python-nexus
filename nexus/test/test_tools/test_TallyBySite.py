@@ -9,7 +9,7 @@ class Test_TallyBySite(unittest.TestCase):
         self.nex = NexusReader()
         self.nex.read_string(
             """Begin data;
-            Dimensions ntax=2 nchar=5;
+            Dimensions ntax=3 nchar=6;
             Format datatype=standard symbols="12" gap=-;
             Matrix
             Harry              0111-?
