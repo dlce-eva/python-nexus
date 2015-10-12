@@ -9,17 +9,17 @@ __doc__ = """nexus_anonymise - python-nexus tools v%(version)s
 Anonymises the taxa in a nexus
 """ % {'version': VERSION, }
 
-def anonymise(nexus_obj):
+def anonymise(nexus_obj, salt=None):
     """Anonymises a nexus object"""
     for block in nexus_obj.blocks:
         if block == 'taxa':
             for idx, t in enumerate(nexus_obj.blocks[block].taxa):
-                nexus_obj.blocks[block].taxa[idx] = hash(nexus_obj.filename, t)
+                nexus_obj.blocks[block].taxa[idx] = hash(salt, t)
         elif block == 'trees':
             if nexus_obj.blocks[block].was_translated:
                 for idx in nexus_obj.blocks[block].translators:
                     h = hash(
-                        nexus_obj.filename,
+                        salt,
                         nexus_obj.blocks[block].translators[idx]
                     )
                     nexus_obj.blocks[block].translators[idx] = h
@@ -30,8 +30,7 @@ def anonymise(nexus_obj):
         elif block == 'data':
             newmatrix = {}
             for t in nexus_obj.blocks[block].matrix:
-                newmatrix[hash(nexus_obj.filename, t)] = \
-                    nexus_obj.blocks[block].matrix[t]
+                newmatrix[hash(salt, t)] = nexus_obj.blocks[block].matrix[t]
             nexus_obj.blocks[block].matrix = newmatrix
 
         else:
@@ -39,8 +38,8 @@ def anonymise(nexus_obj):
     return nexus_obj
 
 
-def hash(salt, taxon):
-    return hashlib.md5(("%s-%s" % (salt, taxon)).encode('ascii')).hexdigest()
+def hash(salt, value):
+    return hashlib.md5(("%s-%s" % (salt, value)).encode('ascii')).hexdigest()
 
 if __name__ == '__main__':
     from optparse import OptionParser
