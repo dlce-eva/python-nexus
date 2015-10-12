@@ -6,10 +6,16 @@ from nexus.tools import count_site_values
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
-class Test_CountSiteValues(unittest.TestCase):
-    def test_failure_on_notiterableargument(self):
-        self.assertRaises(TypeError, count_site_values, 1)
 
+class Test_CountSiteValues(unittest.TestCase):
+    def test_errorcheck(self):
+        self.assertRaises(TypeError, count_site_values, "I am a string")
+        self.assertRaises(TypeError, count_site_values, 0)
+    
+    def test_errorcheck_characters(self):
+        nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        self.assertRaises(TypeError, count_site_values, nexus, None)
+    
     def test_count_missing_one(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         missing = count_site_values(nexus)

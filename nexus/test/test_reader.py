@@ -68,6 +68,11 @@ class Test_NexusReader_Core(unittest.TestCase):
         assert text == nex.write()
 
 
+class Test_GenericHandler(unittest.TestCase):
+    def test_remove_comments(self):
+        assert GenericHandler().remove_comments("bootstrap [bootstrap!]") == 'bootstrap '
+
+
 class Test_DataHandler_parse_sites(unittest.TestCase):
     def test_simple(self):
         assert DataHandler()._parse_sites('123') == ['1', '2', '3']
