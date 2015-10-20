@@ -28,11 +28,6 @@ Remove comments:
     nexus_treemanip.py -c old.trees new.trees
 """
 
-class TreeListException(NexusFormatException):
-    """Generic Exception for Tree Lists"""
-    pass
-
-
 def parse_deltree(dstring):
     """
     Returns a list of trees to be deleted
@@ -41,27 +36,22 @@ def parse_deltree(dstring):
     :type dstring: string
 
     :return: A list of trees to be deleted.
-    :raises TreeListException: if dstring is invalid.
+    :raises ValueError: if a component of dstring is not an integer.
+    """
+    def _int(v):
+        try:
+            return int(v)
+        except ValueError:
+            raise ValueError("%r is not an integer" % v)
     
-   """
     out = []
     for token in dstring.split(','):
         token = token.replace(':', '-')
         if '-' in token:
-            try:
-                start, stop = token.split("-")
-                out.extend([x for x in range(int(start), int(stop) + 1)])
-            except (ValueError, IndexError):
-                raise TreeListException(
-                    "'%s' is not a valid token for a tree list" % token
-                )
+            start, stop = token.split("-")
+            out.extend([x for x in range(_int(start), _int(stop) + 1)])
         else:
-            try:
-                out.append(int(token))
-            except ValueError:
-                raise TreeListException(
-                    "'%s' is not a valid token for a tree list" % token
-                )
+            out.append(_int(token))
     return sorted(out)
 
 

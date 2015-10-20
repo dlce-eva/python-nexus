@@ -29,7 +29,15 @@ class test_parse_deltree(unittest.TestCase):
             [1, 3, 4, 5, 6]
         assert parse_deltree('1,3,4:6,8,9:10') == \
             [1, 3, 4, 5, 6, 8, 9, 10]
- 
+    
+    def test_error(self):
+        with self.assertRaises(ValueError):
+            parse_deltree("1-x")
+        with self.assertRaises(ValueError):
+            parse_deltree("sausage")
+        with self.assertRaises(ValueError):
+            parse_deltree("first:last")
+        
 
 class Test_TreeManip_run_deltree(unittest.TestCase):
     
