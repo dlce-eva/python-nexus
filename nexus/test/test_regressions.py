@@ -126,8 +126,9 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
 
     def test_taxa_block_attributes(self):
         assert 'taxa' in self.nex.blocks
-        assert len(self.nex.taxa.attributes) == 1
+        assert len(self.nex.taxa.attributes) == 2
         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
+        assert 'LINK Taxa = Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
     
     def test_write(self):
         expected_patterns = [
