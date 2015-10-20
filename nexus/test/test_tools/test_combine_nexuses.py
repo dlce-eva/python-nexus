@@ -8,7 +8,6 @@ from nexus.tools.combine_nexuses import combine_nexuses
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_CombineNexuses(unittest.TestCase):
-    """Test combine_nexuses"""
     def setUp(self):
         self.nex1 = NexusReader()
         self.nex1.read_string(

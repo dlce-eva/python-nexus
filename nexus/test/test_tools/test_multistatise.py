@@ -7,7 +7,6 @@ from nexus.tools.multistatise import multistatise
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_Multistatise(unittest.TestCase):
-    """Test multistatise"""
     def setUp(self):
         self.nex = NexusReader()
         self.nex.read_string("""

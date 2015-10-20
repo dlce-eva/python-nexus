@@ -7,7 +7,6 @@ from nexus.tools.shufflenexus import shufflenexus
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_ShuffleNexus(unittest.TestCase):
-    """Test shufflenexus"""
     def setUp(self):
         self.nexus_obj = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
 

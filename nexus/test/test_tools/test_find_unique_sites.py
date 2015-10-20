@@ -7,7 +7,6 @@ from nexus.tools import find_unique_sites
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_FindUniqueSites(unittest.TestCase):
-    """Test find_unique_sites"""
     def test_find_unique_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert len(find_unique_sites(nexus)) == 0

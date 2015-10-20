@@ -5,7 +5,6 @@ from nexus.tools.check_zeros import check_zeros, remove_zeros
 
 
 class Test_CheckZeros(unittest.TestCase):
-    """Test multistatise"""
     def setUp(self):
         self.nex = NexusReader()
         self.nex.read_string("""
@@ -40,7 +39,7 @@ class Test_CheckZeros(unittest.TestCase):
     def test_change_absence(self):
         found = check_zeros(self.nex, absences=['1', '0'])
         assert found == [0, 1, 2, 3, 4, 5, 6, 7]
-    
+
     def test_remove_zeros(self):
         new = remove_zeros(self.nex)
         assert new.data.nchar == 4

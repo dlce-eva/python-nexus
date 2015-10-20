@@ -4,7 +4,6 @@ from nexus import NexusReader
 from nexus.tools.sites import tally_by_taxon
 
 class Test_TallyByTaxon(unittest.TestCase):
-    """Test combine_nexuses"""
     def setUp(self):
         self.nex = NexusReader()
         self.nex.read_string(

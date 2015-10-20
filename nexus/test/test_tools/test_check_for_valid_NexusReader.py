@@ -7,8 +7,6 @@ from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_CheckForValidNexusReader(unittest.TestCase):
-    """Test check_for_valid_NexusReader"""
-    
     def test_valid_NexusReader(self):
         check_for_valid_NexusReader(NexusReader())
     
