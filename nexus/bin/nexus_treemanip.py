@@ -30,9 +30,8 @@ Remove comments:
 
 class TreeListException(NexusFormatException):
     """Generic Exception for Tree Lists"""
-    def __init__(self, arg):
-        Exception.__init__(self, arg)
-        self.arg = arg
+    pass
+
 
 def parse_deltree(dstring):
     """

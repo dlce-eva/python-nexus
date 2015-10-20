@@ -30,11 +30,7 @@ MESQUITE_LINK_PATTERN = re.compile(
 
 class NexusFormatException(Exception):
     """Generic Exception for Nexus Format Errors"""
-    def __init__(self, arg):
-        self.value = arg
-    
-    def __str__(self):  # pragma: no cover
-        return repr(self.value)
+    pass
 
 
 class GenericHandler(object):
