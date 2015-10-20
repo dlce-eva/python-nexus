@@ -183,7 +183,22 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
             "Expected <True>, but got '%s'" % f['labels']
         assert f['interleave'] is True, \
             "Expected <True>, but got '%s'" % f['interleave']
-
+    
+    def test_parse_format_line_returns_none(self):
+        d = DataHandler()
+        assert d.parse_format_line('#NEXUS ') is None
+        assert d.parse_format_line('') is None
+        assert d.parse_format_line('Begin data;') is None
+        assert d.parse_format_line('Dimensions ntax=4 nchar=2;') is None
+        assert d.parse_format_line('Matrix') is None
+        assert d.parse_format_line('Harry              00') is None
+        assert d.parse_format_line('Simon              01') is None
+        assert d.parse_format_line('Betty              10') is None
+        assert d.parse_format_line('Louise             11') is None
+        assert d.parse_format_line('    ;') is None
+        assert d.parse_format_line('End;') is None
+        
+        
     def test_write(self):
         expected_patterns = [
             '^begin data;$',
