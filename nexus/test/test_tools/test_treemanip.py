@@ -11,36 +11,22 @@ from nexus.bin.nexus_treemanip import run_resample
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class test_parse_deltree(unittest.TestCase):
-    def test_1(self):
+    def test_simple(self):
         assert parse_deltree('1') == [1]
-    
-    def test_2(self):
         assert parse_deltree('1,2,3') == [1, 2, 3]
-    
-    def test_3(self):
         assert parse_deltree('1,3,5') == [1, 3, 5]
-    
-    def test_4(self):
         assert parse_deltree('1-10') == \
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    
-    def test_5(self):
         assert parse_deltree('1,3,4-6') == \
             [1, 3, 4, 5, 6]
-    
-    def test_6(self):
         assert parse_deltree('1,3,4-6,8,9-10') == \
             [1, 3, 4, 5, 6, 8, 9, 10]
     
-    def test_alternate_1(self):
+    def test_alternate_range(self):
         assert parse_deltree('1:10') == \
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    
-    def test_alternate_2(self):
         assert parse_deltree('1,3,4:6') == \
             [1, 3, 4, 5, 6]
-    
-    def test_alternate_3(self):
         assert parse_deltree('1,3,4:6,8,9:10') == \
             [1, 3, 4, 5, 6, 8, 9, 10]
  
@@ -98,7 +84,8 @@ class Test_TreeManip_run_randomise(unittest.TestCase):
     def test_run_randomise_sample_toobig(self):
         # raises ValueError, sample size too big (only 3 trees in this file)
         nex = NexusReader(self.filename)
-        self.assertRaises(ValueError, run_random, 10, nex)
+        with self.assertRaises(ValueError):
+            run_random(10, nex)
         
         
 if __name__ == '__main__':
