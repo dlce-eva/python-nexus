@@ -48,11 +48,22 @@ class Test_Anonymise(unittest.TestCase):
             assert h in nex.data.matrix
             assert h in nex.data.taxa
             assert nex.data.matrix[h] == ['0', '1', '2', '3', '4', '5']
-
-    def test_anonymise_untranslated_trees(self):
-        # NOT IMPLEMENTED
-        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
-        self.assertRaises(NotImplementedError, anonymise, nex)
+            
+    def test_notimplemented_exception(self):
+        with self.assertRaises(NotImplementedError):
+            nex = NexusReader()
+            nex.read_string(
+                """Begin something;
+                Dimensions ntax=5 nchar=1;
+                Format datatype=standard symbols="01" gap=-;
+                Matrix
+                Harry              1
+                ;""")
+            anonymise(nex)
+            
+    def test_notimplemented_exception_untranslated_trees(self):
+        with self.assertRaises(NotImplementedError):
+            anonymise(NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees')))
 
     def test_anonymise_translated_trees(self):
         filename = os.path.join(EXAMPLE_DIR, 'example-translated.trees')

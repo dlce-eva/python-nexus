@@ -32,7 +32,7 @@ def anonymise(nexus_obj, salt=None):
             for t in nexus_obj.blocks[block].matrix:
                 newmatrix[hash(salt, t)] = nexus_obj.blocks[block].matrix[t]
             nexus_obj.blocks[block].matrix = newmatrix
-
+            
         else:
             raise NotImplementedError("Unable to anonymise %s blocks" % block)
     return nexus_obj
