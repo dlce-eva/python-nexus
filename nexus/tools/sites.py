@@ -1,5 +1,5 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
-from collections import Iterable
+from collections import Counter, Iterable
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
@@ -188,4 +188,32 @@ def tally_by_taxon(nexus_obj):
             label = nexus_obj.data.charlabels.get(pos, pos)
             tally[taxon][char] = tally[taxon].get(char, [])
             tally[taxon][char].append(label)
+    return tally
+
+
+def count_binary_set_size(nexus_obj):
+    """
+    Counts the number of sites by their size (i.e. how many sites have two
+    members, etc)
+
+    Returns a dictionary of the set size and count
+
+    :param nexus_obj: A `NexusReader` instance
+    :type nexus_obj: NexusReader
+
+    :return: A Dictionary
+    :raises AssertionError: if nexus_obj is not a nexus
+    :raises NexusFormatException: if nexus_obj does not have a `data` block
+
+    e.g. {
+        0: 0,
+        1: 100,
+        2: 20,
+    }
+    """
+    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
+    tally = Counter()
+    for char_id in nexus_obj.data.characters:
+        char = nexus_obj.data.characters[char_id]
+        tally[len([v for v in char.values() if v == '1'])] += 1
     return tally
