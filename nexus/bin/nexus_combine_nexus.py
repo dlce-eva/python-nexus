@@ -8,18 +8,17 @@ __doc__ = """combine-nexus - python-nexus tools v%(version)s
 combines a series of nexuses into one nexus.
 """ % {'version': VERSION, }
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog nex1.nex nex2.nex ... nexN.nex")
     options, nexuslist = parser.parse_args()
-
+    
     if len(nexuslist) <= 1:
         print(__doc__)
         parser.print_help()
         sys.exit()
-
+        
     nexuslist = [NexusReader(n) for n in nexuslist]
     out = combine_nexuses(nexuslist)
     out.write_to_file('combined.nex', charblock=False, interleave=False)

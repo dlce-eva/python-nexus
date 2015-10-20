@@ -3,6 +3,7 @@ Tools for reading a nexus file
 """
 import re
 import os
+import gzip
 import warnings
 import pickle
 from hashlib import md5
@@ -32,7 +33,7 @@ class NexusFormatException(Exception):
     def __init__(self, arg):
         self.value = arg
     
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         return repr(self.value)
 
 
@@ -694,8 +695,7 @@ class NexusReader(object):
             raise IOError("Unable To Read File %s" % filename)
 
         if filename.endswith('.gz'):
-            import gzip
-            handle = gzip.open(filename, 'rb')
+            handle = gzip.open(filename, 'rb') # pragma: no cover
         else:
             handle = open(filename, 'rU')
         self._read(handle)

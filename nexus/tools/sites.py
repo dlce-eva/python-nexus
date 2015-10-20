@@ -23,7 +23,7 @@ def find_constant_sites(nexus_obj):
         for taxa, data in nexus_obj.data:
             c = data[i]
             if c in ('?', '-'):
-                continue
+                continue  # pragma: no cover
             elif c not in states:
                 states.append(c)
 

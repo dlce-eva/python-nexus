@@ -4,10 +4,12 @@ from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 # set isstr in a python 2 vs python 3 safe way
 try:
     basestring  # attempt to evaluate basestring
-    def isstr(s):  # py2
+    # py2
+    def isstr(s):  # pragma: no cover
         return isinstance(s, basestring)
 except NameError:
-    def isstr(s):  # py3
+    # py3
+    def isstr(s):
         return isinstance(s, str)
 
 

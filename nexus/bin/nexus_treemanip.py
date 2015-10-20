@@ -59,7 +59,7 @@ def parse_deltree(dstring):
         else:
             try:
                 out.append(int(token))
-            except (ValueError):
+            except ValueError:
                 raise TreeListException(
                     "'%s' is not a valid token for a tree list" % token
                 )
@@ -89,12 +89,12 @@ def run_deltree(deltree, nexus_obj, do_print=False):
     new = []
     delitems = parse_deltree(deltree)
 
-    if do_print:
+    if do_print:  # pragma: no cover
         print('Deleting: %d trees' % len(delitems))
 
     for index, tree in enumerate(nexus_obj.trees, 1):
         if index in delitems:
-            if do_print:
+            if do_print:  # pragma: no cover
                 print('Deleting tree %d' % index)
         else:
             new.append(tree)
@@ -126,11 +126,11 @@ def run_resample(resample, nexus_obj, do_print=False):
     try:
         every = int(resample)
     except ValueError:
-        sys.exit(
+        raise SystemExit(
             "Invalid resample option %s - should be an integer" % resample
         )
 
-    if do_print:
+    if do_print:  # pragma: no cover
         print('Resampling ever %d trees' % every)
 
     ignore_count = 0
@@ -140,7 +140,7 @@ def run_resample(resample, nexus_obj, do_print=False):
         else:
             ignore_count += 1
 
-    if do_print:
+    if do_print:  # pragma: no cover
         print("Ignored %d trees" % ignore_count)
 
     nexus_obj.trees.trees = new
@@ -167,7 +167,7 @@ def run_removecomments(nexus_obj, do_print=False):
     for index, tree in enumerate(nexus_obj.trees, 1):
         new.append(nexus_obj.trees.remove_comments(tree))
 
-    if do_print:
+    if do_print:  # pragma: no cover
         print("Removed comments")
 
     nexus_obj.trees.trees = new
@@ -223,7 +223,7 @@ def run_random(num_trees, nexus_obj, do_print=False):
     elif num_trees == nexus_obj.trees.ntrees:
         return nexus_obj  # um. ok.
     else:
-        if do_print:
+        if do_print:  # pragma: no cover
             print(
                 "%d trees read. Sampling %d" %
                 (nexus_obj.trees.ntrees, num_trees)
@@ -232,7 +232,7 @@ def run_random(num_trees, nexus_obj, do_print=False):
     return nexus_obj
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.trees new.trees")

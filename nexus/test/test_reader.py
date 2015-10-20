@@ -1,8 +1,10 @@
 """Tests for nexus reading"""
 import os
 import re
+import gzip
 import warnings
 import unittest
+from tempfile import NamedTemporaryFile
 from nexus import NexusReader
 from nexus.reader import GenericHandler, DataHandler, TreeHandler
 
@@ -16,11 +18,13 @@ class Test_NexusReader_Core(unittest.TestCase):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         assert 'data' in nex.blocks
         assert 'Simon' in nex.blocks['data'].matrix
-
+    
+    def test_error_on_missing_file(self):
+        with self.assertRaises(IOError):
+            NexusReader(os.path.join(EXAMPLE_DIR, 'sausage.nex'))
+    
     def test_read_gzip_file(self):
         # first, MAKE a gzip file
-        import gzip
-        from tempfile import NamedTemporaryFile
         tmp = NamedTemporaryFile(delete=False, suffix=".gz")
         tmp.close()
         with open(os.path.join(EXAMPLE_DIR, 'example.nex'), 'rb') as h:

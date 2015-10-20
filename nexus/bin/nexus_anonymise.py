@@ -41,7 +41,7 @@ def anonymise(nexus_obj, salt=None):
 def hash(salt, value):
     return hashlib.md5(("%s-%s" % (salt, value)).encode('ascii')).hexdigest()
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog fudge.nex output.nex")
     options, args = parser.parse_args()
