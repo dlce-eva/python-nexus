@@ -57,7 +57,6 @@ class Test_NexusReader_Core(unittest.TestCase):
         n2 = NexusReader(tmp.name)
         assert n2.data.matrix == nex.data.matrix
         assert n2.data.taxa == nex.data.taxa
-        
         os.unlink(tmp.name)        # cleanup
 
 #class Test_Inline_Comments(unittest.TestCase):
