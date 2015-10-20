@@ -8,7 +8,6 @@ from nexus.bin.nexus_treemanip import run_resample
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_ResampleTrees(unittest.TestCase):
-    """Test nexus_treemanip.run_resample"""
     def setUp(self):
         self.nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         
