@@ -3,6 +3,7 @@
 
 BEGIN TAXA;
 	TITLE Untitled_Block_of_Taxa;
+    LINK Taxa = Untitled_Block_of_Taxa;
 	DIMENSIONS NTAX=3;
 	TAXLABELS
 		A B C 

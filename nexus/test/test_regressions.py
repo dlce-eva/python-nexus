@@ -128,7 +128,7 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
         assert 'taxa' in self.nex.blocks
         assert len(self.nex.taxa.attributes) == 1
         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
-
+    
     def test_write(self):
         expected_patterns = [
             '^begin taxa;$',
@@ -156,7 +156,8 @@ class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
         #NEXUS
 
         Begin data;
-        TITLE something;
+        TITLE Untitled_Block_of_Taxa;
+        LINK Taxa = Untitled_Block_of_Taxa;
         Dimensions ntax=2 nchar=2;
         Format datatype=standard gap=- symbols="01";
         Matrix
@@ -165,14 +166,19 @@ class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
             ;
         End;
         """)
-
-    def test_attr_find(self):
-        assert len(self.nex.data.attributes) == 1
+    
+    def test_attributes(self):
+        assert len(self.nex.data.attributes) == 2
+        assert self.nex.data.attributes[0] == \
+            """TITLE Untitled_Block_of_Taxa;"""
+        assert self.nex.data.attributes[1] == \
+            """LINK Taxa = Untitled_Block_of_Taxa;"""
 
     def test_write(self):
         expected_patterns = [
             '^begin data;$',
-            '^\s+TITLE something;$',
+            '^\s+TITLE Untitled_Block_of_Taxa;$',
+            '^\s+LINK Taxa = Untitled_Block_of_Taxa;$',
             '^\s+dimensions ntax=2 nchar=2;$',
             '^\s+format datatype=standard gap=- symbols="01";$',
             "^matrix$",
