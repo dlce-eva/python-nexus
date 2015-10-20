@@ -1,5 +1,7 @@
+import os
 import re
 import unittest
+from tempfile import NamedTemporaryFile
 from nexus import NexusWriter
 
 data = {
@@ -127,6 +129,37 @@ class Test_NexusWriter(unittest.TestCase):
         n = self.nex.make_nexus(charblock=True)
         assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)  # no change
         assert re.search("French\s+\(12\)4", n)
+    
+    def test_write_to_file(self):
+        tmp = NamedTemporaryFile(delete=False, suffix=".nex")
+        tmp.close()
+        self.nex.write_to_file(tmp.name)
+        assert os.path.isfile(tmp.name)
+        
+        with open(tmp.name, 'r') as handle:
+            n = handle.read()
+            
+        assert re.search("#NEXUS", n)
+        assert re.search("BEGIN DATA;", n)
+        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)
+        assert re.search("MATRIX", n)
+        assert re.search("Latin\s+36", n)
+        assert re.search("French\s+14", n)
+        assert re.search("English\s+25", n)
+        assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
+        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+            == 'STANDARD'
+        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+            == '123456'
+        
+        os.unlink(tmp.name)        # cleanup
+
+    def test_write_as_table(self):
+        content = self.nex.write_as_table()
+        assert re.search("Latin\s+36", content)
+        assert re.search("French\s+14", content)
+        assert re.search("English\s+25", content)
+        assert len(content.split("\n")) == 3
         
 
 class RegressionTests(unittest.TestCase):

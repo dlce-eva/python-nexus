@@ -113,7 +113,7 @@ def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
                 new_label = "%s_%d" % (str(label), j)
                 # add to nexus
                 n.add(taxon, new_label, state[j])
-
+            
         if one_nexus_per_block:
             nexuslist.append(n)
             n = NexusWriter()

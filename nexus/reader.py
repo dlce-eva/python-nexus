@@ -616,7 +616,7 @@ class DataHandler(GenericHandler):
                     # Datatype must come first!
                     fstring.insert(1, "%s=%s" % (key, value))
                 elif key in ('interleave', ):
-                    # IGNORE the interleaving
+                    # IGNORE the interleaving -- not implemented
                     continue
                 else:
                     if key == 'symbols':
