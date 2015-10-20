@@ -47,7 +47,18 @@ class Test_NexusReader_Core(unittest.TestCase):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         text = open(os.path.join(EXAMPLE_DIR, 'example.trees')).read()
         assert text == nex.write()
-
+    
+    def test_write_to_file(self):
+        tmp = NamedTemporaryFile(delete=False, suffix=".nex")
+        tmp.close()
+        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+        nex.write_to_file(tmp.name)
+        assert os.path.isfile(tmp.name)
+        n2 = NexusReader(tmp.name)
+        assert n2.data.matrix == nex.data.matrix
+        assert n2.data.taxa == nex.data.taxa
+        
+        os.unlink(tmp.name)        # cleanup
 
 #class Test_Inline_Comments(unittest.TestCase):
     #def setUp(self):
