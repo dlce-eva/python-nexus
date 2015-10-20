@@ -192,7 +192,7 @@ class NexusWriter:
         out = []
         for t in sorted(self.taxa):
             s = []
-            for c in self.characters:
+            for c in sorted(self.characters):
                 value = self.data[c].get(t, self.MISSING)
                 if len(value) > 1:  # wrap equivocal states in ()'s
                     value = "(%s)" % value

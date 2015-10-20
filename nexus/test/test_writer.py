@@ -161,6 +161,14 @@ class Test_NexusWriter(unittest.TestCase):
         assert re.search("English\s+25", content)
         assert len(content.split("\n")) == 3
         
+    def test_write_as_table_with_polymorphoc(self):
+        self.nex.add('French', 'char1', '2')
+        content = self.nex.write_as_table()
+        assert re.search("Latin\s+36", content)
+        assert re.search("French\s+\(12\)4", content)
+        assert re.search("English\s+25", content)
+        assert len(content.split("\n")) == 3
+        
 
 class RegressionTests(unittest.TestCase):
     def test_regression_format_string_has_datatype_first(self):
