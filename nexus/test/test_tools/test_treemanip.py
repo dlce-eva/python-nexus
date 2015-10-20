@@ -7,6 +7,7 @@ from nexus.bin.nexus_treemanip import parse_deltree, run_deltree
 from nexus.bin.nexus_treemanip import run_random
 from nexus.bin.nexus_treemanip import run_removecomments
 from nexus.bin.nexus_treemanip import run_resample
+from nexus.bin.nexus_treemanip import run_detranslate
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
@@ -64,7 +65,6 @@ class Test_TreeManip_run_resample(unittest.TestCase):
 
 
 class Test_TreeManip_run_removecomments(unittest.TestCase):
-    
     def test_run_removecomments(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-beast.trees'))
         new_nex = run_removecomments(nex, do_print=False)
@@ -95,6 +95,18 @@ class Test_TreeManip_run_randomise(unittest.TestCase):
         with self.assertRaises(ValueError):
             run_random(10, nex)
         
-        
+
+class Test_TreeManip_run_detranslate(unittest.TestCase):
+    def test_run_detranslate(self):
+        nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example-translated.trees'))
+        assert not nex.trees._been_detranslated
+        nex = run_detranslate(nex)
+        # should NOW be the same as tree 0 in example.trees
+        other_tree_file = NexusReader(
+            os.path.join(EXAMPLE_DIR, 'example.trees')
+        )
+        assert other_tree_file.trees[0] == nex.trees[0]
+
+ 
 if __name__ == '__main__':
     unittest.main()
