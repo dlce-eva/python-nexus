@@ -1,4 +1,11 @@
 include readme.txt 
 include LICENSE
+exclude .gitignore
+exclude .coverage
+exclude .travis.yml
+prune .cache
+prune .git
+prune build
+prune dist
 recursive-include examples *.nex *.trees
 recursive-include test *.nex *.trees
