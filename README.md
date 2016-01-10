@@ -3,8 +3,9 @@
 A Generic nexus (.nex, .trees) reader/writer for python.
 
 [![Build Status](https://travis-ci.org/SimonGreenhill/python-nexus.svg?branch=master)](https://travis-ci.org/SimonGreenhill//python-nexus)
+[![Coverage Status](https://coveralls.io/repos/SimonGreenhill/python-nexus/badge.svg?branch=master&service=github)](https://coveralls.io/github/SimonGreenhill/python-nexus?branch=master)
 
-Copyright (c) 2009-2015, Simon J. Greenhill <simon@simon.net.nz>
+Copyright (c) 2009-2016, Simon J. Greenhill <simon@simon.net.nz>
 
  * http://simon.net.nz/python-nexus/
  * https://github.com/SimonGreenhill/python-nexus
