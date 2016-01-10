@@ -97,9 +97,9 @@ PACKAGE_NAME = "python-nexus"
 PACKAGE_VERSION = __version__
 VERSION = __version__
 PACKAGE_AUTHOR = "Simon J. Greenhill"
-PACKAGE_COPYRIGHT = "Copyright 2009-2015 Simon J. Greenhill"
+PACKAGE_COPYRIGHT = "Copyright 2009-2016 Simon J. Greenhill"
 PACKAGE_LICENSE = """
-Copyright (c) 2009-2015, Simon J. Greenhill
+Copyright (c) 2009-2016, Simon J. Greenhill
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification
