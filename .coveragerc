@@ -1,6 +1,3 @@
-[run]
-source = python-nexus
-
 [report]
 omit =  
     */python?.?/*
