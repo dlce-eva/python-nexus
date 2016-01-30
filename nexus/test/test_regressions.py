@@ -230,5 +230,45 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
         assert """Title 'Trees from "temp.trees"';""" in written
         assert """LINK Taxa = Untitled_Block_of_Taxa;""" in written
 
+
+
+class Test_TaxaHandler_OneLine(unittest.TestCase):
+    """
+    Regression: 
+    Test that we can read taxalabels delimited by spaces not new lines.
+    """
+    def setUp(self):
+        self.nex = NexusReader(
+            os.path.join(REGRESSION_DIR, 'taxlabels.nex')
+        )
+    
+    def test_block_find(self):
+        assert 'taxa' in self.nex.blocks
+        
+    def test_taxa(self):
+        for taxon in ['A', 'B', 'C']:
+            assert taxon in self.nex.data.matrix
+            assert taxon in self.nex.blocks['taxa'].taxa
+        assert self.nex.blocks['taxa'].ntaxa == 3
+    
+    def test_block_find(self):
+        assert 'data' in self.nex.blocks
+
+    def test_charblock_find(self):
+        assert hasattr(self.nex.data, 'characters')
+
+    def test_data_ntaxa(self):
+        assert self.nex.data.ntaxa == 3
+
+    def test_data_nchar(self):
+        assert self.nex.data.nchar == 3
+
+    def test_matrix(self):
+        assert self.nex.data.matrix["A"] == ["1", "1", "1"]
+        assert self.nex.data.matrix["B"] == ["0", "1", "1"]
+        assert self.nex.data.matrix["C"] == ["0", "0", "1"]
+        
+
+
 if __name__ == '__main__':
     unittest.main()
