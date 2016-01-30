@@ -1,0 +1,16 @@
+#NEXUS
+
+begin taxa;
+  dimensions ntax=3;
+  taxlabels A B C;
+end;
+
+begin characters;
+  dimensions nchar=3;
+  format symbols="01" missing=?;
+  matrix
+    A              111
+    B              011
+    C              001
+;
+end;
