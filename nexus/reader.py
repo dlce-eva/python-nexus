@@ -131,16 +131,23 @@ class TaxaHandler(GenericHandler):
                 found_ntaxa = int(self.is_dimensions.findall(line)[0])
             elif line == ';':
                 continue
-            elif self.is_taxlabel_block.match(line):
+            elif in_taxlabel_block or self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
-            elif in_taxlabel_block:
-                for taxon in line.strip(';').split():
-                    self.taxa.append(taxon)
+                line = self.is_taxlabel_block.sub("", line)
+                taxa = [t.replace(";", "").strip() for t in line.split(" ")]
+                taxa = [t for t in taxa if len(t)]
+                if len(taxa):
+                    self.taxa.extend(taxa)
             elif MESQUITE_TITLE_PATTERN.match(line):
                 self.attributes.append(line)
             elif MESQUITE_LINK_PATTERN.match(line):
                 self.attributes.append(line)
-        assert found_ntaxa == self.ntaxa
+        
+        if found_ntaxa != self.ntaxa:
+            raise NexusFormatException(
+                "Number of taxa (%d) doesn't match dimensions declaration (%d)" % (self.ntaxa, found_ntaxa)
+            )
+
 
     def write(self):
         """
@@ -231,18 +238,20 @@ class TreeHandler(GenericHandler):
                 if translation_pattern.match(line):
                     taxon_id, taxon = translation_pattern.findall(line)[0]
                     taxon = taxon.strip("'")
-                    assert taxon_id not in self.translators, \
-                         "Duplicate Taxa ID %s in translate block" % taxon_id
+                    if taxon_id in self.translators:
+                        raise NexusFormatException(
+                            "Duplicate Taxa ID %s in translate block" % taxon_id
+                        )
+                    if taxon in self.translators.values():
+                        raise NexusFormatException(
+                            "Duplicate Taxon %s in translate block" % taxon
+                        )
+                        
                     self.translators[taxon_id] = taxon
                 if line.endswith(';'):
                     lost_in_translation = False
 
             elif self.is_tree.search(line):
-                if lost_in_translation:
-                    # can't find a tree if we're still in the translate block!
-                    raise NexusFormatException(
-                        "Tree block has incomplete translate table"
-                    )
                 self.trees.append(line)
 
         # get taxa if not translated.
@@ -729,7 +738,7 @@ class NexusReader(object):
             if found:
                 block = found[0].lower()
                 if block in store:
-                    raise Exception("Duplicate Block %s" % block)
+                    raise NexusFormatException("Duplicate Block %s" % block)
                 store[block] = []
 
             # check if we're ending a block
