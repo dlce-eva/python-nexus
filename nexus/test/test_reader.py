@@ -3,7 +3,7 @@ import os
 import gzip
 import unittest
 from tempfile import NamedTemporaryFile
-from nexus import NexusReader
+from nexus import NexusReader, NexusFormatException
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -58,7 +58,28 @@ class Test_NexusReader_Core(unittest.TestCase):
         assert n2.data.matrix == nex.data.matrix
         assert sorted(n2.data.taxa) == sorted(nex.data.taxa)
         os.unlink(tmp.name)        # cleanup
-
+    
+    def test_error_on_duplicate_block(self):
+        with self.assertRaises(NexusFormatException):
+            NexusReader().read_string(
+                """
+                #NEXUS
+                
+                Begin data;
+                Dimensions ntax=5 nchar=1;
+                Format datatype=standard symbols="01" gap=-;
+                Matrix
+                Harry              1
+                ;
+                
+                Begin data;
+                Dimensions ntax=5 nchar=1;
+                Format datatype=standard symbols="01" gap=-;
+                Matrix
+                Harry              1
+                """)
+            
+        
 #class Test_Inline_Comments(unittest.TestCase):
     #def setUp(self):
     #    self.nex = NexusReader(
