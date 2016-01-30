@@ -16,6 +16,10 @@ Copyright (c) 2009-2016, Simon J. Greenhill <simon@simon.net.nz>
 python-nexus provides simple nexus file-format reading/writing tools, and a small
 collection of nexus manipulation scripts.
 
+## Versions:
+
+ * v1.33: fixed bug in taxa labels parser when taxa are listed on one line.
+
 ## Usage
 
 Reading a Nexus:
