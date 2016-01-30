@@ -41,7 +41,10 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         self.nex = NexusReader(
             os.path.join(EXAMPLE_DIR, 'example.nex')
         )
-
+    
+    def test_repr(self):
+        assert repr(self.nex.data) == "<NexusDataBlock: 2 characters from 4 taxa>"
+        
     def test_block_find(self):
         assert 'data' in self.nex.blocks
         assert hasattr(self.nex, 'data')
