@@ -1,3 +1,4 @@
+.PHONY: build release test clean
 
 build:
 	python setup.py sdist bdist_wheel
@@ -7,3 +8,7 @@ release:
 
 test:
 	py.test --cov
+
+clean:
+	rm -rf build/*
+
