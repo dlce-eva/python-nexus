@@ -8,7 +8,7 @@ import warnings
 import pickle
 from hashlib import md5
 
-try:
+try:  # pragma: no cover
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
@@ -781,7 +781,3 @@ class NexusReader(object):
         handle = open(filename, 'w')
         handle.writelines(self.write())
         handle.close()
-
-
-if __name__ == '__main__':
-    pass

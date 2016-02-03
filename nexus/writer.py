@@ -214,4 +214,3 @@ class NexusWriter:
         n.read_string(out)
         return n
 
-

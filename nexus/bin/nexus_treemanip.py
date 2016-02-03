@@ -114,8 +114,8 @@ def run_resample(resample, nexus_obj, do_print=False):
     new = []
     try:
         every = int(resample)
-    except ValueError:
-        raise SystemExit(
+    except TypeError:
+        raise ValueError(
             "Invalid resample option %s - should be an integer" % resample
         )
 

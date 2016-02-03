@@ -19,6 +19,15 @@ class Test_ResampleTrees(unittest.TestCase):
         newnex = run_resample(1, self.nexus)
         assert len(newnex.trees.trees) == 3
     
+    def test_raises_error_on_invalid_resample_value(self):
+        with self.assertRaises(ValueError):
+            run_resample('a', self.nexus)
+        with self.assertRaises(ValueError):
+            run_resample(None, self.nexus)
+        with self.assertRaises(ValueError):
+            run_resample([], self.nexus)
+        
+        
 
 if __name__ == '__main__':
     unittest.main()
