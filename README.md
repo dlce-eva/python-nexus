@@ -18,6 +18,7 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v1.34: fixed parsing of malformed taxa blocks.
  * v1.33: fixed bug in taxa labels parser when taxa are listed on one line.
 
 ## Usage

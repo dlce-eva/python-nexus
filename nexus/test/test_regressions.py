@@ -128,7 +128,8 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
         assert 'taxa' in self.nex.blocks
         assert len(self.nex.taxa.attributes) == 2
         assert 'TITLE Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
-        assert 'LINK Taxa = Untitled_Block_of_Taxa;' in self.nex.taxa.attributes
+        assert 'LINK Taxa = Untitled_Block_of_Taxa;' in \
+            self.nex.taxa.attributes
     
     def test_write(self):
         expected_patterns = [
@@ -234,8 +235,8 @@ class Test_TreeHandler_Regression_Mesquite(unittest.TestCase):
 
 class Test_TaxaHandler_OneLine(unittest.TestCase):
     """
-    Regression: 
-    Test that we can read taxalabels delimited by spaces not new lines.
+    Regression: Test that we can read taxalabels delimited by spaces not new
+    lines.
     """
     def setUp(self):
         self.nex = NexusReader(
@@ -244,6 +245,7 @@ class Test_TaxaHandler_OneLine(unittest.TestCase):
     
     def test_block_find(self):
         assert 'taxa' in self.nex.blocks
+        assert 'data' in self.nex.blocks
         
     def test_taxa(self):
         for taxon in ['A', 'B', 'C']:
@@ -251,9 +253,6 @@ class Test_TaxaHandler_OneLine(unittest.TestCase):
             assert taxon in self.nex.blocks['taxa'].taxa
         assert self.nex.blocks['taxa'].ntaxa == 3
     
-    def test_block_find(self):
-        assert 'data' in self.nex.blocks
-
     def test_charblock_find(self):
         assert hasattr(self.nex.data, 'characters')
 
@@ -269,6 +268,31 @@ class Test_TaxaHandler_OneLine(unittest.TestCase):
         assert self.nex.data.matrix["C"] == ["0", "0", "1"]
         
 
+class Test_GlottologTree(unittest.TestCase):
+    """
+    Regression: Test that we can read glottolog tree format.
+    """
+    def setUp(self):
+        self.nex = NexusReader(
+            os.path.join(REGRESSION_DIR, 'glottolog.trees')
+        )
+    
+    def test_block_find(self):
+        assert 'taxa' in self.nex.blocks
+        assert 'trees' in self.nex.blocks
+    
+    def test_taxa(self):
+        for i in range(2, 6):
+            taxon = 'abun125%d' % i
+            assert taxon in self.nex.blocks['taxa'].taxa
+    
+    def test_taxa_count(self):
+        # has duplicate taxon label
+        assert self.nex.blocks['taxa'].ntaxa == 4
+    
+    def test_tree_count(self):
+        assert len(self.nex.trees.trees) == 1
+    
 
 if __name__ == '__main__':
     unittest.main()

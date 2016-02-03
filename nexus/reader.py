@@ -124,26 +124,34 @@ class TaxaHandler(GenericHandler):
         """
         super(TaxaHandler, self).parse(data)
         in_taxlabel_block = False
+        found_ntaxa = None
         for line in data:
             line = self.remove_comments(line).strip()
             line = QUOTED_PATTERN.sub('\\1', line)
             if self.is_dimensions.match(line):
                 found_ntaxa = int(self.is_dimensions.findall(line)[0])
+            elif 'begin taxa' in line.lower():
+                continue
             elif line == ';':
                 continue
             elif in_taxlabel_block or self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
                 line = self.is_taxlabel_block.sub("", line)
                 taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-                taxa = [t for t in taxa if len(t)]
+                taxa = [t for t in taxa if len(t) and t not in self.taxa]
                 if len(taxa):
                     self.taxa.extend(taxa)
             elif MESQUITE_TITLE_PATTERN.match(line):
                 self.attributes.append(line)
             elif MESQUITE_LINK_PATTERN.match(line):
                 self.attributes.append(line)
+            else:
+                taxa = [t.replace(";", "").strip() for t in line.split(" ")]
+                taxa = [t for t in taxa if len(t) and t not in self.taxa]
+                if len(taxa):
+                    self.taxa.extend(taxa)
         
-        if found_ntaxa != self.ntaxa:
+        if found_ntaxa and found_ntaxa != self.ntaxa:
             raise NexusFormatException(
                 "Number of taxa (%d) doesn't match dimensions declaration (%d)" % (self.ntaxa, found_ntaxa)
             )
