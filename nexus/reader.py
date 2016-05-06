@@ -710,7 +710,7 @@ class NexusReader(object):
         if filename.endswith('.gz'):
             handle = gzip.open(filename, 'rb') # pragma: no cover
         else:
-            handle = open(filename, 'rU')
+            handle = open(filename, 'r')
         self._read(handle)
         handle.close()
 
