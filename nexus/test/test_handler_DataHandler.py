@@ -51,7 +51,6 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         assert self.nex.data == self.nex.data
 
     def test_raw(self):
-        print(self.nex.data.block)
         assert self.nex.data.block == [
             'Begin data;',
             'Dimensions ntax=4 nchar=2;',

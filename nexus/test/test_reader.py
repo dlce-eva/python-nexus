@@ -45,7 +45,8 @@ class Test_NexusReader_Core(unittest.TestCase):
 
     def test_write(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
-        text = open(os.path.join(EXAMPLE_DIR, 'example.trees')).read()
+        with open(os.path.join(EXAMPLE_DIR, 'example.trees')) as handle:
+            text = handle.read()
         assert text == nex.write()
     
     def test_write_to_file(self):

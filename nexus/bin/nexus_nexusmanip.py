@@ -3,6 +3,7 @@ from __future__ import division, print_function
 import sys
 from nexus import NexusReader, VERSION
 from nexus.tools import count_site_values
+from nexus.tools import check_zeros
 from nexus.tools import find_constant_sites
 from nexus.tools import find_unique_sites
 from nexus.tools import new_nexus_without_sites
@@ -79,6 +80,9 @@ if __name__ == '__main__':
     parser.add_option("-u", "--unique", dest="unique",
             action="store_true", default=False,
             help="Remove the unique characters")
+    parser.add_option("-z", "--zeros", dest="zeros",
+            action="store_true", default=False,
+            help="Remove the empty characters")
     parser.add_option("-s", "--stats", dest="stats",
             action="store_true", default=False,
             help="Print character-by-character stats")
@@ -102,25 +106,27 @@ if __name__ == '__main__':
     newnexus = None
 
     if options.number:
-        if newnexusname is not None:
-            print_site_values(nexus, newnexusname)
-        else:
-            print_site_values(nexus)
-
-    elif options.constant:
-        const = find_constant_sites(nexus)
-        newnexus = new_nexus_without_sites(nexus, const)
-        print("Constant Sites: %s" % ",".join([str(i) for i in const]))
-    elif options.unique:
-        unique = find_unique_sites(nexus)
-        newnexus = new_nexus_without_sites(nexus, unique)
-        print("Unique Sites: %s" % ",".join([str(i) for i in unique]))
-    elif options.stats:
-        d = print_character_stats(nexus)
-
-    else:
+        print_site_values(nexus)
         exit()
-
+    
+    if options.stats:
+        print_character_stats(nexus)
+        exit()
+        
+    
+    const, unique, zeros = [], [], []
+    if options.constant:
+        const = find_constant_sites(nexus)
+        print("Constant Sites: %s" % ",".join([str(i) for i in const]))
+    if options.unique:
+        unique = find_unique_sites(nexus)
+        print("Unique Sites: %s" % ",".join([str(i) for i in unique]))
+    if options.zeros:
+        zeros = check_zeros(nexus)
+        print("Zero Sites: %s" % ",".join([str(i) for i in zeros]))
+    
+    newnexus = new_nexus_without_sites(nexus, set(const + unique + zeros))
+    
     # check for saving
     if newnexus is not None and newnexusname is not None:
         newnexus.write_to_file(newnexusname)
