@@ -29,14 +29,12 @@ def check_zeros(nexus_obj, absences=None, missing=None):
     """
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     
-    if absences is None:
-        absences = ['0']
-    if missing is None:
-        missing = ['-', '?']
+    absences = absences if absences else ['0']
+    missing = missing if missing else ['-', '?']
     
     bad = []
-    for site_idx, site in enumerate(nexus_obj.data.characters, 0):
-        states = Counter(nexus_obj.data.characters[site].values())
+    for site_idx in range(0, nexus_obj.data.nchar):
+        states = Counter([nexus_obj.data.matrix[t][site_idx] for t in nexus_obj.data.matrix])
         zeros = sum([
             states[k] for k in states if k in absences or k in missing
         ])
