@@ -7,6 +7,7 @@ from nexus.tools import check_zeros
 from nexus.tools import find_constant_sites
 from nexus.tools import find_unique_sites
 from nexus.tools import new_nexus_without_sites
+from nexus_treemanip import parse_deltree
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexusmanip - python-nexus tools v%(version)s
@@ -80,6 +81,9 @@ if __name__ == '__main__':
     parser.add_option("-u", "--unique", dest="unique",
             action="store_true", default=False,
             help="Remove the unique characters")
+    parser.add_option("-x", "--remove", dest="remove",
+            action="store", default=False,
+            help="Remove the empty characters")
     parser.add_option("-z", "--zeros", dest="zeros",
             action="store_true", default=False,
             help="Remove the empty characters")
@@ -113,8 +117,7 @@ if __name__ == '__main__':
         print_character_stats(nexus)
         exit()
         
-    
-    const, unique, zeros = [], [], []
+    const, unique, zeros, remove = [], [], [], []
     if options.constant:
         const = find_constant_sites(nexus)
         print("Constant Sites: %s" % ",".join([str(i) for i in const]))
@@ -124,8 +127,11 @@ if __name__ == '__main__':
     if options.zeros:
         zeros = check_zeros(nexus)
         print("Zero Sites: %s" % ",".join([str(i) for i in zeros]))
-    
-    newnexus = new_nexus_without_sites(nexus, set(const + unique + zeros))
+    if options.remove:
+        remove = [int(i) for i in parse_deltree(options.remove)]
+        print("Remove: %s" % ",".join([str(i) for i in zeros]))
+        
+    newnexus = new_nexus_without_sites(nexus, set(const + unique + zeros + remove))
     
     # check for saving
     if newnexus is not None and newnexusname is not None:
