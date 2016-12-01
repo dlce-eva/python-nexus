@@ -745,7 +745,7 @@ class NexusReader(object):
             # check if we're in a block and initialise
             found = BEGIN_PATTERN.findall(line)
             if found:
-                block = found[0].lower()
+                block = found[0][0].lower()
                 if block in store:
                     raise NexusFormatException("Duplicate Block %s" % block)
                 store[block] = []
