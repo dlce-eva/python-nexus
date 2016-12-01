@@ -15,8 +15,9 @@ except ImportError:
 
 DEBUG = False
 
-BEGIN_PATTERN = re.compile(r"""begin (\w+);""", re.IGNORECASE)
-END_PATTERN = re.compile(r"""end;""", re.IGNORECASE)
+BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", 
+re.IGNORECASE)
+END_PATTERN = re.compile(r"""end\s*;""", re.IGNORECASE)
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
