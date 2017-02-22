@@ -474,10 +474,8 @@ class DataHandler(GenericHandler):
         """
         sites = [s for s in sites if s != ' ']
         if '(' not in sites:
-            import sys; sys.stdout.write("FAST"); sys.stdout.flush()
             return sites
         else:
-            import sys; sys.stdout.write("SLOW"); sys.stdout.flush()
             multistate = False
             out = []
             # Slow reader for multistate
