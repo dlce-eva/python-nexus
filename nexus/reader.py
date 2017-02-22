@@ -471,31 +471,37 @@ class DataHandler(GenericHandler):
         :raises NexusFormatException: If data matrix contains incomplete
             multistate values
         """
-        out = []
-        multistate = False
-        sites = [site for site in sites]
-        while len(sites) > 0:
-            site = sites.pop(0)
-            if site == ' ':
-                continue
-            elif site == '(':
-                # read-ahead
-                site = ''  # discard open bracket
-                multistate = True
-                while multistate:
-                    nextchar = sites.pop(0)
-                    if nextchar == ')':
-                        multistate = False
-                    else:
-                        site += nextchar
-            out.append(site)
+        sites = [s for s in sites if s != ' ']
+        if '(' not in sites:
+            import sys; sys.stdout.write("FAST"); sys.stdout.flush()
+            return sites
+        else:
+            import sys; sys.stdout.write("SLOW"); sys.stdout.flush()
+            multistate = False
+            out = []
+            # Slow reader for multistate
+            while len(sites) > 0:
+                site = sites.pop(0)
+                if site == ',':
+                    continue
+                elif site == '(':
+                    # read-ahead
+                    site = ''  # discard open bracket
+                    multistate = True
+                    while multistate:
+                        nextchar = sites.pop(0)
+                        if nextchar == ')':
+                            multistate = False
+                        else:
+                            site += nextchar
+                out.append(site)
             
-        # check we're not in hanging multistate chunk
-        if multistate:
-            raise NexusFormatException(
-                "Data Matrix contains incomplete multistate values"
-            )
-        return out
+            # check we're not in hanging multistate chunk
+            if multistate:
+                raise NexusFormatException(
+                    "Data Matrix contains incomplete multistate values"
+                )
+            return out
 
     def add_taxon(self, taxon, site_values=None):
         """
