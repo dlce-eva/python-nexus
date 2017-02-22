@@ -7,11 +7,7 @@ import gzip
 import warnings
 import pickle
 from hashlib import md5
-
-try:  # pragma: no cover
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+from StringIO import StringIO
 
 DEBUG = False
 
