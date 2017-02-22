@@ -20,10 +20,6 @@ class Test_DataHandler_parse_sites(unittest.TestCase):
         assert DataHandler()._parse_sites('123(4,5)56') == \
             ['1', '2', '3', '4,5', '5', '6']
 
-    def test_space(self):
-        assert DataHandler()._parse_sites('123(4 5)56') == \
-            ['1', '2', '3', '4 5', '5', '6']
-
     def test_sequence(self):
         assert DataHandler()._parse_sites("ACGTU?") == \
             ['A', 'C', 'G', 'T', 'U', '?']
