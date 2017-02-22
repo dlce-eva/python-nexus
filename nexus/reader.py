@@ -15,8 +15,9 @@ except ImportError:
 
 DEBUG = False
 
-BEGIN_PATTERN = re.compile(r"""begin (\w+);""", re.IGNORECASE)
-END_PATTERN = re.compile(r"""end;""", re.IGNORECASE)
+BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", 
+re.IGNORECASE)
+END_PATTERN = re.compile(r"""end\s*;""", re.IGNORECASE)
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
@@ -750,7 +751,7 @@ class NexusReader(object):
             # check if we're in a block and initialise
             found = BEGIN_PATTERN.findall(line)
             if found:
-                block = found[0].lower()
+                block = found[0][0].lower()
                 if block in store:
                     raise NexusFormatException("Duplicate Block %s" % block)
                 store[block] = []
