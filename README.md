@@ -19,6 +19,8 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v1.42: minor fix to remove a stray debugging print statement
+ * v1.41: minor fix to remove a stray debugging print statement
  * v1.40: major speed enhancement in NexusReader -- a 2 order of magnitude decrease in reading most nexus data blocks.
  * v1.35: fixed nexus_nexusmanip.py utility to handle multiple arguments, and to delete arbitrary sites.
  * v1.34: fixed parsing of malformed taxa blocks.
