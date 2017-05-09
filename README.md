@@ -19,6 +19,8 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * unreleased:
+     - `characters` block is now added as `characters` and not invisibly renamed to `data`.
  * v1.42: minor fix to remove a stray debugging print statement
  * v1.41: minor fix to remove a stray debugging print statement
  * v1.40: major speed enhancement in NexusReader -- a 2 order of magnitude decrease in reading most nexus data blocks.
