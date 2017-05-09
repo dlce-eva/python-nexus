@@ -24,6 +24,9 @@ class Test_DataHandler_parse_sites(unittest.TestCase):
         assert DataHandler()._parse_sites("ACGTU?") == \
             ['A', 'C', 'G', 'T', 'U', '?']
 
+    def test_maddison(self):
+        assert DataHandler()._parse_sites('TAG;') == ['T', 'A', 'G']
+
 
 class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
     expected = {

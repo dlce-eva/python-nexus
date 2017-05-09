@@ -11,6 +11,7 @@ Anonymises the taxa in a nexus
 
 def anonymise(nexus_obj, salt=None):
     """Anonymises a nexus object"""
+    _done_data = False  # flag so we don't double randomise
     for block in nexus_obj.blocks:
         if block == 'taxa':
             for idx, t in enumerate(nexus_obj.blocks[block].taxa):
@@ -27,14 +28,19 @@ def anonymise(nexus_obj, salt=None):
                 raise NotImplementedError(
                     "Unable to anonymise untranslated trees"
                 )
-        elif block == 'data':
+        elif block in ('data', 'characters'):
+            if _done_data:
+                continue
             newmatrix = {}
             for t in nexus_obj.blocks[block].matrix:
                 newmatrix[hash(salt, t)] = nexus_obj.blocks[block].matrix[t]
             nexus_obj.blocks[block].matrix = newmatrix
             
+            if block == 'characters':
+                nexus_obj.blocks['data'].matrix = newmatrix
+            _done_data = True
         else:
-            raise NotImplementedError("Unable to anonymise %s blocks" % block)
+            raise NotImplementedError("Unable to anonymise `%s` blocks" % block)
     return nexus_obj
 
 

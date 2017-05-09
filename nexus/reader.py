@@ -472,7 +472,8 @@ class DataHandler(GenericHandler):
         :raises NexusFormatException: If data matrix contains incomplete
             multistate values
         """
-        sites = [s for s in sites if s != ' ']
+        remove_values = [' ', ';']
+        sites = [s for s in sites if s not in remove_values]
         if '(' not in sites:
             return sites
         else:
@@ -671,6 +672,10 @@ class DataHandler(GenericHandler):
             (self.nchar, self.ntaxa)
 
 
+class CharacterHandler(DataHandler):
+    pass
+
+
 class NexusReader(object):
     """A nexus reader"""
     def __init__(self, filename=None, debug=False):
@@ -679,7 +684,7 @@ class NexusReader(object):
         self.raw_blocks = {}
         self.handlers = {
             'data': DataHandler,
-            'characters': DataHandler,
+            'characters': CharacterHandler,
             'trees': TreeHandler,
             'taxa': TaxaHandler,
         }
@@ -689,12 +694,15 @@ class NexusReader(object):
     def _do_blocks(self):
         """Iterates over all nexus blocks and parses them appropriately"""
         for block, data in self.raw_blocks.items():
-            if block == 'characters':
-                block = 'data'  # override
             self.blocks[block] = self.handlers.get(block, GenericHandler)()
             self.blocks[block].parse(data)
+        
+        if self.blocks.get('characters') and not self.blocks.get('data'):
+            self.blocks['data'] = self.blocks['characters']
+        
+        for block in self.blocks:
             setattr(self, block, self.blocks[block])
-
+        
     def read_file(self, filename):
         """
         Loads and Parses a Nexus File
