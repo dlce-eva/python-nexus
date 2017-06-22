@@ -346,7 +346,9 @@ class TreeHandler(GenericHandler):
             for index in sorted([int(k) for k in self.translators.keys()]):
                 out.append("\t%d %s," % (index, self.translators[str(index)]))
             # handle last taxa label in translate block
-            out[-1] = out[-1].replace(',', ';')
+            out[-1] = out[-1].replace(',', '')
+            # work around bug https://github.com/CompEvol/beast2/issues/713
+            out.append(';')
         for tree in self.trees:
             out.append("\t" + tree)
         out.append('end;\n')

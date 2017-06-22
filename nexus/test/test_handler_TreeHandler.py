@@ -101,6 +101,8 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         # remove tabs since we reformat things a bit
         expected = expected.replace("\t", "").strip()
         written = written.replace("\t", "").strip()
+        # handle the workaround for the beast bug
+        expected = expected.replace("12 David;", "12 David\n;")
         assert expected == written, "%s\n----\n%s" % (expected, written)
 
     def test_no_error_on_multiple_translate(self):

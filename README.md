@@ -19,7 +19,8 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
- * unreleased:
+ * v1.5: 
+     - work around a minor bug in BEAST2 (https://github.com/CompEvol/beast2/issues/713)
      - `characters` block is now added as `characters` and not invisibly renamed to `data`.
  * v1.42: minor fix to remove a stray debugging print statement
  * v1.41: minor fix to remove a stray debugging print statement
