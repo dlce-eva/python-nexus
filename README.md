@@ -19,11 +19,11 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
-
+ * v1.51:
+    - `characters` and `data` block now retain their character labels in `NexusReader`
  * v1.5: 
      - work around a minor bug in BEAST2 (https://github.com/CompEvol/beast2/issues/713)
      - `characters` block is now added as `characters` and not invisibly renamed to `data`.
-     - `characters` and `data` block now retain their character labels in `NexusReader`
  * v1.42: minor fix to remove a stray debugging print statement
  * v1.41: minor fix to remove a stray debugging print statement
  * v1.40: major speed enhancement in NexusReader -- a 2 order of magnitude decrease in reading most nexus data blocks.
