@@ -288,7 +288,33 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
             # All sites in CHAR_A are state "A", and all in CHAR_B and "B" etc
             for t in ("A", "B", "C", "D", "E"):
                 assert self.nex.data.characters["CHAR_%s" % site][t] == site
-
-
+    
+    def test_write(self):
+        out = self.nex.data.write()
+        print(out)
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+dimensions ntax=5 nchar=5;$',
+            '^\s+format gap=- missing=\?;$',
+            '^\s+charstatelabels$',
+            '^\s+1\s+CHAR_A,$',
+            '^\s+2\s+CHAR_B,$',
+            '^\s+3\s+CHAR_C,$',
+            '^\s+4\s+CHAR_D,$',
+            '^\s+5\s+CHAR_E$',
+            '^matrix$',
+            '^A\s+ABCDE$',
+            '^B\s+ABCDE$',
+            '^C\s+ABCDE$',
+            '^D\s+ABCDE$',
+            '^E\s+ABCDE$',
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
+    
 if __name__ == '__main__':
     unittest.main()

@@ -655,6 +655,17 @@ class DataHandler(GenericHandler):
             out.append("\t%s" % att)
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
         out.append(_make_format_line(self))
+        # handle char block
+        if len(self.charlabels):
+            out.append('\tcharstatelabels')
+            max_id = max(self.charlabels)
+            for char_id in sorted(self.charlabels):
+                out.append('\t\t%d %s%s' % (
+                    char_id + 1,  # zero-indexing
+                    self.charlabels[char_id],
+                    ',' if char_id < max_id else ''
+                ))
+            out.append('\t;')
         out.append("matrix")
         max_taxon_len = max([len(_) for _ in self.matrix])
         for taxon in sorted(self.matrix):
