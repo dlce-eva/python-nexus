@@ -423,6 +423,9 @@ class DataHandler(GenericHandler):
     def hash(self):
         return md5(pickle.dumps(self.matrix)).hexdigest()
     
+    def is_missing_or_gap(self, state):
+        return True if state in ('-', '?') else False
+    
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
@@ -645,7 +648,9 @@ class DataHandler(GenericHandler):
                     continue
                 else:
                     if key == 'symbols':
-                        value = '"%s"' % "".join(sorted(self.symbols))
+                        value = '"%s"' % "".join(sorted([
+                            s for s in self.symbols if not self.is_missing_or_gap(s)
+                        ]))
                     fstring.append("%s=%s" % (key, value))
             return " ".join(fstring) + ";"
         

@@ -294,5 +294,39 @@ class Test_GlottologTree(unittest.TestCase):
         assert len(self.nex.trees.trees) == 1
     
 
+class Test_DataHandler_NoMissingInSymbols(unittest.TestCase): 
+    """
+    Regression:
+    Test that the missing or gap symbols are NOT in the SYMBOLS format string
+    """
+    def test_write(self):
+        self.nex = NexusReader()
+        self.nex.read_string("""
+        #NEXUS
+        begin data;
+        Dimensions ntax=2 nchar=2;
+        Format datatype=standard gap=- symbols="01";
+        Matrix
+        Harry              1-
+        Simon              0?
+            ;
+        End;
+        """)
+        expected_patterns = [
+            '^begin data;$',
+            '^\s+dimensions ntax=2 nchar=2;$',
+            '^\s+format datatype=standard gap=- symbols="01";$',
+            "^matrix$",
+            "^Harry\s+1-",
+            "^Simon\s+0\?$",
+            '^\s+;$',
+            '^end;$',
+        ]
+        written = self.nex.write()
+        for expected in expected_patterns:
+            assert re.search(expected, written, re.MULTILINE), \
+                'Expected "%s"' % expected
+    
+
 if __name__ == '__main__':
     unittest.main()
