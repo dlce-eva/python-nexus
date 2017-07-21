@@ -19,6 +19,11 @@ class Test_CombineNexuses(unittest.TestCase):
             Simon              2
             ;"""
         )
+        # set short_filename to test that functionality. If `combine_nexuses`
+        # doesn't use `short_filename`, then the nex1 characters will be
+        # identified as 1.xx, rather than 0.xx
+        self.nex1.short_filename = '0'
+        
         self.nex2 = NexusReader()
         self.nex2.read_string(
             """Begin data;
@@ -49,41 +54,41 @@ class Test_CombineNexuses(unittest.TestCase):
 
     def test_combine_simple(self):
         newnex = combine_nexuses([self.nex1, self.nex2])
-        assert newnex.data['1.1']['Harry'] == '1'
-        assert newnex.data['1.1']['Simon'] == '2'
+        assert newnex.data['0.1']['Harry'] == '1'
+        assert newnex.data['0.1']['Simon'] == '2'
         assert newnex.data['2.1']['Harry'] == '3'
         assert newnex.data['2.1']['Simon'] == '4'
 
     def test_combine_simple_generated_matrix(self):
-        newnex = combine_nexuses([self.nex1, self.nex2])
-        assert re.search(r"""\bSimon\s+24\b""", newnex.write())
-        assert re.search(r"""\bHarry\s+13\b""", newnex.write())
+        newnex = combine_nexuses([self.nex1, self.nex2]).write()
+        assert re.search(r"""\bSimon\s+24\b""", newnex)
+        assert re.search(r"""\bHarry\s+13\b""", newnex)
 
     def test_combine_simple_generated_formatline(self):
-        newnex = combine_nexuses([self.nex1, self.nex2])
-        assert re.search(r"""\bNTAX=2\b""", newnex.write())
-        assert re.search(r"""\bNCHAR=2\b""", newnex.write())
-        assert re.search(r'\sSYMBOLS="1234"[\s;]', newnex.write())
+        newnex = combine_nexuses([self.nex1, self.nex2]).write()
+        assert re.search(r"""\bNTAX=2\b""", newnex)
+        assert re.search(r"""\bNCHAR=2\b""", newnex)
+        assert re.search(r'\sSYMBOLS="1234"[\s;]', newnex)
 
     def test_combine_missing(self):
         newnex = combine_nexuses([self.nex1, self.nex3])
-        assert newnex.data['1.1']['Harry'] == '1'
-        assert newnex.data['1.1']['Simon'] == '2'
+        assert newnex.data['0.1']['Harry'] == '1'
+        assert newnex.data['0.1']['Simon'] == '2'
         assert newnex.data['2.1']['Betty'] == '3'
         assert newnex.data['2.1']['Boris'] == '4'
 
     def test_combine_missing_generated_matrix(self):
-        newnex = combine_nexuses([self.nex1, self.nex3])
-        assert re.search(r"""\bSimon\s+25\b""", newnex.write())
-        assert re.search(r"""\bHarry\s+1\\?\b""", newnex.write())
-        assert re.search(r"""\bBetty\s+\?3\b""", newnex.write())
-        assert re.search(r"""\bBoris\s+\?4\b""", newnex.write())
+        newnex = combine_nexuses([self.nex1, self.nex3]).write()
+        assert re.search(r"""\bSimon\s+25\b""", newnex)
+        assert re.search(r"""\bHarry\s+1\\?\b""", newnex)
+        assert re.search(r"""\bBetty\s+\?3\b""", newnex)
+        assert re.search(r"""\bBoris\s+\?4\b""", newnex)
 
     def test_combine_missing_generated_formatline(self):
-        newnex = combine_nexuses([self.nex1, self.nex3])
-        assert re.search(r"""\bNTAX=4\b""", newnex.write())
-        assert re.search(r"""\bNCHAR=2\b""", newnex.write())
-        assert re.search(r'\sSYMBOLS="12345"[\s;]', newnex.write())
+        newnex = combine_nexuses([self.nex1, self.nex3]).write()
+        assert re.search(r"""\bNTAX=4\b""", newnex)
+        assert re.search(r"""\bNCHAR=2\b""", newnex)
+        assert re.search(r'\sSYMBOLS="12345"[\s;]', newnex)
 
     def test_combine_with_character_labels(self):
         n1 = NexusReader()
