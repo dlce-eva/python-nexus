@@ -8,6 +8,7 @@ release:
 
 test:
 	py.test --cov
+	coverage html
 
 clean:
 	rm -rf build/*
