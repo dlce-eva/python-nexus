@@ -61,7 +61,7 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
             'Louise             11',
             ';'
         ]
-
+    
     def test_format_string(self):
         # did we get the expected tokens in the format string?
         expected = {'datatype': 'standard', 'gap': '-', 'symbols': '01'}

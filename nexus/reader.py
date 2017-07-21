@@ -324,12 +324,7 @@ class TreeHandler(GenericHandler):
                     # taxon only
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
-                if found['match'] not in tree:
-                    raise ValueError(
-                        "Expected match for %s not in tree" % found['match']
-                    )
                 tree = tree.replace(found['match'], sub)
-
         return tree
 
     def write(self):
@@ -558,12 +553,12 @@ class DataHandler(GenericHandler):
                 # try for ntaxa
                 try:
                     _dim_taxa = int(NTAX_PATTERN.findall(line)[0])
-                except IndexError:
+                except IndexError:  # pragma: no cover
                     pass
                 # and nchar
                 try:
                     _dim_chars = int(NCHAR_PATTERN.findall(line)[0])
-                except IndexError:
+                except IndexError:  # pragma: no cover
                     pass
 
             # handle MESQUITE attributes

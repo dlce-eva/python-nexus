@@ -460,7 +460,6 @@ class Test_TreeHandler_translate_regex(unittest.TestCase):
 
 
 class Test_TreeHandler__detranslate_tree(unittest.TestCase):
-
     def test_no_change(self):
         translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
         oldtree = "tree a = ((Chris,Bruce),Tom);"
@@ -492,7 +491,16 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
         assert trans == newtree, \
             "Unable to correctly detranslate a tree with branchlengths"
-
+    
+    def test_change_comment(self):
+        translatetable = {'0': 'Chris', '1': 'Bruce', '2': 'Tom'}
+        oldtree = "tree a = ((0[x],1[y]),2[z]);"
+        newtree = "tree a = ((Chris[x],Bruce[y]),Tom[z]);"
+        trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+        assert trans == newtree, \
+            "Unable to correctly detranslate a tree with branchlengths"
+    
+    
     def test_BEAST_format(self):
         translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
         oldtree = "tree STATE_0 [&lnP=-584.441] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
