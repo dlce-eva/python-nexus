@@ -83,7 +83,19 @@ class Test_Multistatise(unittest.TestCase):
         # deal with completely missing taxa
         assert 'Zarathrustra' in msnex.data.matrix
         assert msnex.data.matrix['Zarathrustra'][0] == '?'
-
+    
+    def test_error_on_too_many_states(self):
+        self.nex = NexusReader()
+        self.nex.read_string("""
+        Begin data;
+        Dimensions ntax=1 nchar=30;
+        Format datatype=standard symbols="01" gap=-;
+        Matrix
+        A   111111111111111111111111111111
+        ;""")
+        with self.assertRaises(ValueError):
+            multistatise(self.nex)
+        
 
 if __name__ == '__main__':
     unittest.main()
