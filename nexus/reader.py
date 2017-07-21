@@ -668,13 +668,7 @@ class DataHandler(GenericHandler):
         out.append("matrix")
         max_taxon_len = max([len(_) for _ in self.matrix])
         for taxon in sorted(self.matrix):
-            sites = self.matrix[taxon]
-            if len(sites) != self.nchar:
-                raise NexusFormatException(
-                    "Number of characters is wrong - expecting %d, got %d" %
-                    (self.nchar, len(sites))
-                )
-            out.append("%s %s" % (taxon.ljust(max_taxon_len), ''.join(sites)))
+            out.append("%s %s" % (taxon.ljust(max_taxon_len), ''.join(self.matrix[taxon])))
         out.append(" ;")
         out.append("end;")
         return "\n".join(out)
