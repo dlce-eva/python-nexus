@@ -209,7 +209,7 @@ def run_random(num_trees, nexus_obj, do_print=False):
         raise ValueError(
             "Treefile only has %d trees in it." % nexus_obj.trees.ntrees
         )
-    elif num_trees == nexus_obj.trees.ntrees:
+    elif num_trees == nexus_obj.trees.ntrees:  # pragma: no cover
         return nexus_obj  # um. ok.
     else:
         if do_print:  # pragma: no cover
