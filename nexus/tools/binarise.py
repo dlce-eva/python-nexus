@@ -50,9 +50,9 @@ def _recode_to_binary(char, keep_zero=False):
         unwanted_states.append('0')
     
     if not all(isstr(v) for v in char.values()):
-        raise ValueError('Data must be strings')
+        raise ValueError('Data must be strings: %r' % char.values())
 
-    # preproccess taxa states and get unique states
+    # preprocess taxa states and get unique states
     states = set()
     for taxon, value in char.items():
         char[taxon] = [v for v in value.replace(" ", ",").split(",")
@@ -71,17 +71,13 @@ def _recode_to_binary(char, keep_zero=False):
 
     return newdata
 
-def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
+def binarise(nexus_obj, keep_zero=False):
     """
     Returns a binary variant of the given `nexus_obj`.
     If `one_nexus_per_block` then we return a list of NexusWriter instances.
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
-
-    :param one_nexus_per_block: Whether to return a single NexusWriter, or a
-                                list of NexusWriter's (one per character)
-    :type one_nexus_per_block: Boolean
 
     :param keep_zero: A boolean flag denoting whether to
         treat '0' as a missing state or not. The default
@@ -113,13 +109,5 @@ def binarise(nexus_obj, one_nexus_per_block=False, keep_zero=False):
                 new_label = "%s_%d" % (str(label), j)
                 # add to nexus
                 n.add(taxon, new_label, state[j])
-            
-        if one_nexus_per_block:
-            nexuslist.append(n)
-            n = NexusWriter()
-
-    if one_nexus_per_block:
-        return nexuslist
-    else:
-        return n
+    return n
 

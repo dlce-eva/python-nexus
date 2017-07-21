@@ -135,7 +135,6 @@ class Test_Binarise(unittest.TestCase):
         assert re.search("Dutch\s+010010", nexus)
         assert re.search("Maori\s+100100", nexus)
         assert re.search("Latin\s+001001", nexus)
-        
 
 
 if __name__ == '__main__':

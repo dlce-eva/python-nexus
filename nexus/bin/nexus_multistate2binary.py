@@ -13,9 +13,6 @@ if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog old.nex new.nex")
-    parser.add_option("-1", "--onefile", dest="onefile",
-            action="store_true", default=False,
-            help="One nexus file for each multistate character")
     options, args = parser.parse_args()
 
     try:
@@ -27,14 +24,5 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit()
         
-    new = binarise(NexusReader(nexusname), one_nexus_per_block=options.onefile)
-    if isinstance(new, NexusWriter):
-        new.write_to_file(newnexusname)
-    elif len(new) > 1:
-        newnexusname, ext = os.path.splitext(newnexusname)
-        for nex in new:
-            nex.write_to_file("%s-%s%s" %
-                (newnexusname, nex.clean(nex.characters[0]), ext)
-            )
-
-
+    new = binarise(NexusReader(nexusname))
+    new.write_to_file(newnexusname)
