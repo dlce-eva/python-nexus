@@ -441,10 +441,9 @@ class DataHandler(GenericHandler):
             line = self._format_line_pattern.findall(data)[0]
         except IndexError:
             return None
-
-        line = line.strip(';')
+        
         line = line.lower()
-
+        line = line.replace(" =", "=").replace("= ", "=")  # standardise
         for chunk in WHITESPACE_PATTERN.split(line):
             try:
                 key, value = chunk.split("=")

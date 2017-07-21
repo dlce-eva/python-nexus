@@ -291,7 +291,6 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
     
     def test_write(self):
         out = self.nex.data.write()
-        print(out)
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=5 nchar=5;$',

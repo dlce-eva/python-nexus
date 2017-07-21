@@ -3,6 +3,7 @@ import os
 import re
 import unittest
 from nexus import NexusReader
+from nexus.reader import DataHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 REGRESSION_DIR = os.path.join(os.path.dirname(__file__), 'regression')
@@ -327,6 +328,25 @@ class Test_DataHandler_NoMissingInSymbols(unittest.TestCase):
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
     
+
+class Test_DataHandler_ParsingGlitch(unittest.TestCase):
+    """
+    Regression:
+    Fix for parsing glitch in DataHandler.parse_format()
+    """
+    def test_parse_format_line(self):
+        d = DataHandler()
+        f = d.parse_format_line('FORMAT DATATYPE=STANDARD GAP=- MISSING=? SYMBOLS = "012345";')
+        assert f['datatype'] == 'standard', \
+            "Expected 'standard', but got '%s'" % f['datatype']
+        assert f['symbols'] == '012345', \
+            "Expected '012345', but got '%s'" % f['symbols']
+        assert f['gap'] == '-', \
+            "Expected 'gap', but got '%s'" % f['gap']
+        assert f['missing'] == '?', \
+            "Expected 'gap', but got '%s'" % f['missing']
+
+
 
 if __name__ == '__main__':
     unittest.main()
