@@ -5,8 +5,7 @@ import re
 import os
 import gzip
 import warnings
-import pickle
-from hashlib import md5
+from collections import defaultdict
 
 try:  # pragma: no cover
     from StringIO import StringIO
@@ -15,8 +14,7 @@ except ImportError:
 
 DEBUG = False
 
-BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", 
-re.IGNORECASE)
+BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", re.IGNORECASE)
 END_PATTERN = re.compile(r"""end\s*;""", re.IGNORECASE)
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
@@ -371,10 +369,8 @@ class DataHandler(GenericHandler):
         self.format = {}
         self.gaps = None
         self.missing = None
-        self.matrix = {}
+        self.matrix = defaultdict(list)
         # private
-        self._characters = None  # precalculated/cached characters block
-        self.__matrix_hash = None  # hash of the data matrix to identify changes
         super(DataHandler, self).__init__()
 
     def __getitem__(self, index):
@@ -404,19 +400,12 @@ class DataHandler(GenericHandler):
     
     @property
     def characters(self):
-        current = self.hash()
-        if self.__matrix_hash != current:
-            self._characters = {}
-            for taxon in self.taxa:
-                for index, char in enumerate(self.matrix[taxon]):
-                    label = self.charlabels.get(index, index)
-                    self._characters[label] = self._characters.get(label, {})
-                    self._characters[label][taxon] = self.matrix[taxon][index]
-            self.__matrix_hash = current
-        return self._characters
-    
-    def hash(self):
-        return md5(pickle.dumps(self.matrix)).hexdigest()
+        out = defaultdict(dict)
+        for taxon in self.taxa:
+            for index, char in enumerate(self.matrix[taxon]):
+                label = self.charlabels.get(index, index)
+                out[label][taxon] = self.matrix[taxon][index]
+        return out
     
     def is_missing_or_gap(self, state):
         return True if state in ('-', '?') else False
@@ -514,7 +503,6 @@ class DataHandler(GenericHandler):
 
         :return: None
         """
-        self.matrix[taxon] = self.matrix.get(taxon, [])
         self.matrix[taxon].extend(site_values)
 
     def del_taxon(self, taxon):
@@ -727,7 +715,7 @@ class NexusReader(object):
             raise IOError("Unable To Read File %s" % filename)
 
         if filename.endswith('.gz'):
-            handle = gzip.open(filename, 'rb') # pragma: no cover
+            handle = gzip.open(filename, 'rb')  # pragma: no cover
         else:
             handle = open(filename, 'r')
         self._read(handle)
@@ -750,9 +738,9 @@ class NexusReader(object):
         store = {}
         block = None
         for line in handle.readlines():
-            try:  # deal
+            try:
                 line = line.decode('utf-8')
-            except:
+            except Exception as e:
                 pass
             line = line.strip()
             if len(line) == 0:
@@ -800,3 +788,4 @@ class NexusReader(object):
         handle = open(filename, 'w')
         handle.writelines(self.write())
         handle.close()
+
