@@ -468,7 +468,7 @@ class DataHandler(GenericHandler):
             multistate = False
             out = []
             # Slow reader for multistate
-            while len(sites) > 0:
+            while sites:
                 site = sites.pop(0)
                 if site == ',':
                     continue

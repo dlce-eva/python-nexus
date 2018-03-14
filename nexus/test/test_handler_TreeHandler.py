@@ -64,10 +64,8 @@ class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
         assert self.nex.trees.ntrees == 3
 
     def test_iterable(self):
-        for tree in self.nex.blocks['trees']:
-            tree  # will raise something if unable to iterate
-        for tree in self.nex.trees:
-            tree
+        assert list(self.nex.blocks['trees'])
+        assert list(self.nex.trees)
 
     def test_taxa(self):
         expected = [
