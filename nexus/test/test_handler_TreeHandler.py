@@ -31,10 +31,8 @@ class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
             assert taxon in self.nex.trees.taxa
 
     def test_iterable(self):
-        for tree in self.nex.blocks['trees']:
-            pass
-        for tree in self.nex.trees:
-            pass
+        assert list(self.nex.blocks['trees'])
+        assert list(self.nex.trees)
 
     def test_write(self):
         written = self.nex.trees.write()

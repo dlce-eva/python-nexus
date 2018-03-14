@@ -137,8 +137,8 @@ class TaxaHandler(GenericHandler):
                 in_taxlabel_block = True
                 line = self.is_taxlabel_block.sub("", line)
                 taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-                taxa = [t for t in taxa if len(t) and t not in self.taxa]
-                if len(taxa):
+                taxa = [t for t in taxa if t and t not in self.taxa]
+                if taxa:
                     self.taxa.extend(taxa)
             elif MESQUITE_TITLE_PATTERN.match(line):
                 self.attributes.append(line)
@@ -146,8 +146,8 @@ class TaxaHandler(GenericHandler):
                 self.attributes.append(line)
             else:
                 taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-                taxa = [t for t in taxa if len(t) and t not in self.taxa]
-                if len(taxa):
+                taxa = [t for t in taxa if t and t not in self.taxa]
+                if taxa:
                     self.taxa.extend(taxa)
         
         if found_ntaxa and found_ntaxa != self.ntaxa:
@@ -262,7 +262,7 @@ class TreeHandler(GenericHandler):
                 self.trees.append(line)
 
         # get taxa if not translated.
-        if len(self.translators) == 0:
+        if not self.translators:
             taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
@@ -402,7 +402,7 @@ class DataHandler(GenericHandler):
     def characters(self):
         out = defaultdict(dict)
         for taxon in self.taxa:
-            for index, char in enumerate(self.matrix[taxon]):
+            for index, state in enumerate(self.matrix[taxon]):
                 label = self.charlabels.get(index, index)
                 out[label][taxon] = self.matrix[taxon][index]
         return out
@@ -434,7 +434,7 @@ class DataHandler(GenericHandler):
                 value = QUOTED_PATTERN.sub('\\1', value)
             except ValueError:
                 key, value = chunk, True
-            if len(key):
+            if key:
                 out[key] = value
         return out
 
@@ -643,7 +643,7 @@ class DataHandler(GenericHandler):
         out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
         out.append(_make_format_line(self))
         # handle char block
-        if len(self.charlabels):
+        if self.charlabels:
             out.append('\tcharstatelabels')
             max_id = max(self.charlabels)
             for char_id in sorted(self.charlabels):
@@ -743,7 +743,7 @@ class NexusReader(object):
             except Exception as e:
                 pass
             line = line.strip()
-            if len(line) == 0:
+            if not line:
                 continue
             elif line.startswith('[') and line.endswith(']'):
                 continue
@@ -788,4 +788,3 @@ class NexusReader(object):
         handle = open(filename, 'w')
         handle.writelines(self.write())
         handle.close()
-
