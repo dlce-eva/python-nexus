@@ -738,10 +738,8 @@ class NexusReader(object):
         store = {}
         block = None
         for line in handle.readlines():
-            try:
+            if hasattr(line, 'decode'):
                 line = line.decode('utf-8')
-            except Exception as e:
-                pass
             line = line.strip()
             if not line:
                 continue
