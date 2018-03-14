@@ -128,8 +128,9 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from .reader import NexusFormatException, NexusReader
-from .writer import NexusWriter
-from . import tools
+from nexus.reader import NexusReader
+from nexus.writer import NexusWriter
+from nexus.handlers import NexusFormatException
+from nexus import tools
 
 __all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "tools"]
