@@ -290,7 +290,6 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
                 assert self.nex.data.characters["CHAR_%s" % site][t] == site
     
     def test_write(self):
-        out = self.nex.data.write()
         expected_patterns = [
             '^begin data;$',
             '^\s+dimensions ntax=5 nchar=5;$',
