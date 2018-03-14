@@ -321,5 +321,3 @@ class DataHandler(GenericHandler):
 
 class CharacterHandler(DataHandler):
     pass
-
-

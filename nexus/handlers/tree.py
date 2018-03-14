@@ -168,4 +168,3 @@ class TreeHandler(GenericHandler):
 
     def __repr__(self):
         return "<NexusTreeBlock: %d trees>" % self.ntrees
-

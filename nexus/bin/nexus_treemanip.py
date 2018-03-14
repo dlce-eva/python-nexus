@@ -154,7 +154,7 @@ def run_removecomments(nexus_obj, do_print=False):
     check_for_valid_NexusReader(nexus_obj, required_blocks=['trees'])
 
     new = []
-    for index, tree in enumerate(nexus_obj.trees, 1):
+    for tree in nexus_obj.trees:
         new.append(nexus_obj.trees.remove_comments(tree))
 
     if do_print:  # pragma: no cover

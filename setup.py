@@ -44,4 +44,3 @@ setup(
         'nexus/bin/nexus_treemanip.py',
     ],
 )
-

@@ -87,4 +87,3 @@ class TaxaHandler(GenericHandler):
 
     def __repr__(self):
         return "<NexusTaxaBlock: %d taxa>" % self.ntaxa
-
