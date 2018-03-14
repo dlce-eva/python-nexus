@@ -194,7 +194,7 @@ class Test_DataHandler_InterleavedNexusFormat(unittest.TestCase):
         assert nexus.data.nchar == 6
         for taxon, blocks in nexus.data:
             for i in range(0, nexus.data.nchar):
-                assert blocks[i] == str(i)
+                assert blocks[i] == str(i), "Error for %s:%d" % (taxon, i)
 
 
 
