@@ -10,7 +10,7 @@ EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 class Test_FindConstantSites(unittest.TestCase):
     def test_find_constant_sites_1(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
-        assert len(find_constant_sites(nexus)) == 0
+        assert not find_constant_sites(nexus)
 
     def test_find_constant_sites_2(self):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example2.nex'))
