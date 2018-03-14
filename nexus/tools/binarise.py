@@ -55,14 +55,15 @@ def _recode_to_binary(char, keep_zero=False):
     # preprocess taxa states and get unique states
     states = set()
     for taxon, value in char.items():
-        char[taxon] = [v for v in value.replace(" ", ",").split(",")
-                            if v not in unwanted_states]
+        char[taxon] = [
+            v for v in value.replace(" ", ",").split(",") if v not in unwanted_states
+        ]
         states.update(char[taxon])
 
     states = sorted(states)
     num_states = len(states)
     for taxon, values in char.items():
-        newdata[taxon] = ['0' for x in range(num_states)]
+        newdata[taxon] = ['0' for _ in range(num_states)]
         for value in values:
             if value not in unwanted_states:  # ignore missing values
                 newdata[taxon][states.index(value)] = '1'
@@ -92,7 +93,6 @@ def binarise(nexus_obj, keep_zero=False):
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-    nexuslist = []
     n = NexusWriter()
 
     for i in sorted(nexus_obj.data.charlabels):
@@ -110,4 +110,3 @@ def binarise(nexus_obj, keep_zero=False):
                 # add to nexus
                 n.add(taxon, new_label, state[j])
     return n
-
