@@ -150,9 +150,9 @@ class NexusWriter:
 
         :return: String
         """
-        assert len(self.data) > 0, "No data in nexus!"
-        assert len(self.taxa) > 0, "No taxa in nexus!"
-        assert len(self.characters) > 0, "No characters in nexus!"
+        assert self.data, "No data in nexus!"
+        assert self.taxa, "No taxa in nexus!"
+        assert self.characters, "No characters in nexus!"
 
         return TEMPLATE.strip() % {
             'ntax': len(self.taxa),
@@ -213,4 +213,3 @@ class NexusWriter:
         out = self.make_nexus(interleave=False, charblock=True)
         n.read_string(out)
         return n
-

@@ -162,15 +162,12 @@ def run_removecomments(nexus_obj, do_print=False):
     nexus_obj.trees.trees = new
     return nexus_obj
 
-def run_detranslate(nexus_obj, do_print=False):
+def run_detranslate(nexus_obj):
     """
     Removes comments from the trees in a nexus
 
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
-
-    :param do_print: flag to print() logging information or not
-    :type do_print: Boolean
 
     :return: A NexusReader instance with the comments removed.
 
@@ -287,7 +284,7 @@ if __name__ == '__main__':  # pragma: no cover
 
     # detranslate
     if options.detranslate:
-        nexus = run_detranslate(nexus, options.quiet)
+        nexus = run_detranslate(nexus)
 
     if newnexus is not None:
         nexus.write_to_file(newnexus)
@@ -298,4 +295,3 @@ if __name__ == '__main__':  # pragma: no cover
             )
     else:
         print(nexus.write())
-
