@@ -402,7 +402,7 @@ class DataHandler(GenericHandler):
     def characters(self):
         out = defaultdict(dict)
         for taxon in self.taxa:
-            for index, state in enumerate(self.matrix[taxon]):
+            for index, _ in enumerate(self.matrix[taxon]):
                 label = self.charlabels.get(index, index)
                 out[label][taxon] = self.matrix[taxon][index]
         return out
@@ -683,7 +683,7 @@ class NexusReader(object):
             'taxa': TaxaHandler,
         }
         if filename:
-            return self.read_file(filename)
+            self.read_file(filename)
 
     def _do_blocks(self):
         """Iterates over all nexus blocks and parses them appropriately"""
