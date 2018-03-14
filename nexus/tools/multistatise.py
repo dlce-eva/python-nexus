@@ -32,10 +32,9 @@ def multistatise(nexus_obj, charlabel=None):
     
     nexout = NexusWriter()
     for taxon in states:
-        if len(states[taxon]) == 0:
+        if not states[taxon]:
             nexout.add(taxon, charlabel, '?')
         else:
             for s in states[taxon]:
                 nexout.add(taxon, charlabel, s)
     return nexout._convert_to_reader()
-

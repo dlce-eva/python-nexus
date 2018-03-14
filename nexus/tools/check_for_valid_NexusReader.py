@@ -1,7 +1,7 @@
 from nexus.reader import NexusReader
 from nexus.handlers import NexusFormatException
 
-def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
+def check_for_valid_NexusReader(nexus_obj, required_blocks=None):
     """
     Performs some checking to make sure we received a valid NexusReader
 
@@ -15,6 +15,7 @@ def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
     :raises TypeError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `required_block`
     """
+    required_blocks = required_blocks if required_blocks else []
     if isinstance(nexus_obj, NexusReader) is False:
         raise TypeError("Nexus_obj should be a NexusReader instance")
     for b in required_blocks:
@@ -23,4 +24,3 @@ def check_for_valid_NexusReader(nexus_obj, required_blocks=[]):
                 "Requires a `%s` block, but one was not found in nexus" % b
             )
     return True
-

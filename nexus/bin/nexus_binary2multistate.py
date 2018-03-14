@@ -32,7 +32,7 @@ if __name__ == '__main__':
     nexuslist2 = []
     for nfile in nexuslist:
         n = NexusReader(nfile)
-        n = multistatise(n)
+        n = multistatise.multistatise(n)
         nexuslist2.append(n)
 
     out = combine_nexuses(nexuslist2)
