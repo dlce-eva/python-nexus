@@ -7,7 +7,7 @@ from nexus.tools import check_zeros
 from nexus.tools import find_constant_sites
 from nexus.tools import find_unique_sites
 from nexus.tools import new_nexus_without_sites
-from nexus_treemanip import parse_deltree
+from nexus.bin.nexus_treemanip import parse_deltree
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexusmanip - python-nexus tools v%(version)s
@@ -16,7 +16,7 @@ Performs a number of nexus manipulation methods.
 """ % {'version': VERSION, }
 
 
-def print_site_values(nexus_obj, characters=['-', '?']):
+def print_site_values(nexus_obj, characters=None):
     """
     Prints out counts of the number of sites with state in `characters` in a
     nexus.
@@ -26,6 +26,8 @@ def print_site_values(nexus_obj, characters=['-', '?']):
     :param nexus_obj: A `NexusReader` instance
     :type nexus_obj: NexusReader
     """
+    characters = characters if characters is not None else ['-', '?']
+    
     count = count_site_values(nexus_obj, characters)
     print ("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
     for taxon in sorted(count):
@@ -137,5 +139,3 @@ if __name__ == '__main__':
     if newnexus is not None and newnexusname is not None:
         newnexus.write_to_file(newnexusname)
         print("New nexus written to %s" % newnexusname)
-
-
