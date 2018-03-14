@@ -62,4 +62,3 @@ def remove_zeros(nexus_obj, absences=None, missing=None):
     """
     zeros = check_zeros(nexus_obj, absences=absences, missing=missing)
     return new_nexus_without_sites(nexus_obj, zeros)._convert_to_reader()
-

@@ -24,6 +24,11 @@ class TaxaHandler(GenericHandler):
     def ntaxa(self):
         return len(self.taxa)
 
+    def _parse_taxa(self, line):
+        taxa = [t.replace(";", "").strip() for t in line.split(" ")]
+        taxa = [t for t in taxa if t and t not in self.taxa]
+        return taxa
+        
     def parse(self, data):
         """
         Parses a `taxa` nexus block from `data`.
@@ -45,26 +50,19 @@ class TaxaHandler(GenericHandler):
                 continue
             elif line == ';':
                 continue
+            elif self.is_mesquite_attribute(line):
+                self.attributes.append(line)
             elif in_taxlabel_block or self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
                 line = self.is_taxlabel_block.sub("", line)
-                taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-                taxa = [t for t in taxa if t and t not in self.taxa]
-                if taxa:
-                    self.taxa.extend(taxa)
-            elif self.is_mesquite_attribute(line):
-                self.attributes.append(line)
+                self.taxa.extend(self._parse_taxa(line))
             else:
-                taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-                taxa = [t for t in taxa if t and t not in self.taxa]
-                if taxa:
-                    self.taxa.extend(taxa)
+                self.taxa.extend(self._parse_taxa(line))
         
         if found_ntaxa and found_ntaxa != self.ntaxa:
             raise NexusFormatException(
                 "Number of taxa (%d) doesn't match dimensions declaration (%d)" % (self.ntaxa, found_ntaxa)
             )
-
 
     def write(self):
         """
