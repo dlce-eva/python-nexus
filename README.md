@@ -19,7 +19,7 @@ collection of nexus manipulation scripts.
 
 ## Versions:
  
- * pre
+ * v1.6:
     - remove some over-engineered checking on the `NexusReader.DataMatrix.characters` property
     - major refactoring of reader.py into a `handlers` subpackage
     - `NexusReader.read_string` now returns self, such that it can be used as a factory-style method.
