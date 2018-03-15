@@ -37,6 +37,3 @@ class Test_FindUniqueSites(unittest.TestCase):
         # - are we handling missing data appropriately?
         assert 5 in unique
         assert 6 in unique
-
-if __name__ == '__main__':
-    unittest.main()

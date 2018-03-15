@@ -1,7 +1,8 @@
 """Tests for TaxaHandler"""
 import os
 import unittest
-from nexus import NexusReader, NexusFormatException
+from nexus.reader import NexusReader
+from nexus.exceptions import NexusFormatException
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -69,7 +70,3 @@ class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
     def test_annotation_write(self):
         self.nex.taxa.annotations['John'] = '[&!color=#006fa6]'
         assert 'John[&!color=#006fa6]' in self.nex.taxa.write()
-
-
-if __name__ == '__main__':
-    unittest.main()

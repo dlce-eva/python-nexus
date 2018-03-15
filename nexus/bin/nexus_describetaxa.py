@@ -28,6 +28,7 @@ def print_taxa_stats(nexus_obj):
         print("%s\t%s" % (taxon.ljust(20), tally))
     return
 
+
 if __name__ == '__main__':
     #set up command-line options
     from optparse import OptionParser

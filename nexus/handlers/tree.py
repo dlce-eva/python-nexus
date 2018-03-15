@@ -1,5 +1,6 @@
 import re
-from nexus.handlers import GenericHandler, NexusFormatException
+from nexus.handlers import GenericHandler
+from nexus.exceptions import NexusFormatException
 
 
 class TreeHandler(GenericHandler):

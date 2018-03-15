@@ -11,11 +11,6 @@ BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", re.IGNORECASE)
 END_PATTERN = re.compile(r"""end\s*;""", re.IGNORECASE)
 
 
-class NexusFormatException(Exception):
-    """Generic Exception for Nexus Format Errors"""
-    pass
-
-
 class GenericHandler(object):
     """
     Handlers are objects to store specialised blocks found in nexus files.

@@ -2,8 +2,8 @@
 import os
 import re
 import unittest
-from nexus import NexusReader
-from nexus.reader import DataHandler
+from nexus.reader import NexusReader
+from nexus.handlers.data import DataHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 REGRESSION_DIR = os.path.join(os.path.dirname(__file__), 'regression')
@@ -345,8 +345,3 @@ class Test_DataHandler_ParsingGlitch(unittest.TestCase):
             "Expected 'gap', but got '%s'" % f['gap']
         assert f['missing'] == '?', \
             "Expected 'gap', but got '%s'" % f['missing']
-
-
-
-if __name__ == '__main__':
-    unittest.main()

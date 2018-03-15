@@ -3,7 +3,6 @@ import sys
 from random import sample
 
 from nexus import NexusReader, VERSION
-from nexus.handlers import NexusFormatException
 from nexus.tools import check_for_valid_NexusReader
 
 

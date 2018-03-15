@@ -87,7 +87,3 @@ class Test_CountSiteValues(unittest.TestCase):
         count = count_site_values(nexus, ['A', 'B'])
         for taxon in count:
             assert count[taxon] == expected[taxon]
-
-
-if __name__ == '__main__':
-    unittest.main()

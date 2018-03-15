@@ -1,7 +1,8 @@
 import os
 import unittest
 
-from nexus import NexusReader, NexusFormatException
+from nexus import NexusReader
+from nexus.exceptions import NexusFormatException
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')

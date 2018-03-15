@@ -10,11 +10,11 @@ except ImportError:
     from io import StringIO
 
 from nexus.handlers import GenericHandler
-from nexus.handlers import NexusFormatException
 from nexus.handlers import BEGIN_PATTERN, END_PATTERN
 from nexus.handlers.taxa import TaxaHandler
 from nexus.handlers.data import CharacterHandler, DataHandler
 from nexus.handlers.tree import TreeHandler
+from nexus.exceptions import NexusFormatException
 
 
 class NexusReader(object):

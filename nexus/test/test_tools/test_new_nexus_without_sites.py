@@ -16,7 +16,3 @@ class Test_NewNexusWithoutSites(unittest.TestCase):
         nexus = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
         nexus = new_nexus_without_sites(nexus, set([1]))
         assert len(nexus.data) == 1
-
-
-if __name__ == '__main__':
-    unittest.main()

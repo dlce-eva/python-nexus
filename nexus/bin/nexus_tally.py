@@ -10,6 +10,7 @@ __doc__ = """nexusmanip - python-nexus tools v%(version)s
 Performs a number of nexus counting/tallying methods.
 """ % {'version': VERSION, }
 
+
 def print_tally(tally):
     wrapper = TextWrapper(initial_indent=" ", subsequent_indent="\t", width=65)
     for tkey in sorted(tally):
@@ -22,10 +23,12 @@ def print_tally(tally):
         print("\n")
     return
 
+
 def print_binary(tally):
     for i in sorted(tally):
         print("%d\t%d" % (i, tally[i]))
     return
+
 
 if __name__ == '__main__':
     from optparse import OptionParser

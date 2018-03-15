@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import sys
 import hashlib
-from nexus import NexusReader, VERSION
+from nexus import VERSION
+from nexus.reader import NexusReader
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexus_anonymise - python-nexus tools v%(version)s

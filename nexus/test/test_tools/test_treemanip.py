@@ -2,7 +2,7 @@
 import os
 import unittest
 
-from nexus import NexusReader
+from nexus.reader import NexusReader
 from nexus.bin.nexus_treemanip import parse_deltree, run_deltree
 from nexus.bin.nexus_treemanip import run_random
 from nexus.bin.nexus_treemanip import run_removecomments
@@ -106,7 +106,3 @@ class Test_TreeManip_run_detranslate(unittest.TestCase):
             os.path.join(EXAMPLE_DIR, 'example.trees')
         )
         assert other_tree_file.trees[0] == nex.trees[0]
-
- 
-if __name__ == '__main__':
-    unittest.main()

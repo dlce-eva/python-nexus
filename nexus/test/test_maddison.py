@@ -37,7 +37,3 @@ class Test_Maddison_et_al_Spec(unittest.TestCase):
     def test_trees(self):
         assert 'trees' in self.nex.blocks
         assert self.nex.blocks['trees'].ntrees == 1
-        
-    
-if __name__ == '__main__':
-    unittest.main()

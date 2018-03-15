@@ -143,7 +143,3 @@ class Test_CombineNexuses(unittest.TestCase):
                     newnex.write(charblock=True)
                 )
                 counter += 1
-
-
-if __name__ == '__main__':
-    unittest.main()

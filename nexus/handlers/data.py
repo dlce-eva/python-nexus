@@ -1,8 +1,9 @@
 import re
 import warnings
 from collections import defaultdict
-from nexus.handlers import NexusFormatException, GenericHandler
+from nexus.handlers import GenericHandler
 from nexus.handlers import QUOTED_PATTERN, WHITESPACE_PATTERN, BEGIN_PATTERN
+from nexus.exceptions import NexusFormatException
 
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)

@@ -1,8 +1,9 @@
 """Tests for TreeHandler"""
 import os
 import unittest
-from nexus import NexusReader, NexusFormatException
-from nexus.reader import TreeHandler
+from nexus.reader import NexusReader
+from nexus.exceptions import NexusFormatException
+from nexus.handlers.tree import TreeHandler
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -504,7 +505,3 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
         assert trans == newtree, \
             "Unable to correctly detranslate a BEAST tree"
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,6 +1,7 @@
 import re
-from nexus.handlers import GenericHandler, NexusFormatException
-from nexus.handlers import QUOTED_PATTERN, COMMENT_PATTERN
+from nexus.exceptions import NexusFormatException
+from nexus.handlers import GenericHandler
+from nexus.handlers import QUOTED_PATTERN
 
 TAXON_PLACEHOLDER = re.compile(r"""^\[.*\]\s+""")
 TAXON_ANNOTATION = re.compile(r"""(.*)(\[.*\])$""")

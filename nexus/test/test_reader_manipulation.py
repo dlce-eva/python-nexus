@@ -106,6 +106,3 @@ class Test_Manipulation_Data(unittest.TestCase):
         for expected in expected_patterns:
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
-
-if __name__ == '__main__':
-    unittest.main()

@@ -26,6 +26,9 @@ class Test_DataHandler_parse_sites(unittest.TestCase):
 
     def test_maddison(self):
         assert DataHandler()._parse_sites('TAG;') == ['T', 'A', 'G']
+    
+    def test_extra_comma(self):
+        assert DataHandler()._parse_sites('(T,A),C,G') == ['T,A', 'C', 'G']
 
 
 class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
@@ -314,6 +317,3 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
             assert re.search(expected, written, re.MULTILINE), \
                 'Expected "%s"' % expected
 
-
-if __name__ == '__main__':
-    unittest.main()

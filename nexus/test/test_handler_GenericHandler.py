@@ -26,7 +26,3 @@ class Test_GenericHandler(unittest.TestCase):
         for line in nex.data.write().split("\n"):
             e = expected.pop(0).strip()
             assert line.strip() == e
-
-
-if __name__ == '__main__':
-    unittest.main()

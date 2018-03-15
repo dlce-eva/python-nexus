@@ -20,7 +20,3 @@ class Test_FindConstantSites(unittest.TestCase):
         assert 1 in const
         assert 2 in const
         assert 3 in const
-
-
-if __name__ == '__main__':
-    unittest.main()

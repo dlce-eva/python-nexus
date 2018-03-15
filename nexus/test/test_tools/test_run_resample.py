@@ -26,8 +26,3 @@ class Test_ResampleTrees(unittest.TestCase):
             run_resample(None, self.nexus)
         with self.assertRaises(ValueError):
             run_resample([], self.nexus)
-        
-        
-
-if __name__ == '__main__':
-    unittest.main()

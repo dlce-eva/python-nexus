@@ -3,7 +3,8 @@ import os
 import gzip
 import unittest
 from tempfile import NamedTemporaryFile
-from nexus import NexusReader, NexusFormatException
+from nexus.reader import NexusReader
+from nexus.exceptions import NexusFormatException
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -93,23 +94,3 @@ class Test_NexusReader_Core(unittest.TestCase):
                 Matrix
                 Harry              1
                 """)
-            
-        
-#class Test_Inline_Comments(unittest.TestCase):
-    #def setUp(self):
-    #    self.nex = NexusReader(
-    #        os.path.join(EXAMPLE_DIR, 'example-comments.nex')
-    #    )
-    #
-    #def test_whole_file_comments(self):
-    #    assert self.nex.comments == ['[one]']
-    #
-    #def test_taxa_comments(self):
-    #    assert self.nex.blocks['data'].comments == ['[two]'], \
-    #        self.nex.data.comments
-    #
-    #def test_trees_comments(self):
-    #    assert self.nex.blocks['characters'].comments == ['[three]']
-
-if __name__ == '__main__':
-    unittest.main()

@@ -115,7 +115,3 @@ class Test_Anonymise(unittest.TestCase):
             assert taxon not in nex.data.taxa, \
                 '%s should have been anonymised' % taxon
             assert h in nex.data.taxa
-
-
-if __name__ == '__main__':
-    unittest.main()

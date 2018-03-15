@@ -47,6 +47,3 @@ class Test_CheckZeros(unittest.TestCase):
         assert new.data.matrix['Simon'] == ['0', '1', '0', '0']
         assert new.data.matrix['Betty'] == ['0', '0', '1', '0']
         assert new.data.matrix['Louise'] == ['0', '0', '0', '1']
-
-if __name__ == '__main__':
-    unittest.main()

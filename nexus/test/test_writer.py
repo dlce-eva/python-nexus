@@ -2,7 +2,7 @@ import os
 import re
 import unittest
 from tempfile import NamedTemporaryFile
-from nexus import NexusWriter
+from nexus.writer import NexusWriter
 
 data = {
     'char1': {'French': 1, 'English': 2, 'Latin': 3},
@@ -192,7 +192,3 @@ class RegressionTests(unittest.TestCase):
                 nex.add(taxon, char, value)
         out = nex.make_nexus()
         assert 'SYMBOLS="123456"' in out
-
-
-if __name__ == '__main__':
-    unittest.main()

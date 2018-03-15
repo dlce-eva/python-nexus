@@ -18,7 +18,7 @@ END;
 """
 
 
-class NexusWriter:
+class NexusWriter(object):
 
     MISSING = '?'
     GAP = '-'

@@ -95,7 +95,3 @@ class Test_Multistatise(unittest.TestCase):
         ;""")
         with self.assertRaises(ValueError):
             multistatise(self.nex)
-        
-
-if __name__ == '__main__':
-    unittest.main()
