@@ -141,12 +141,6 @@ class DataHandler(GenericHandler):
                         else:
                             site += nextchar
                 out.append(site)
-            
-            # check we're not in hanging multistate chunk
-            if multistate:
-                raise NexusFormatException(
-                    "Data Matrix contains incomplete multistate values"
-                )
             return out
 
     def add_taxon(self, taxon, site_values=None):
