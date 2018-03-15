@@ -1,7 +1,7 @@
 """Tests for nexus reading -- Maddison et al example"""
 import os
 import unittest
-from nexus import NexusReader, NexusFormatException
+from nexus import NexusReader
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../examples')
 
@@ -34,7 +34,7 @@ class Test_Maddison_et_al_Spec(unittest.TestCase):
     def test_data(self):  # characters is linked to `data`
         assert self.nex.blocks['data'] == self.nex.blocks['characters']
     
-    def test_trees(self): 
+    def test_trees(self):
         assert 'trees' in self.nex.blocks
         assert self.nex.blocks['trees'].ntrees == 1
         

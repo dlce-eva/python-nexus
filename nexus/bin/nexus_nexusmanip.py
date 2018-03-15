@@ -29,7 +29,7 @@ def print_site_values(nexus_obj, characters=None):
     characters = characters if characters is not None else ['-', '?']
     
     count = count_site_values(nexus_obj, characters)
-    print ("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
+    print("Number of %s in %s" % (",".join(characters), nexus_obj.filename))
     for taxon in sorted(count):
         prop = (count[taxon] / nexus.data.nchar) * 100
         print(

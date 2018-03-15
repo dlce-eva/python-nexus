@@ -9,6 +9,7 @@ __doc__ = """nexus_anonymise - python-nexus tools v%(version)s
 Anonymises the taxa in a nexus
 """ % {'version': VERSION, }
 
+
 def anonymise(nexus_obj, salt=None):
     """Anonymises a nexus object"""
     _done_data = False  # flag so we don't double randomise
@@ -46,6 +47,7 @@ def anonymise(nexus_obj, salt=None):
 
 def hash(salt, value):
     return hashlib.md5(("%s-%s" % (salt, value)).encode('ascii')).hexdigest()
+
 
 if __name__ == '__main__':  # pragma: no cover
     from optparse import OptionParser

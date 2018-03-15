@@ -130,7 +130,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from nexus.reader import NexusReader
 from nexus.writer import NexusWriter
+from nexus import handlers
 from nexus.handlers import NexusFormatException
 from nexus import tools
 
-__all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "tools"]
+__all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools"]

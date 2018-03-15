@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import sys
-import os
-from nexus import NexusReader, NexusWriter, VERSION
+from nexus import NexusReader, VERSION
 from nexus.tools.binarise import binarise
+
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexus_multistate2binary - python-nexus tools v%(version)s
 
