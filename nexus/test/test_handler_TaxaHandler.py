@@ -26,7 +26,15 @@ class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
     
     def test_repr(self):
         assert repr(self.nex.blocks['taxa']) == "<NexusTaxaBlock: 4 taxa>"
-
+    
+    def test_wrap_label_in_quotes_only_when_needed(self):
+        self.nex.taxa.taxa[0] = "long name"
+        output = self.nex.taxa.write()
+        assert "[1] 'long name'" in output
+        assert "[2] Paul" in output
+        assert "[3] George" in output
+        assert "[4] Ringo" in output
+        
     def test_error_on_incorrect_dimensions(self):
         with self.assertRaises(NexusFormatException):
             NexusReader().read_string("""
@@ -37,7 +45,31 @@ class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
               taxlabels A B C;
             end;
             """)
+    
+    def test_annotation_read(self):
+        nex = NexusReader().read_string("""
+        #NEXUS
+        BEGIN TAXA;
+            DIMENSIONS  NTAX=3;
+            TAXLABELS
+            A[&!color=#aaaaaa]
+            B[&!color=#bbbbbb]
+            C[&!color=#cccccc]
+        END;
+        """)
+        self.nex.taxa.annotations['A'] = '[&!color=#aaaaaa]'
+        self.nex.taxa.annotations['B'] = '[&!color=#bbbbbb]'
+        self.nex.taxa.annotations['C'] = '[&!color=#cccccc]'
+        out = nex.taxa.write()
+        print(out)
+        assert 'A[&!color=#aaaaaa]' in out
+        assert 'B[&!color=#bbbbbb]' in out
+        assert 'C[&!color=#cccccc]' in out
         
+    def test_annotation_write(self):
+        self.nex.taxa.annotations['John'] = '[&!color=#006fa6]'
+        assert 'John[&!color=#006fa6]' in self.nex.taxa.write()
+
 
 if __name__ == '__main__':
     unittest.main()

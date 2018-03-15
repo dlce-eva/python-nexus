@@ -15,6 +15,7 @@ class TaxaHandler(GenericHandler):
     def __init__(self):
         self.taxa = []
         self.attributes = []
+        self.annotations = {}
         super(TaxaHandler, self).__init__()
 
     def __getitem__(self, index):
@@ -70,6 +71,9 @@ class TaxaHandler(GenericHandler):
 
         :return: String
         """
+        def wrap(s):
+            return s if ' ' not in s else "'%s'" % s
+        
         out = ['begin taxa;']
         # handle any attributes
         for att in self.attributes:
@@ -78,7 +82,8 @@ class TaxaHandler(GenericHandler):
         out.append('\ttaxlabels')
         # taxa labels
         for idx, taxon in enumerate(self.taxa, 1):
-            out.append("\t[%d] '%s'" % (idx, taxon))
+            taxon = "%s%s" % (taxon, self.annotations.get(taxon, ''))
+            out.append("\t[%d] %s" % (idx, wrap(taxon)))
         out.append(';')
         out.append('end;')
         return "\n".join(out)

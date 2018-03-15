@@ -138,9 +138,9 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
             '^\s+TITLE Untitled_Block_of_Taxa;$',
             '^\s+dimensions ntax=3;$',
             '^\s+taxlabels$',
-            "^\s+\[1\] 'A'$",
-            "^\s+\[2\] 'B'$",
-            "^\s+\[3\] 'C'$",
+            "^\s+\[1\] A$",
+            "^\s+\[2\] B$",
+            "^\s+\[3\] C$",
             '^;$',
             '^end;$',
         ]
