@@ -79,7 +79,8 @@ class NexusReader(object):
         """
         self.filename = "<String>"
         self._read(StringIO(contents))
-
+        return self
+        
     def _read(self, handle):
         """Reads from a iterable object"""
         store = {}

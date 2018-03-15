@@ -42,7 +42,21 @@ class Test_NexusReader_Core(unittest.TestCase):
         nex.read_string(data)
         assert 'data' in nex.blocks
         assert 'Simon' in nex.blocks['data'].matrix
-
+    
+    def test_read_string_returns_self(self):
+        nex = NexusReader().read_string(
+            """
+            #NEXUS
+            
+            Begin data;
+            Dimensions ntax=1 nchar=1;
+            Format datatype=standard symbols="01" gap=-;
+            Matrix
+            Harry              1
+            ;
+        """)
+        assert isinstance(nex, NexusReader)
+    
     def test_write(self):
         nex = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
         with open(os.path.join(EXAMPLE_DIR, 'example.trees')) as handle:
