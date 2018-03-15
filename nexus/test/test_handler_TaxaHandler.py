@@ -60,6 +60,7 @@ class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
         self.nex.taxa.annotations['A'] = '[&!color=#aaaaaa]'
         self.nex.taxa.annotations['B'] = '[&!color=#bbbbbb]'
         self.nex.taxa.annotations['C'] = '[&!color=#cccccc]'
+        print(self.nex.taxa.taxa)
         out = nex.taxa.write()
         print(out)
         assert 'A[&!color=#aaaaaa]' in out

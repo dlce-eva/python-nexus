@@ -1,6 +1,6 @@
 import re
 from nexus.handlers import GenericHandler, NexusFormatException
-from nexus.handlers import QUOTED_PATTERN
+from nexus.handlers import QUOTED_PATTERN, COMMENT_PATTERN
 
 
 class TaxaHandler(GenericHandler):
@@ -28,6 +28,7 @@ class TaxaHandler(GenericHandler):
     def _parse_taxa(self, line):
         taxa = [t.replace(";", "").strip() for t in line.split(" ")]
         taxa = [t for t in taxa if t and t not in self.taxa]
+        ## HERE
         return taxa
         
     def parse(self, data):
