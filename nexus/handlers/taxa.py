@@ -2,6 +2,8 @@ import re
 from nexus.handlers import GenericHandler, NexusFormatException
 from nexus.handlers import QUOTED_PATTERN, COMMENT_PATTERN
 
+TAXON_PLACEHOLDER = re.compile(r"""^\[.*\]\s+""")
+TAXON_ANNOTATION = re.compile(r"""(.*)(\[.*\])$""")
 
 class TaxaHandler(GenericHandler):
     """Handler for `taxa` blocks"""
@@ -27,9 +29,18 @@ class TaxaHandler(GenericHandler):
 
     def _parse_taxa(self, line):
         taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-        taxa = [t for t in taxa if t and t not in self.taxa]
-        ## HERE
-        return taxa
+        for taxon in taxa:
+            # remove initial comment
+            taxon = TAXON_PLACEHOLDER.sub('', taxon)
+            # get annotations
+            annot = TAXON_ANNOTATION.match(taxon)
+            if annot:
+                taxon, annot = annot.groups()
+            # remove quotes
+            taxon = QUOTED_PATTERN.sub('\\1', taxon)
+            
+            if taxon and taxon not in self.taxa:
+                yield (taxon, annot)
         
     def parse(self, data):
         """
@@ -44,26 +55,29 @@ class TaxaHandler(GenericHandler):
         in_taxlabel_block = False
         found_ntaxa = None
         for line in data:
-            line = self.remove_comments(line).strip()
             line = QUOTED_PATTERN.sub('\\1', line)
             if self.is_dimensions.match(line):
                 found_ntaxa = int(self.is_dimensions.findall(line)[0])
+                continue
             elif 'begin taxa' in line.lower():
                 continue
             elif line == ';':
                 continue
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)
+                continue
             elif in_taxlabel_block or self.is_taxlabel_block.match(line):
                 in_taxlabel_block = True
                 line = self.is_taxlabel_block.sub("", line)
-                self.taxa.extend(self._parse_taxa(line))
-            else:
-                self.taxa.extend(self._parse_taxa(line))
+            
+            for taxon, annot in self._parse_taxa(line):
+                self.taxa.append(taxon)
+                if annot:
+                    self.annotations[taxon] = annot
         
         if found_ntaxa and found_ntaxa != self.ntaxa:
             raise NexusFormatException(
-                "Number of taxa (%d) doesn't match dimensions declaration (%d)" % (self.ntaxa, found_ntaxa)
+                "Number of found taxa (%d) doesn't match dimensions declaration (%d)" % (self.ntaxa, found_ntaxa)
             )
 
     def write(self):
