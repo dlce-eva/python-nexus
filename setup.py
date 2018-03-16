@@ -29,7 +29,10 @@ setup(
     packages=['nexus', 'nexus.tools', 'nexus.handlers', 'nexus.test'],
     package_dir={'nexus': 'nexus'},
     include_package_data=True,
-    package_data={'nexus': ['examples/*.nex', 'examples/*.trees']},
+    package_data={'nexus': [
+        'examples/*.nex', 'examples/*.trees',
+        'test/regression/*.nex', 'test/regression/*.trees',
+    ]},
     test_suite="nexus.test.nexus_suite",
     scripts=[
         'nexus/bin/nexus_anonymise.py',
