@@ -26,9 +26,10 @@ setup(
     author_email="simon@simon.net.nz",
     url="https://github.com/SimonGreenhill/python-nexus",
     license="BSD",
-    packages=['nexus', 'nexus.tools'],
+    packages=['nexus', 'nexus.tools', 'nexus.handlers', 'nexus.test'],
     package_dir={'nexus': 'nexus'},
-    package_data={'nexus/examples': ['*.nex', '*.trees']},
+    include_package_data=True,
+    package_data={'nexus': ['examples/*.nex', 'examples/*.trees']},
     test_suite="nexus.test.nexus_suite",
     scripts=[
         'nexus/bin/nexus_anonymise.py',

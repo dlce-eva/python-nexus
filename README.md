@@ -18,7 +18,9 @@ python-nexus provides simple nexus file-format reading/writing tools, and a smal
 collection of nexus manipulation scripts.
 
 ## Versions:
- 
+
+ * v1.61:
+    - fixed an install issue caused by refactoring.
  * v1.6:
     - remove some over-engineered checking on the `NexusReader.DataMatrix.characters` property
     - major refactoring of reader.py into a `handlers` subpackage
