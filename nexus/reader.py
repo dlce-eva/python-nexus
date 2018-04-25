@@ -124,6 +124,9 @@ class NexusReader(object):
             # empty line after block if needed
             if len(self.blocks) > 1:
                 out.append("\n")
+        # add end block if needed
+        if not END_PATTERN.search(out[-1]):
+            out.append("end;")
         return "\n".join(out)
 
     def write_to_file(self, filename):
