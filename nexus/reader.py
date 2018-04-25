@@ -121,6 +121,9 @@ class NexusReader(object):
         out = ["#NEXUS\n"]
         for block in self.blocks:
             out.append(self.blocks[block].write())
+            # empty line after block if needed
+            if len(self.blocks) > 1:
+                out.append("\n")
         return "\n".join(out)
 
     def write_to_file(self, filename):
