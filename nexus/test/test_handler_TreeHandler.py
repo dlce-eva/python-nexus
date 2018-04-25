@@ -46,6 +46,10 @@ class Test_TreeHandler_SimpleTreefile(unittest.TestCase):
     def test_repr(self):
         assert repr(self.nex.trees) == '<NexusTreeBlock: 3 trees>'
 
+    def test_write_produces_end(self):
+        assert "end;" in self.nex.trees.write()
+    
+
 
 class Test_TreeHandler_TranslatedTreefile(unittest.TestCase):
     def setUp(self):
@@ -496,7 +500,6 @@ class Test_TreeHandler__detranslate_tree(unittest.TestCase):
         trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
         assert trans == newtree, \
             "Unable to correctly detranslate a tree with branchlengths"
-    
     
     def test_BEAST_format(self):
         translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}

@@ -10,19 +10,23 @@ class Test_GenericHandler(unittest.TestCase):
         assert GenericHandler().remove_comments("bootstrap [bootstrap!]") == 'bootstrap '
 
     def test_generic_readwrite(self):
-        expected = """Begin data;
-        Dimensions ntax=4 nchar=2;
-        Format datatype=standard symbols="01" gap=-;
-        Matrix
-        Harry              00
-        Simon              01
-        Betty              10
-        Louise             11
-        ;
-        """.split("\n")
+        expected = [
+            "begin sets;",
+            "    A = 1;",
+            "    B = 2;",
+            "end;",
+        ]
         nex = NexusReader()
-        nex.handlers['data'] = GenericHandler
-        nex.read_file(os.path.join(EXAMPLE_DIR, 'example.nex'))
-        for line in nex.data.write().split("\n"):
+        nex.read_string("\n".join(expected))
+        for line in nex.sets.write().split("\n"):
             e = expected.pop(0).strip()
             assert line.strip() == e
+
+    def test_write_produces_end(self):
+        nex = NexusReader()
+        nex.read_string("""
+            begin assumptions;
+                A = 1;
+            end;
+        """)
+        assert "end;" in nex.write()

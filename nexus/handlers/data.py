@@ -2,7 +2,7 @@ import re
 import warnings
 from collections import defaultdict
 from nexus.handlers import GenericHandler
-from nexus.handlers import QUOTED_PATTERN, WHITESPACE_PATTERN, BEGIN_PATTERN
+from nexus.handlers import QUOTED_PATTERN, WHITESPACE_PATTERN, BEGIN_PATTERN, END_PATTERN
 from nexus.exceptions import NexusFormatException
 
 NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
@@ -184,12 +184,15 @@ class DataHandler(GenericHandler):
         data = self._parse_charstate_block(data)
 
         _dim_taxa, _dim_chars = None, None
-
+        
         seen_matrix = False
         for line in data:
             lline = line.lower().strip()
+            # end...
+            if END_PATTERN.match(lline):
+                continue
             # Dimensions line
-            if lline.startswith('dimensions '):
+            elif lline.startswith('dimensions '):
                 # try for ntaxa
                 try:
                     _dim_taxa = int(NTAX_PATTERN.findall(line)[0])

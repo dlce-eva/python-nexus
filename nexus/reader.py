@@ -104,9 +104,11 @@ class NexusReader(object):
 
             # check if we're ending a block
             if END_PATTERN.search(line):
+                if block:
+                    store[block].append(line)
                 block = None
 
-            if block is not None:
+            if block:
                 store[block].append(line)
         self.raw_blocks = store
         self._do_blocks()
@@ -124,9 +126,6 @@ class NexusReader(object):
             # empty line after block if needed
             if len(self.blocks) > 1:
                 out.append("\n")
-        # add end block if needed
-        if not END_PATTERN.search(out[-1]):
-            out.append("end;")
         return "\n".join(out)
 
     def write_to_file(self, filename):

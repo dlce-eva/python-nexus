@@ -1,7 +1,7 @@
 import re
 from nexus.exceptions import NexusFormatException
 from nexus.handlers import GenericHandler
-from nexus.handlers import QUOTED_PATTERN
+from nexus.handlers import QUOTED_PATTERN, END_PATTERN
 
 TAXON_PLACEHOLDER = re.compile(r"""^\[.*\]\s+""")
 TAXON_ANNOTATION = re.compile(r"""(.*)(\[.*\])$""")
@@ -62,7 +62,7 @@ class TaxaHandler(GenericHandler):
                 continue
             elif 'begin taxa' in line.lower():
                 continue
-            elif line == ';':
+            elif line == ';' or END_PATTERN.match(line.strip()):
                 continue
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)

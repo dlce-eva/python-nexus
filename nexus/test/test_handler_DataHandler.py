@@ -62,7 +62,8 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
             'Simon              01',
             'Betty              10',
             'Louise             11',
-            ';'
+            ';',
+            'End;'
         ]
     
     def test_format_string(self):

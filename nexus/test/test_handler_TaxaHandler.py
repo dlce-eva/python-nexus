@@ -35,6 +35,9 @@ class Test_TaxaHandler_AlternateNexusFormat(unittest.TestCase):
         assert "[2] Paul" in output
         assert "[3] George" in output
         assert "[4] Ringo" in output
+    
+    def test_write_produces_end(self):
+        assert "end;" in self.nex.taxa.write()
         
     def test_error_on_incorrect_dimensions(self):
         with self.assertRaises(NexusFormatException):
