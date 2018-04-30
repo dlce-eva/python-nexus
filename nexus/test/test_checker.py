@@ -1,5 +1,7 @@
 """Tests for nexus checkers"""
 import os
+import sys
+import pytest
 import unittest
 from nexus.reader import NexusReader
 from nexus.checker import BEASTAscertainmentChecker
@@ -157,6 +159,7 @@ class Test_SingletonCharacterChecker(unittest.TestCase):
         assert len(c.errors) == 2
 
 
+@pytest.mark.skipif(sys.version_info < (3,3), reason="requires python3.3")
 class Test_LowStateCountChecker(unittest.TestCase):
     def test(self):
         nex = NexusReader().read_string(
