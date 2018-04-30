@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 #coding=utf-8
-import statistics
+
+from warnings import warn
+
+try:
+    import statistics
+except ImportError:
+    statistics = None
+    warn("Some checkers need python > 3.3 to work, disabling: LowStateCountChecker")
+    
 from collections import Counter
 from string import ascii_lowercase, ascii_uppercase, digits
 from nexus import NexusReader
@@ -140,6 +148,10 @@ class LowStateCountChecker(Checker):
     THRESHOLD = 3  # 3 x the standard deviation
     
     def check(self, nex):
+        if statistics is None:
+            warn("LowStateCountChecker does not work on python <= 3.3")
+            return not self.has_errors
+        
         counts = {}
         for taxon in nex.data.matrix:
             counts[taxon] = len([
