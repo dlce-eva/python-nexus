@@ -28,8 +28,9 @@ class DataHandler(GenericHandler):
         self.gaps = None
         self.missing = None
         self.matrix = defaultdict(list)
-        self._characters = None
-        self._symbols = None
+        self._sitecache = {}  # cache for site patterns to parsed sites
+        self._characters = None  # cache for characters list
+        self._symbols = None  # cache for symbols list
         super(DataHandler, self).__init__()
 
     def __getitem__(self, index):
@@ -122,29 +123,30 @@ class DataHandler(GenericHandler):
             multistate values
         """
         remove_values = [' ', ';']
-        sites = [s for s in sites if s not in remove_values]
-        if '(' not in sites:
-            return sites
-        else:
-            multistate = False
-            out = []
-            # Slow reader for multistate
-            while sites:
-                site = sites.pop(0)
-                if site == ',':
-                    continue
-                elif site == '(':
-                    # read-ahead
-                    site = ''  # discard open bracket
-                    multistate = True
-                    while multistate:
-                        nextchar = sites.pop(0)
-                        if nextchar == ')':
-                            multistate = False
-                        else:
-                            site += nextchar
-                out.append(site)
-            return out
+        parsed = [s for s in sites if s not in remove_values]
+        if sites not in self._sitecache:
+            # Slow parser for multistate
+            if '(' in parsed:
+                multistate = False
+                todo, parsed = parsed, []  # switch places.
+                while todo:
+                    site = todo.pop(0)
+                    if site == ',':
+                        continue
+                    elif site == '(':
+                        # read-ahead
+                        site = ''  # discard open bracket
+                        multistate = True
+                        while multistate:
+                            nextchar = todo.pop(0)
+                            if nextchar == ')':
+                                multistate = False
+                            else:
+                                site += nextchar
+                    parsed.append(site)
+                # end slow parser
+        self._sitecache[sites] = parsed
+        return self._sitecache[sites]
 
     def add_taxon(self, taxon, site_values=None):
         """
