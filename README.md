@@ -20,7 +20,9 @@ collection of nexus manipulation scripts.
 ## Versions:
 
  * v1.62:
-    - cached the DataHandler's _characters_ property.
+    - cached DataHandler's _characters_ property to speed up.
+    - cached DataHandler's _symbol_ property to speed up.
+    - cached DataHandler's site parser to speed up.
  * v1.61:
     - fixed an install issue caused by refactoring.
  * v1.6:
