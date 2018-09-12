@@ -93,7 +93,10 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         for site, data in self.nex.data.characters.items():
             for taxon, value in data.items():
                 assert value == self.expected[taxon][site]
-                
+    
+    def test_characters_cached(self):
+        assert self.nex.data.characters == self.nex.data._characters
+    
     def test_iterable(self):
         for taxon, block in self.nex.data:
             assert block == self.expected[taxon]

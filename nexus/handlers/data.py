@@ -28,7 +28,8 @@ class DataHandler(GenericHandler):
         self.gaps = None
         self.missing = None
         self.matrix = defaultdict(list)
-        # private
+        self._characters = None
+        self._symbols = None
         super(DataHandler, self).__init__()
 
     def __getitem__(self, index):
@@ -52,18 +53,20 @@ class DataHandler(GenericHandler):
     @property
     def symbols(self):
         """Distinct symbols in matrix"""
-        symbols = set()
-        [symbols.update(vals) for vals in self.matrix.values()]
-        return symbols
+        if not self._symbols:
+            self._symbols = set()
+            [self._symbols.update(vals) for vals in self.matrix.values()]
+        return self._symbols
     
     @property
     def characters(self):
-        out = defaultdict(dict)
-        for taxon in self.taxa:
-            for index, _ in enumerate(self.matrix[taxon]):
-                label = self.charlabels.get(index, index)
-                out[label][taxon] = self.matrix[taxon][index]
-        return out
+        if not self._characters:
+            self._characters = defaultdict(dict)
+            for taxon in self.taxa:
+                for index, _ in enumerate(self.matrix[taxon]):
+                    label = self.charlabels.get(index, index)
+                    self._characters[label][taxon] = self.matrix[taxon][index]
+        return self._characters
     
     def is_missing_or_gap(self, state):
         return True if state in ('-', '?') else False
