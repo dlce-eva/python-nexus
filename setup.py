@@ -26,7 +26,7 @@ setup(
     author_email="simon@simon.net.nz",
     url="https://github.com/SimonGreenhill/python-nexus",
     license="BSD",
-    packages=['nexus', 'nexus.tools', 'nexus.handlers', 'nexus.test'],
+    packages=['nexus', 'nexus.tools', 'nexus.handlers', 'nexus.test', 'nexus.bin'],
     package_dir={'nexus': 'nexus'},
     include_package_data=True,
     package_data={'nexus': [
@@ -34,6 +34,7 @@ setup(
         'test/regression/*.nex', 'test/regression/*.trees',
     ]},
     test_suite="nexus.test.nexus_suite",
+    extras_require={'test': 'pytest'},
     scripts=[
         'nexus/bin/nexus_anonymise.py',
         'nexus/bin/nexus_binary2multistate.py',
