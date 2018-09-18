@@ -6,4 +6,5 @@ build
 .coverage
 .cache
 htmlcov/*
-
+.tox/
+.pytest_cache/
