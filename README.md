@@ -19,6 +19,8 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v1.63:
+    - fixed an issue where the bin directory wasn't packed on py2.7 (thanks @xrotwang)
  * v1.62:
     - cached DataHandler's _characters_ property to speed up.
     - cached DataHandler's _symbol_ property to speed up.
