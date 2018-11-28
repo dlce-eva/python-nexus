@@ -20,17 +20,17 @@ class Test_Manipulation_Data(unittest.TestCase):
         assert 'Elvis' in self.nex.data.taxa
         assert 'Elvis' in self.nex.data.matrix
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=5 nchar=2;$',
-            '^\s+format datatype=standard gap=- symbols="012";$',
-            '^matrix$',
-            '^Simon\s+01$',
-            '^Louise\s+11$',
-            '^Betty\s+10$',
-            '^Harry\s+00$',
-            '^Elvis\s+12$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=5 nchar=2;$',
+            r'^\s+format datatype=standard gap=- symbols="012";$',
+            r'^matrix$',
+            r'^Simon\s+01$',
+            r'^Louise\s+11$',
+            r'^Betty\s+10$',
+            r'^Harry\s+00$',
+            r'^Elvis\s+12$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -46,15 +46,15 @@ class Test_Manipulation_Data(unittest.TestCase):
         assert 'Simon' not in self.nex.data.matrix
 
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=3 nchar=2;$',
-            '^\s+format datatype=standard gap=- symbols="01";$',
-            '^matrix$',
-            '^Louise\s+11$',
-            '^Betty\s+10$',
-            '^Harry\s+00$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=3 nchar=2;$',
+            r'^\s+format datatype=standard gap=- symbols="01";$',
+            r'^matrix$',
+            r'^Louise\s+11$',
+            r'^Betty\s+10$',
+            r'^Harry\s+00$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -70,16 +70,16 @@ class Test_Manipulation_Data(unittest.TestCase):
         for taxon in self.nex.data.matrix:
             self.nex.data.matrix[taxon].append('9')
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=4 nchar=3;$',
-            '^\s+format datatype=standard gap=- symbols="019";$',
-            '^matrix$',
-            '^Simon\s+019$',
-            '^Louise\s+119$',
-            '^Betty\s+109$',
-            '^Harry\s+009$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=4 nchar=3;$',
+            r'^\s+format datatype=standard gap=- symbols="019";$',
+            r'^matrix$',
+            r'^Simon\s+019$',
+            r'^Louise\s+119$',
+            r'^Betty\s+109$',
+            r'^Harry\s+009$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -91,16 +91,16 @@ class Test_Manipulation_Data(unittest.TestCase):
         for taxon in self.nex.data.matrix:
             self.nex.data.matrix[taxon].pop()
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=4 nchar=1;$',
-            '^\s+format datatype=standard gap=- symbols="01";$',
-            '^matrix$',
-            '^Simon\s+0$',
-            '^Louise\s+1$',
-            '^Betty\s+1$',
-            '^Harry\s+0$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=4 nchar=1;$',
+            r'^\s+format datatype=standard gap=- symbols="01";$',
+            r'^matrix$',
+            r'^Simon\s+0$',
+            r'^Louise\s+1$',
+            r'^Betty\s+1$',
+            r'^Harry\s+0$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:

@@ -1,8 +1,13 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
-from collections import Counter, Iterable
+from collections import Counter
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
+try:
+    from collections.abc import Iterable  # py3.7+
+except ImportError:
+    from collections import Iterable  # py2.7
+    
 
 def find_constant_sites(nexus_obj):
     """

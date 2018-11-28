@@ -141,16 +141,16 @@ class Test_DataHandler_SimpleNexusFormat(unittest.TestCase):
         
     def test_write(self):
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=4 nchar=2;$',
-            '^\s+format datatype=standard gap=- symbols="01";$',
-            '^matrix$',
-            '^Simon\s+01$',
-            '^Louise\s+11$',
-            '^Betty\s+10$',
-            '^Harry\s+00$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=4 nchar=2;$',
+            r'^\s+format datatype=standard gap=- symbols="01";$',
+            r'^matrix$',
+            r'^Simon\s+01$',
+            r'^Louise\s+11$',
+            r'^Betty\s+10$',
+            r'^Harry\s+00$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -298,23 +298,23 @@ class Test_DataHandler_CharacterBlockNexusFormat(unittest.TestCase):
     
     def test_write(self):
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=5 nchar=5;$',
-            '^\s+format gap=- missing=\?;$',
-            '^\s+charstatelabels$',
-            '^\s+1\s+CHAR_A,$',
-            '^\s+2\s+CHAR_B,$',
-            '^\s+3\s+CHAR_C,$',
-            '^\s+4\s+CHAR_D,$',
-            '^\s+5\s+CHAR_E$',
-            '^matrix$',
-            '^A\s+ABCDE$',
-            '^B\s+ABCDE$',
-            '^C\s+ABCDE$',
-            '^D\s+ABCDE$',
-            '^E\s+ABCDE$',
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=5 nchar=5;$',
+            r'^\s+format gap=- missing=\?;$',
+            r'^\s+charstatelabels$',
+            r'^\s+1\s+CHAR_A,$',
+            r'^\s+2\s+CHAR_B,$',
+            r'^\s+3\s+CHAR_C,$',
+            r'^\s+4\s+CHAR_D,$',
+            r'^\s+5\s+CHAR_E$',
+            r'^matrix$',
+            r'^A\s+ABCDE$',
+            r'^B\s+ABCDE$',
+            r'^C\s+ABCDE$',
+            r'^D\s+ABCDE$',
+            r'^E\s+ABCDE$',
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:

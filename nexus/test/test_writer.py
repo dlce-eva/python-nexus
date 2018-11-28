@@ -67,68 +67,68 @@ class Test_NexusWriter(unittest.TestCase):
     def test_nexus_noninterleave(self):
         """Test Nexus Generation - Non-Interleaved"""
         n = self.nex.make_nexus(interleave=False)
-        assert re.search("#NEXUS", n)
-        assert re.search("BEGIN DATA;", n)
-        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)
-        assert re.search("MATRIX", n)
-        assert re.search("Latin\s+36", n)
-        assert re.search("French\s+14", n)
-        assert re.search("English\s+25", n)
-        assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+        assert re.search(r"#NEXUS", n)
+        assert re.search(r"BEGIN DATA;", n)
+        assert re.search(r"DIMENSIONS NTAX=3 NCHAR=2;", n)
+        assert re.search(r"MATRIX", n)
+        assert re.search(r"Latin\s+36", n)
+        assert re.search(r"French\s+14", n)
+        assert re.search(r"English\s+25", n)
+        assert re.search(r"FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
+        assert re.search(r"FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
             == 'STANDARD'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+        assert re.search(r'FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
             == '123456'
 
     def test_nexus_charblock(self):
         """Test Nexus Generation - with characters block"""
         n = self.nex.make_nexus(charblock=True)
-        assert re.search("#NEXUS", n)
-        assert re.search("BEGIN DATA;", n)
-        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)
-        assert re.search("CHARSTATELABELS", n)
-        assert re.search("1 char1,", n)
-        assert re.search("2 char2", n)
-        assert re.search("MATRIX", n)
-        assert re.search("Latin\s+36", n)
-        assert re.search("French\s+14", n)
-        assert re.search("English\s+25", n)
-        assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+        assert re.search(r"#NEXUS", n)
+        assert re.search(r"BEGIN DATA;", n)
+        assert re.search(r"DIMENSIONS NTAX=3 NCHAR=2;", n)
+        assert re.search(r"CHARSTATELABELS", n)
+        assert re.search(r"1 char1,", n)
+        assert re.search(r"2 char2", n)
+        assert re.search(r"MATRIX", n)
+        assert re.search(r"Latin\s+36", n)
+        assert re.search(r"French\s+14", n)
+        assert re.search(r"English\s+25", n)
+        assert re.search(r"FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
+        assert re.search(r"FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
             == 'STANDARD'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+        assert re.search(r'FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
             == '123456'
 
     def test_nexus_interleave(self):
         """Test Nexus Generation - Interleaved"""
         n = self.nex.make_nexus(interleave=True)
-        assert re.search("#NEXUS", n)
-        assert re.search("BEGIN DATA;", n)
-        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)
-        assert re.search("MATRIX", n)
+        assert re.search(r"#NEXUS", n)
+        assert re.search(r"BEGIN DATA;", n)
+        assert re.search(r"DIMENSIONS NTAX=3 NCHAR=2;", n)
+        assert re.search(r"MATRIX", n)
         # char1
-        assert re.search("Latin\s+3", n)
-        assert re.search("French\s+1", n)
-        assert re.search("English\s+2", n)
+        assert re.search(r"Latin\s+3", n)
+        assert re.search(r"French\s+1", n)
+        assert re.search(r"English\s+2", n)
         # char2
-        assert re.search("Latin\s+6", n)
-        assert re.search("French\s+4", n)
-        assert re.search("English\s+5", n)
+        assert re.search(r"Latin\s+6", n)
+        assert re.search(r"French\s+4", n)
+        assert re.search(r"English\s+5", n)
 
-        assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == \
+        assert re.search(r"FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
+        assert re.search(r"FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] == \
             'STANDARD'
-        assert re.search("FORMAT.*(INTERLEAVE)", n).groups()[0] == \
+        assert re.search(r"FORMAT.*(INTERLEAVE)", n).groups()[0] == \
             'INTERLEAVE'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == \
+        assert re.search(r'FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] == \
             '123456'
             
     def test_polymorphic_characters(self):
         self.nex.add("French", "char1", 2)
         self.assertEqual(self.nex.data['char1']['French'], "12")
         n = self.nex.make_nexus(charblock=True)
-        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)  # no change
-        assert re.search("French\s+\(12\)4", n)
+        assert re.search(r"DIMENSIONS NTAX=3 NCHAR=2;", n)  # no change
+        assert re.search(r"French\s+\(12\)4", n)
     
     def test_write_to_file(self):
         tmp = NamedTemporaryFile(delete=False, suffix=".nex")
@@ -139,34 +139,34 @@ class Test_NexusWriter(unittest.TestCase):
         with open(tmp.name, 'r') as handle:
             n = handle.read()
             
-        assert re.search("#NEXUS", n)
-        assert re.search("BEGIN DATA;", n)
-        assert re.search("DIMENSIONS NTAX=3 NCHAR=2;", n)
-        assert re.search("MATRIX", n)
-        assert re.search("Latin\s+36", n)
-        assert re.search("French\s+14", n)
-        assert re.search("English\s+25", n)
-        assert re.search("FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
-        assert re.search("FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
+        assert re.search(r"#NEXUS", n)
+        assert re.search(r"BEGIN DATA;", n)
+        assert re.search(r"DIMENSIONS NTAX=3 NCHAR=2;", n)
+        assert re.search(r"MATRIX", n)
+        assert re.search(r"Latin\s+36", n)
+        assert re.search(r"French\s+14", n)
+        assert re.search(r"English\s+25", n)
+        assert re.search(r"FORMAT.*MISSING\=(.+?)", n).groups()[0] == '?'
+        assert re.search(r"FORMAT.*DATATYPE\=(\w+)\s", n).groups()[0] \
             == 'STANDARD'
-        assert re.search('FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
+        assert re.search(r'FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
             == '123456'
         
         os.unlink(tmp.name)        # cleanup
 
     def test_write_as_table(self):
         content = self.nex.write_as_table()
-        assert re.search("Latin\s+36", content)
-        assert re.search("French\s+14", content)
-        assert re.search("English\s+25", content)
+        assert re.search(r"Latin\s+36", content)
+        assert re.search(r"French\s+14", content)
+        assert re.search(r"English\s+25", content)
         assert len(content.split("\n")) == 3
         
     def test_write_as_table_with_polymorphoc(self):
         self.nex.add('French', 'char1', '2')
         content = self.nex.write_as_table()
-        assert re.search("Latin\s+36", content)
-        assert re.search("French\s+\(12\)4", content)
-        assert re.search("English\s+25", content)
+        assert re.search(r"Latin\s+36", content)
+        assert re.search(r"French\s+\(12\)4", content)
+        assert re.search(r"English\s+25", content)
         assert len(content.split("\n")) == 3
         
 

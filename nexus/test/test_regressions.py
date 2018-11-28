@@ -134,15 +134,15 @@ class Test_TaxaHandler_Regression_Mesquite(unittest.TestCase):
     
     def test_write(self):
         expected_patterns = [
-            '^begin taxa;$',
-            '^\s+TITLE Untitled_Block_of_Taxa;$',
-            '^\s+dimensions ntax=3;$',
-            '^\s+taxlabels$',
-            "^\s+\[1\] A$",
-            "^\s+\[2\] B$",
-            "^\s+\[3\] C$",
-            '^;$',
-            '^end;$',
+            r'^begin taxa;$',
+            r'^\s+TITLE Untitled_Block_of_Taxa;$',
+            r'^\s+dimensions ntax=3;$',
+            r'^\s+taxlabels$',
+            r"^\s+\[1\] A$",
+            r"^\s+\[2\] B$",
+            r"^\s+\[3\] C$",
+            r'^;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -179,16 +179,16 @@ class Test_DataHandler_Regression_Mesquite(unittest.TestCase):
 
     def test_write(self):
         expected_patterns = [
-            '^begin data;$',
-            '^\s+TITLE Untitled_Block_of_Taxa;$',
-            '^\s+LINK Taxa = Untitled_Block_of_Taxa;$',
-            '^\s+dimensions ntax=2 nchar=2;$',
-            '^\s+format datatype=standard gap=- symbols="01";$',
-            "^matrix$",
-            "^Harry\s+00",
-            "^Simon\s+01$",
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+TITLE Untitled_Block_of_Taxa;$',
+            r'^\s+LINK Taxa = Untitled_Block_of_Taxa;$',
+            r'^\s+dimensions ntax=2 nchar=2;$',
+            r'^\s+format datatype=standard gap=- symbols="01";$',
+            r"^matrix$",
+            r"^Harry\s+00",
+            r"^Simon\s+01$",
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
@@ -314,14 +314,14 @@ class Test_DataHandler_NoMissingInSymbols(unittest.TestCase):
         End;
         """)
         expected_patterns = [
-            '^begin data;$',
-            '^\s+dimensions ntax=2 nchar=2;$',
-            '^\s+format datatype=standard gap=- symbols="01";$',
-            "^matrix$",
-            "^Harry\s+1-",
-            "^Simon\s+0\?$",
-            '^\s+;$',
-            '^end;$',
+            r'^begin data;$',
+            r'^\s+dimensions ntax=2 nchar=2;$',
+            r'^\s+format datatype=standard gap=- symbols="01";$',
+            r"^matrix$",
+            r"^Harry\s+1-",
+            r"^Simon\s+0\?$",
+            r'^\s+;$',
+            r'^end;$',
         ]
         written = self.nex.write()
         for expected in expected_patterns:
