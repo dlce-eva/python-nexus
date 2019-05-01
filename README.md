@@ -19,6 +19,13 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v1.7:
+    - added rudimentary tree handling to `NexusWriter` objects:
+        
+        > nex = NexusWriter()
+        > nex.trees.append("tree tree1 = (a,b);")
+        
+    - added the ability to combine nexuses containing trees
  * v1.63:
     - fixed an issue where the bin directory wasn't packed on py2.7 (thanks @xrotwang)
  * v1.62:
@@ -304,6 +311,12 @@ NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
 ... you can make an interleaved nexus by setting `interleave` to True, and you can
 include a character block in the nexus (if you have character labels for example) 
 by setting charblock to True.
+
+There is rudimentary support for handling trees e.g.:
+
+    n.trees.append("tree tree1 = (a,b,c);")
+    n.trees.append("tree tree2 = (a,b,c);")
+    
 
 
 # Nexus manipulation scripts included
