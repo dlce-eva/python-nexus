@@ -6,6 +6,11 @@ import collections
 
 TEMPLATE = """
 #NEXUS
+%(datablock)s
+%(treeblock)s
+"""
+
+DATA_TEMPLATE = """
 %(comments)s
 BEGIN DATA;
     DIMENSIONS NTAX=%(ntax)d NCHAR=%(nchar)d;
@@ -14,6 +19,12 @@ BEGIN DATA;
 MATRIX
 %(matrix)s
 ;
+END;
+"""
+
+TREE_TEMPLATE = """
+BEGIN TREES;
+%(trees)s
 END;
 """
 
@@ -29,6 +40,7 @@ class NexusWriter(object):
         self._taxa = None
         self.data = collections.defaultdict(dict)
         self.is_binary = False
+        self.trees = []
 
     def clean(self, s):
         """Removes unsafe characters"""
@@ -45,6 +57,10 @@ class NexusWriter(object):
     @property
     def characters(self):
         return self.data.keys()
+    
+    @property
+    def ntrees(self):
+        return len(self.trees)
     
     @property
     def taxa(self):
@@ -93,6 +109,9 @@ class NexusWriter(object):
                 out.append("%s %s" % (t.ljust(max_taxon_size), ''.join(s)))
         return "\n".join(out)
 
+    def make_treeblock(self):
+        return "\n".join(["    %s" % t.lstrip().strip() for t in self.trees])
+
     def _make_comments(self):
         """Generates a comments block"""
         return "\n".join(["[%s]" % c.ljust(70) for c in self.comments])
@@ -139,6 +158,15 @@ class NexusWriter(object):
         """
         return self.make_nexus(interleave, charblock)
 
+    def _is_valid(self):
+        """Checks the nexus is valid to write (i.e. not empty)"""
+        valid = False
+        if self.data and self.taxa:
+            valid = True
+        elif self.ntrees:
+            valid = True
+        return valid
+
     def make_nexus(self, interleave=False, charblock=False):
         """
         Generates a string representation of the nexus
@@ -150,22 +178,28 @@ class NexusWriter(object):
 
         :return: String
         """
-        assert self.data, "No data in nexus!"
-        assert self.taxa, "No taxa in nexus!"
-        assert self.characters, "No characters in nexus!"
-
-        return TEMPLATE.strip() % {
-            'ntax': len(self.taxa),
-            'nchar': len(self.characters),
-            'charblock': self._make_charlabel_block() if charblock else '',
-            'matrix': self._make_matrix_block(interleave=interleave),
-            'interleave': 'INTERLEAVE' if interleave else '',
-            'comments': self._make_comments(),
-            'symbols': ''.join(sorted(self.symbols)),
-            'missing': self.MISSING,
-            'gap': self.GAP,
-            'datatype': self.DATATYPE,
-        }
+        
+        if not self._is_valid():
+            raise ValueError("Nexus has no data!")
+        
+        if self.data:
+            datablock = DATA_TEMPLATE % {
+                'ntax': len(self.taxa),
+                'nchar': len(self.characters),
+                'charblock': self._make_charlabel_block() if charblock else '',
+                'matrix': self._make_matrix_block(interleave=interleave),
+                'interleave': 'INTERLEAVE' if interleave else '',
+                'comments': self._make_comments(),
+                'symbols': ''.join(sorted(self.symbols)),
+                'missing': self.MISSING,
+                'gap': self.GAP,
+                'datatype': self.DATATYPE,
+            }
+        else:
+            datablock = ""
+        
+        treeblock = TREE_TEMPLATE % {'trees': self.make_treeblock()} if self.ntrees else ""
+        return TEMPLATE % {'datablock': datablock, 'treeblock': treeblock}
 
     def write_to_file(self, filename="output.nex", interleave=False,
                       charblock=False):
@@ -213,3 +247,4 @@ class NexusWriter(object):
         out = self.make_nexus(interleave=False, charblock=True)
         n.read_string(out)
         return n
+        

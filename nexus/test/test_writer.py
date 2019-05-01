@@ -168,7 +168,36 @@ class Test_NexusWriter(unittest.TestCase):
         assert re.search(r"French\s+\(12\)4", content)
         assert re.search(r"English\s+25", content)
         assert len(content.split("\n")) == 3
+    
+    def test_make_treeblock(self):
+        self.nex.trees.append('tree tree1 = (French,(English,Latin));')
+        self.nex.trees.append('tree tree2 = ((French,English),Latin);')
+        treeblock = self.nex.make_treeblock()
+        assert re.search(r"tree tree1 = \(French,\(English,Latin\)\);", treeblock)
+        assert re.search(r'tree tree2 = \(\(French,English\),Latin\);', treeblock)
+    
+    def test_write_with_trees(self):
+        self.nex.trees.append('tree tree1 = (French,(English,Latin));')
+        self.nex.trees.append('tree tree2 = ((French,English),Latin);')
+        content = self.nex.write()
+        assert re.search(r"BEGIN TREES", content)
+        assert re.search(r"tree tree1 = \(French,\(English,Latin\)\);", content)
+        assert re.search(r'tree tree2 = \(\(French,English\),Latin\);', content)
+    
+    def test_ntrees(self):
+        assert self.nex.ntrees == 0
+        self.nex.trees.append('tree tree1 = (French,English,Latin);')
+        assert self.nex.ntrees == 1
+        self.nex.trees.append('tree tree2 = (French,English,Latin);')
+        assert self.nex.ntrees == 2
         
+    def test_write_with_no_data_but_trees(self):
+        nex = NexusWriter()
+        nex.trees.append('tree tree1 = (French,(English,Latin));')
+        content = nex.write()
+        assert re.search(r"BEGIN TREES", content)
+        assert re.search(r"tree tree1 = \(French,\(English,Latin\)\);", content)
+
 
 class RegressionTests(unittest.TestCase):
     def test_regression_format_string_has_datatype_first(self):
