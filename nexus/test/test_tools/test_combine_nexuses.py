@@ -7,7 +7,7 @@ from nexus.tools.combine_nexuses import combine_nexuses
 
 EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
-class Test_CombineNexuses(unittest.TestCase):
+class Test_CombineNexuses_Data(unittest.TestCase):
     def setUp(self):
         self.nex1 = NexusReader()
         self.nex1.read_string(
@@ -143,3 +143,29 @@ class Test_CombineNexuses(unittest.TestCase):
                     newnex.write(charblock=True)
                 )
                 counter += 1
+
+
+
+class Test_CombineNexuses_Trees(unittest.TestCase):
+    def setUp(self):
+        self.nex1 = NexusReader()
+        self.nex1.read_string(
+            """Begin trees;
+                tree 1 = (a,b,c);
+            end;"""
+        )
+        self.nex2 = NexusReader()
+        self.nex2.read_string(
+            """Begin trees;
+                tree 2 = (b,a,c);
+                tree 3 = (b,c,a);
+            end;"""
+        )
+    
+    def test_combine(self):
+        newnex = combine_nexuses([self.nex1, self.nex2])
+        assert len(newnex.trees) == 3
+        assert newnex.trees[0] == "tree 1 = (a,b,c);"
+        assert newnex.trees[1] == "tree 2 = (b,a,c);"
+        assert newnex.trees[2] == "tree 3 = (b,c,a);"
+        
