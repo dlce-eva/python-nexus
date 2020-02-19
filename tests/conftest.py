@@ -33,11 +33,6 @@ def nex2(make_reader):
 
 
 @pytest.fixture
-def nex3(make_reader):
-    return make_reader('example3.nex')
-
-
-@pytest.fixture
 def nexc(make_reader):
     return make_reader('example-characters.nex')
 

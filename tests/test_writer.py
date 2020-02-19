@@ -19,6 +19,12 @@ def writer():
     return res
 
 
+def test_invalid():
+    w = NexusWriter()
+    with pytest.raises(ValueError):
+        w.write()
+
+
 def test_char_adding1(writer):
     """Test Character Addition 1"""
     assert writer.data['char1']['French'] == '1'

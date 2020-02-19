@@ -154,7 +154,7 @@ class NexusReader(object):
         handle.close()
         return res
 
-    def write(self):
+    def write(self, **kw):
         """
         Generates a string containing a complete nexus from
         all the data.

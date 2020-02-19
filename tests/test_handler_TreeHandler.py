@@ -345,11 +345,7 @@ def test_tree(findall):
     assert len(found) == 3
     for match in expected:
         for key in expected[match]:
-            if expected[match][key] != found[match][key]:
-                raise AssertionError(
-                    "Expected %s for %s, got %s" %
-                    (expected[match][key], key, found[match][key])
-                )
+            assert expected[match][key] == found[match][key]
 
 
 def test_tree_digits(findall):
@@ -380,11 +376,7 @@ def test_tree_digits(findall):
     assert len(found) == 3
     for match in expected:
         for key in expected[match]:
-            if expected[match][key] != found[match][key]:
-                raise AssertionError(
-                    "Expected %s for %s, got %s" %
-                    (expected[match][key], key, found[match][key])
-                )
+            assert expected[match][key] == found[match][key]
 
 
 def test_tree_with_branchlengths(findall):
@@ -415,11 +407,8 @@ def test_tree_with_branchlengths(findall):
     assert len(found) == 3
     for match in expected:
         for key in expected[match]:
-            if expected[match][key] != found[match][key]:
-                raise AssertionError(
-                    "Expected %s for %s, got %s" %
-                    (expected[match][key], key, found[match][key])
-                )
+            assert expected[match][key] == found[match][key]
+
 
 def test_tree_complex(findall):
     expected = {
@@ -451,11 +440,7 @@ def test_tree_complex(findall):
     assert len(found) == 3
     for match in expected:
         for key in expected[match]:
-            if expected[match][key] != found[match][key]:
-                raise AssertionError(
-                    "Expected %s for %s, got %s" %
-                    (expected[match][key], key, found[match][key])
-                )
+            assert expected[match][key] == found[match][key]
 
 
 def test_no_change():

@@ -14,10 +14,20 @@ def nex_string(examples):
     return examples.joinpath('example.nex').read_text(encoding='utf8')
 
 
-"""Test the Core functionality of NexusReader"""
-def test_read_file(nex):
+def test_reader_from_blocks():
+    n = NexusReader(custom=['begin custom;', '[comment]', 'end;'])
+    assert hasattr(n, 'custom')
+
+
+def test_read_file(nex, examples):
+    """Test the Core functionality of NexusReader"""
     assert 'data' in nex.blocks
     assert 'Simon' in nex.blocks['data'].matrix
+
+    with warnings.catch_warnings(record=True) as w:
+        n = NexusReader()
+        n.read_file(examples / 'example.nex')
+        assert len(w) == 1
 
 
 def test_error_on_missing_file(examples):

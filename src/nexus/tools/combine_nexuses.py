@@ -27,7 +27,7 @@ def combine_nexuses(nexuslist):
             out = combine_datablocks(out, nexuslist)
         elif block == 'trees':
             out = combine_treeblocks(out, nexuslist)
-        else:
+        else:  # pragma: no cover
             raise ValueError("Don't know how to combine %s blocks" % block)
     return out
 

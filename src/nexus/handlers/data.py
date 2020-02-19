@@ -1,6 +1,7 @@
 import re
 import warnings
 from collections import defaultdict
+
 from nexus.handlers import GenericHandler
 from nexus.handlers import QUOTED_PATTERN, WHITESPACE_PATTERN, BEGIN_PATTERN, END_PATTERN
 

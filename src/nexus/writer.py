@@ -1,8 +1,9 @@
 """
 Tools for writing a nexus file
 """
-import pathlib
 import collections
+
+from nexus.util import FileWriterMixin
 
 TEMPLATE = """
 #NEXUS
@@ -29,7 +30,7 @@ END;
 """
 
 
-class NexusWriter(object):
+class NexusWriter(FileWriterMixin):
 
     MISSING = '?'
     GAP = '-'
@@ -143,8 +144,8 @@ class NexusWriter(object):
     def remove_character(self, character):
         """Removes a given `character` from the nexus file"""
         del(self.data[character])
-        
-    def write(self, interleave=False, charblock=False):
+
+    def write(self, interleave=False, charblock=False, **kw):
         """
         Generates a string representation of the nexus
         (basically a wrapper around make_nexus)
@@ -160,12 +161,11 @@ class NexusWriter(object):
 
     def _is_valid(self):
         """Checks the nexus is valid to write (i.e. not empty)"""
-        valid = False
         if self.data and self.taxa:
-            valid = True
-        elif self.ntrees:
-            valid = True
-        return valid
+            return True
+        if self.ntrees:
+            return True
+        return False
 
     def make_nexus(self, interleave=False, charblock=False):
         """
@@ -178,10 +178,9 @@ class NexusWriter(object):
 
         :return: String
         """
-        
         if not self._is_valid():
             raise ValueError("Nexus has no data!")
-        
+
         if self.data:
             datablock = DATA_TEMPLATE % {
                 'ntax': len(self.taxa),
@@ -200,22 +199,6 @@ class NexusWriter(object):
         
         treeblock = TREE_TEMPLATE % {'trees': self.make_treeblock()} if self.ntrees else ""
         return TEMPLATE % {'datablock': datablock, 'treeblock': treeblock}
-
-    def write_to_file(self, filename="output.nex", interleave=False,
-                      charblock=False):
-        """
-        Generates a string representation of the nexus
-        
-        :param filename: Filename to store nexus as
-        :type filename: String
-        :param interleave: Generate interleaved matrix or not
-        :type interleave: Boolean
-        :param charblock: Include a characters block or not
-        :type charblock: Boolean
-        
-        :return: None
-        """
-        pathlib.Path(filename).write_text(self.make_nexus(interleave, charblock), encoding='utf8')
 
     def write_as_table(self):
         """

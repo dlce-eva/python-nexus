@@ -140,10 +140,6 @@ class LowStateCountChecker(Checker):
     THRESHOLD = 3  # 3 x the standard deviation
     
     def check(self, nex):
-        if statistics is None:
-            warn("LowStateCountChecker does not work on python <= 3.3")
-            return not self.has_errors
-        
         counts = {}
         for taxon in nex.data.matrix:
             counts[taxon] = len([
