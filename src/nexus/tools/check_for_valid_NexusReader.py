@@ -1,6 +1,7 @@
 from nexus.reader import NexusReader
 from nexus.exceptions import NexusFormatException
 
+
 def check_for_valid_NexusReader(nexus_obj, required_blocks=None):
     """
     Performs some checking to make sure we received a valid NexusReader

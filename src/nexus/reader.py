@@ -1,13 +1,9 @@
 """
 Tools for reading a nexus file
 """
-import os
 import gzip
-
-try:  # pragma: no cover
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import StringIO
+import pathlib
 
 from nexus.handlers import GenericHandler
 from nexus.handlers import BEGIN_PATTERN, END_PATTERN
@@ -55,16 +51,16 @@ class NexusReader(object):
 
         :return: None
         """
-        self.filename = filename
-        self.short_filename = os.path.split(filename)[1]
+        self.filename = pathlib.Path(filename)
+        self.short_filename = self.filename.name
 
-        if not os.path.isfile(filename):
+        if not (self.filename.exists() and self.filename.is_file()):
             raise IOError("Unable To Read File %s" % filename)
 
-        if filename.endswith('.gz'):
-            handle = gzip.open(filename, 'rb')  # pragma: no cover
+        if self.filename.suffix == '.gz':
+            handle = gzip.open(str(self.filename), 'rb')  # pragma: no cover
         else:
-            handle = open(filename, 'r')
+            handle = self.filename.open('r', encoding='utf8')
         self._read(handle)
         handle.close()
 
@@ -136,6 +132,5 @@ class NexusReader(object):
 
         :raises IOError: If file writing fails.
         """
-        handle = open(filename, 'w')
-        handle.writelines(self.write())
-        handle.close()
+        with pathlib.Path(filename).open('w', encoding='utf8') as handle:
+            handle.writelines(self.write())

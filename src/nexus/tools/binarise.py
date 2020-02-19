@@ -1,17 +1,6 @@
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
-# set isstr in a python 2 vs python 3 safe way
-try:
-    basestring  # attempt to evaluate basestring
-    # py2
-    def isstr(s):  # pragma: no cover
-        return isinstance(s, basestring)
-except NameError:
-    # py3
-    def isstr(s):
-        return isinstance(s, str)
-
 
 def _recode_to_binary(char, keep_zero=False):
     """
@@ -49,7 +38,7 @@ def _recode_to_binary(char, keep_zero=False):
     if not keep_zero:
         unwanted_states.append('0')
     
-    if not all(isstr(v) for v in char.values()):
+    if not all(isinstance(v, str) for v in char.values()):
         raise ValueError('Data must be strings: %r' % char.values())
 
     # preprocess taxa states and get unique states

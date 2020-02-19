@@ -1,17 +1,9 @@
-#!/usr/bin/env python3
-#coding=utf-8
-
 from warnings import warn
 
-try:
-    import statistics
-except ImportError:
-    statistics = None
-    warn("Some checkers need python > 3.3 to work, disabling: LowStateCountChecker")
-    
+import statistics
+
 from collections import Counter
 from string import ascii_lowercase, ascii_uppercase, digits
-from nexus import NexusReader
 
 SAFE_CHARACTERS = ascii_uppercase + ascii_lowercase + digits + '-_'
 
@@ -29,7 +21,7 @@ class Checker(object):
         return len(self.errors) > 0
     
     def check(self, nex):  # pragma: no cover
-        raise NotImplementedException("Should be subclassed")
+        raise NotImplementedError("Should be subclassed")
 
     def log(self, message):
         self.messages.append(message)

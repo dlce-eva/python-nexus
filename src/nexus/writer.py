@@ -1,7 +1,7 @@
 """
 Tools for writing a nexus file
 """
-
+import pathlib
 import collections
 
 TEMPLATE = """
@@ -215,9 +215,7 @@ class NexusWriter(object):
         
         :return: None
         """
-        nexus = self.make_nexus(interleave, charblock)
-        with open(filename, 'w+') as handle:
-            handle.write(nexus)
+        pathlib.Path(filename).write_text(self.make_nexus(interleave, charblock), encoding='utf8')
 
     def write_as_table(self):
         """

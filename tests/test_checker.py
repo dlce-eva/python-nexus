@@ -1,8 +1,8 @@
 """Tests for nexus checkers"""
-import os
 import sys
 import pytest
 import unittest
+
 from nexus.reader import NexusReader
 from nexus.checker import BEASTAscertainmentChecker
 from nexus.checker import DuplicateLabelChecker
