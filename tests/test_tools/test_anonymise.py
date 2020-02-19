@@ -1,6 +1,4 @@
 """Tests for utils in bin directory"""
-import os
-
 import pytest
 
 from nexus import NexusReader

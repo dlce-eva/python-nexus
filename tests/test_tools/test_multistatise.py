@@ -1,10 +1,8 @@
-import os
 import unittest
 
 from nexus import NexusReader
 from nexus.tools.multistatise import multistatise
 
-EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), '../../examples')
 
 class Test_Multistatise(unittest.TestCase):
     def setUp(self):
