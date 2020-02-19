@@ -6,6 +6,11 @@ from nexus import NexusReader
 
 
 @pytest.fixture
+def regression():
+    return pathlib.Path(__file__).parent / 'regression'
+
+
+@pytest.fixture
 def examples():
     return pathlib.Path(__file__).parent / 'examples'
 

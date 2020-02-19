@@ -2,29 +2,25 @@
 import re
 import warnings
 
+import pytest
+
 from nexus import NexusReader
 from nexus.reader import DataHandler
 
 
-def test_simple():
-    assert DataHandler()._parse_sites('123') == ['1', '2', '3']
-
-def test_multi():
-    assert DataHandler()._parse_sites('1(12)') == ['1', '12']
-
-def test_comma():
-    assert DataHandler()._parse_sites('123(4,5)56') == \
-        ['1', '2', '3', '4,5', '5', '6']
-
-def test_sequence():
-    assert DataHandler()._parse_sites("ACGTU?") == \
-        ['A', 'C', 'G', 'T', 'U', '?']
-
-def test_maddison():
-    assert DataHandler()._parse_sites('TAG;') == ['T', 'A', 'G']
-
-def test_extra_comma():
-    assert DataHandler()._parse_sites('(T,A),C,G') == ['T,A', 'C', 'G']
+@pytest.mark.parametrize(
+    'input,expected',
+    [
+        ('123', ['1', '2', '3']),
+        ('1(12)', ['1', '12']),
+        ('123(4,5)56', ['1', '2', '3', '4,5', '5', '6']),
+        ("ACGTU?", ['A', 'C', 'G', 'T', 'U', '?']),
+        ('TAG;', ['T', 'A', 'G']),
+        ('(T,A),C,G', ['T,A', 'C', 'G']),
+    ]
+)
+def test_DataHandler_parse_sites(input, expected):
+    assert DataHandler()._parse_sites(input) == expected
 
 
 expected = {

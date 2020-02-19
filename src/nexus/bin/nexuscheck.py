@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import warnings
-from __future__ import print_function
+
 from nexus import NexusReader, VERSION
-from nexus.checker import checkers
 
 __author__ = 'Simon Greenhill <simon@simon.net.nz>'
 __doc__ = """nexusmanip - python-nexus tools v%(version)s
