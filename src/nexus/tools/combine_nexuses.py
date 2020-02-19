@@ -43,7 +43,7 @@ def combine_datablocks(out, nexuslist):
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
         check_for_valid_NexusReader(nex, required_blocks=['data'])
-        if hasattr(nex, 'short_filename'):
+        if nex.short_filename:
             nexus_label = os.path.splitext(nex.short_filename)[0]
         else:
             nexus_label = str(nex_id)

@@ -157,8 +157,7 @@ def test_TaxaHandler_Regression_Mesquite_write(mesquite):
 
 @pytest.fixture
 def mesquite_attributes():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     Begin data;
@@ -309,8 +308,7 @@ def test_DataHandler_NoMissingInSymbols_write():
     Regression:
     Test that the missing or gap symbols are NOT in the SYMBOLS format string
     """
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
     begin data;
     Dimensions ntax=2 nchar=2;

@@ -41,7 +41,7 @@ def test_write_produces_end(nex2):
 
 def test_error_on_incorrect_dimensions():
     with pytest.raises(NexusFormatException):
-        NexusReader().read_string("""
+        NexusReader.from_string("""
         #NEXUS
     
         begin taxa;
@@ -52,7 +52,7 @@ def test_error_on_incorrect_dimensions():
 
 
 def test_annotation_read():
-    nex = NexusReader().read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
     BEGIN TAXA;
         DIMENSIONS  NTAX=3;

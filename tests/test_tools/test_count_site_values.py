@@ -26,8 +26,7 @@ def test_count_missing_two():
     expected = {
         'Harry': 0, 'Simon': 1, 'Peter': 1, 'Betty': 2, 'Louise': 3
     }
-    nexus = NexusReader()
-    nexus.read_string("""#NEXUS
+    nexus = NexusReader.from_string("""#NEXUS
     Begin data;
     Dimensions ntax=5 nchar=3;
     Format datatype=standard symbols="01" gap=-;
@@ -49,8 +48,7 @@ def test_count_other_values_one():
     expected = {
         'Harry': 1, 'Simon': 1, 'Peter': 0, 'Betty': 0, 'Louise': 0
     }
-    nexus = NexusReader()
-    nexus.read_string("""#NEXUS
+    nexus = NexusReader.from_string("""#NEXUS
     Begin data;
     Dimensions ntax=5 nchar=3;
     Format datatype=standard symbols="01" gap=-;
@@ -72,8 +70,7 @@ def test_count_other_values_two():
     expected = {
         'Harry': 1, 'Simon': 2, 'Peter': 1, 'Betty': 0, 'Louise': 0
     }
-    nexus = NexusReader()
-    nexus.read_string("""#NEXUS
+    nexus = NexusReader.from_string("""#NEXUS
     Begin data;
     Dimensions ntax=5 nchar=3;
     Format datatype=standard symbols="01" gap=-;

@@ -6,8 +6,7 @@ from nexus.tools.check_zeros import check_zeros, remove_zeros
 
 @pytest.fixture
 def nex():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
         Begin data;
         Dimensions ntax=4 nchar=8;
         Format datatype=standard symbols="01" gap=-;

@@ -11,7 +11,7 @@ from nexus.checker import UnusualStateChecker
 
 
 def test_DuplicateLabelChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -34,7 +34,7 @@ def test_DuplicateLabelChecker():
 
 
 def test_LabelChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -56,7 +56,7 @@ def test_LabelChecker():
 
 
 def test_LabelChecker_no_error_with_no_labels():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -74,7 +74,7 @@ def test_LabelChecker_no_error_with_no_labels():
 
 
 def test_PotentiallyUnsafeTaxaLabelsChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -92,7 +92,7 @@ def test_PotentiallyUnsafeTaxaLabelsChecker():
 
 
 def test_EmptyCharacterChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -110,7 +110,7 @@ def test_EmptyCharacterChecker():
 
 
 def test_EmptyCharacterChecker_ignore_ascert():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -134,7 +134,7 @@ def test_EmptyCharacterChecker_ignore_ascert():
 
 
 def test_SingletonCharacterChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -152,7 +152,7 @@ def test_SingletonCharacterChecker():
 
 
 def test_LowStateCountChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -175,7 +175,7 @@ def test_LowStateCountChecker():
 
 
 def test_UnusualStateChecker():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -195,7 +195,7 @@ def test_UnusualStateChecker():
 
 def test_BEASTAscertainmentCheckersingle_ascertainment_ok():
     # All ok with one labelled ascertainment character
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -218,7 +218,7 @@ def test_BEASTAscertainmentCheckersingle_ascertainment_ok():
 
 
 def test_BEASTAscertainmentCheckerfail_with_no_assumptions_block():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -243,7 +243,7 @@ def test_BEASTAscertainmentCheckerfail_with_no_assumptions_block():
 
 def test_BEASTAscertainmentChecker_ok():
     # fail with two
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -273,7 +273,7 @@ def test_BEASTAscertainmentChecker_ok():
 
 def test_BEASTAscertainmentChecker_fail_with_non_empty():
     # fail with two
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         

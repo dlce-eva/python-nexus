@@ -47,8 +47,7 @@ def test_Recode_To_Binary_absent_state_but_keep_zero():
 
 @pytest.fixture
 def nex():
-    res = NexusReader()
-    res.read_string("""
+    res = NexusReader.from_string("""
         Begin data;
         Dimensions ntax=3 nchar=2;
         Format datatype=standard symbols="01" gap=-;

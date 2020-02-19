@@ -18,7 +18,7 @@ def examples():
 @pytest.fixture
 def make_reader(examples):
     def _make(fname):
-        return NexusReader(examples / fname)
+        return NexusReader.from_file(examples / fname)
     return _make
 
 

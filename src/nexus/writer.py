@@ -241,8 +241,4 @@ class NexusWriter(object):
         which will make this unnecessary.
         """
         from .reader import NexusReader
-        n = NexusReader()
-        out = self.make_nexus(interleave=False, charblock=True)
-        n.read_string(out)
-        return n
-        
+        return NexusReader.from_string(self.make_nexus(interleave=False, charblock=True))

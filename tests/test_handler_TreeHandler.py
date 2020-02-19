@@ -121,8 +121,7 @@ def test_detranslate(trees_translated, examples):
 
 
 def test_treelabel():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -138,8 +137,7 @@ def test_treelabel():
 
 
 def test_no_treelabel():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -155,8 +153,7 @@ def test_no_treelabel():
 
 
 def test_rooted():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -172,8 +169,7 @@ def test_rooted():
 
 
 def test_unrooted():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -189,8 +185,7 @@ def test_unrooted():
 
 
 def test_labelled_unrooted():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -206,8 +201,7 @@ def test_labelled_unrooted():
 
 
 def test_ok_starting_with_zero():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -225,8 +219,7 @@ def test_ok_starting_with_zero():
 
 
 def test_ok_starting_with_one():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
     #NEXUS
 
     begin trees;
@@ -245,7 +238,7 @@ def test_ok_starting_with_one():
 
 def test_error_on_duplicate_taxa_id():
     with pytest.raises(NexusFormatException):
-        NexusReader().read_string("""
+        NexusReader.from_string("""
         #NEXUS
     
         begin trees;
@@ -260,7 +253,7 @@ def test_error_on_duplicate_taxa_id():
 
 def test_error_on_duplicate_taxa():
     with pytest.raises(NexusFormatException):
-        NexusReader().read_string("""
+        NexusReader.from_string("""
         #NEXUS
     
         begin trees;

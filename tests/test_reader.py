@@ -1,6 +1,7 @@
 """Tests for nexus reading"""
 import gzip
 import pathlib
+import warnings
 
 import pytest
 
@@ -35,15 +36,14 @@ def test_read_gzip_file(nex_string, tmpdir):
     assert 'Simon' in nex.blocks['data'].matrix
 
 
-def test_read_string(nex_string):
-    nex = NexusReader()
-    nex.read_string(nex_string)
+def test_from_string(nex_string):
+    nex = NexusReader.from_string(nex_string)
     assert 'data' in nex.blocks
     assert 'Simon' in nex.blocks['data'].matrix
 
 
 def test_read_string_returns_self():
-    nex = NexusReader().read_string(
+    nex = NexusReader.from_string(
         """
         #NEXUS
         
@@ -73,9 +73,9 @@ def test_write_to_file(nex, tmpdir):
 
 
 def test_error_on_duplicate_block():
-    with pytest.raises(NexusFormatException):
-        NexusReader().read_string(
-            """
+    with warnings.catch_warnings(record=True):
+        with pytest.raises(NexusFormatException):
+            NexusReader.from_string("""
             #NEXUS
             
             Begin data;

@@ -13,16 +13,14 @@ def test_generic_readwrite():
         "    B = 2;",
         "end;",
     ]
-    nex = NexusReader()
-    nex.read_string("\n".join(expected))
+    nex = NexusReader.from_string("\n".join(expected))
     for line in nex.sets.write().split("\n"):
         e = expected.pop(0).strip()
         assert line.strip() == e
 
 
 def test_write_produces_end():
-    nex = NexusReader()
-    nex.read_string("""
+    nex = NexusReader.from_string("""
         begin assumptions;
             A = 1;
         end;

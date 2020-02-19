@@ -47,8 +47,7 @@ def test_anonymise_data_with_interleave(nex3):
 
 def test_notimplemented_exception():
     with pytest.raises(NotImplementedError):
-        nex = NexusReader()
-        nex.read_string(
+        nex = NexusReader.from_string(
             """Begin something;
             Dimensions ntax=5 nchar=1;
             Format datatype=standard symbols="01" gap=-;

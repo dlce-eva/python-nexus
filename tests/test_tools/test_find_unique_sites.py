@@ -7,8 +7,7 @@ def test_find_unique_sites_1(nex):
 
 
 def test_find_unique_sites_2():
-    nexus = NexusReader()
-    nexus.read_string("""Begin data;
+    nexus = NexusReader.from_string("""Begin data;
     Dimensions ntax=4 nchar=7;
     Format datatype=standard symbols="01" gap=-;
     Matrix

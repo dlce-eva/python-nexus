@@ -169,7 +169,8 @@ def test_incorrect_dimensions_warnings_ntaxa():
             Matrix
             Harry              1
             ;""")
-        assert len(w) == 1, 'Expected 1 warning, got %r' % w
+        assert len(w) == 2, 'Expected 2 warnings, got %r' % w
+        assert issubclass(w[0].category, DeprecationWarning)
         assert issubclass(w[-1].category, UserWarning)
         assert "Expected" in str(w[-1].message)
         assert nex.data.nchar == 1
@@ -185,7 +186,7 @@ def test_incorrect_dimensions_warnings_nchar():
             Matrix
             Harry              1
             ;""")
-        assert len(w) == 1, 'Expected 1 warning, got %r' % w
+        assert len(w) == 2, 'Expected 2 warnings, got %r' % w
         assert issubclass(w[-1].category, UserWarning)
         assert "Expected" in str(w[-1].message)
         assert nex.data.nchar == 1
