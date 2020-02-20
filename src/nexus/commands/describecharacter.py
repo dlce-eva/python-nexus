@@ -1,15 +1,22 @@
-#!/usr/bin/env python
-import sys
-from nexus import NexusReader, VERSION
-
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-__doc__ = """describecharacter - python-nexus tools v%(version)s
+"""
 Describes the given character.
-""" % {'version': VERSION, }
-from textwrap import TextWrapper
-from nexus.tools import check_for_valid_NexusReader
+"""
+import textwrap
+import collections
 
-wrapper = TextWrapper(initial_indent="  ", subsequent_indent="  ")
+from nexus.cli_util import add_nexus, get_reader
+
+wrapper = textwrap.TextWrapper(initial_indent="  ", subsequent_indent="  ")
+
+
+def register(parser):
+    parser.add_argument('site_index', help="Character index")
+    add_nexus(parser)
+
+
+def run(args):
+    print_character_stats(get_reader(args, required_blocks=['data']), args.site_index)
+
 
 def print_character_stats(nexus_obj, character_index):
     """
@@ -26,8 +33,6 @@ def print_character_stats(nexus_obj, character_index):
     :raises IndexError: if character_index is not in nexus data block
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
     index = None
     if character_index in nexus_obj.data.characters:
         index = character_index  # string index
@@ -41,34 +46,18 @@ def print_character_stats(nexus_obj, character_index):
             index = character_index
 
     if index is None:
-        raise IndexError("Character '%s' is not in the nexus" % char)
+        raise IndexError("Character '%s' is not in the nexus" % character_index)
 
-    states = {}
+    states = collections.defaultdict(list)
     for taxon, state in nexus_obj.data.characters[index].items():
-        states[state] = states.get(state, [])
         states[state].append(taxon)
 
     for state in sorted(states):
-        print('State: %s (%d / %d = %0.2f)' % (state,
+        print('State: %s (%d / %d = %0.2f)' % (
+            state,
             len(states[state]), nexus_obj.data.ntaxa,
             (len(states[state]) / nexus_obj.data.ntaxa * 100)
         ))
-        print("\n".join(wrapper.wrap(", ".join(states[state]))))
+        print("\n".join(wrapper.wrap(", ".join(sorted(states[state])))))
         print("\n")
     return
-
-
-if __name__ == '__main__':
-    #set up command-line options
-    from optparse import OptionParser
-    parser = OptionParser(usage="usage: %prog site_index nexusfile.nex")
-    options, args = parser.parse_args()
-
-    try:
-        char = args[0]
-        nexusname = args[1]
-    except IndexError:
-        parser.print_help()
-        sys.exit()
-
-    print_character_stats(NexusReader(nexusname), char)

@@ -132,7 +132,6 @@ from nexus.reader import NexusReader
 from nexus.writer import NexusWriter
 from nexus import handlers
 from nexus.exceptions import NexusFormatException
-from nexus import bin
 from nexus import tools
 
-__all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools", "bin"]
+__all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools"]

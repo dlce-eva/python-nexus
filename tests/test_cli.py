@@ -1,7 +1,15 @@
 import re
 import pathlib
 
+import pytest
+
 from nexus.__main__ import main
+
+
+def _make_nexus(tmpdir, block):
+    n = pathlib.Path(str(tmpdir)) / 't.nex'
+    n.write_text('#NEXUS\n\n' + block, encoding='utf8')
+    return n
 
 
 def test_check(capsys, examples):
@@ -18,6 +26,76 @@ def test_tally(capsys, examples):
     main(['tally', '-t', 'binary', str(examples / 'example.nex')])
     out, _ = capsys.readouterr()
     assert '2\t2' in out
+
+
+def test_describecharacter(capsys, examples):
+    main(['describecharacter', '0', str(examples / 'example.nex')])
+    out, _ = capsys.readouterr()
+    assert 'Harry, Simon' in out
+
+
+def test_describetaxa(capsys, examples):
+    main(['describetaxa', str(examples / 'example.nex')])
+    out, _ = capsys.readouterr()
+    assert '0 x 1, 1 x 1' in out
+
+
+def test_edit(capsys, examples, tmpdir):
+    with pytest.raises(ValueError):
+        main(['edit', '-c', str(examples / 'example2.nex')])
+
+    main(['edit', '--number', str(examples / 'example.nex')])
+    out, _ = capsys.readouterr()
+    assert '0/2' in out
+
+    main(['edit', '--stats', str(examples / 'example.nex')])
+    out, _ = capsys.readouterr()
+    assert '1x2' in out
+
+    nex = _make_nexus(
+        tmpdir,
+    """Begin data;
+Dimensions ntax=4 nchar=5;
+Format datatype=standard symbols="01" gap=-;
+Matrix
+Harry              10-10
+Simon              10-01
+Betty              10-10
+Louise             11-01
+    ;
+End;""")
+    main(['edit', '-c', '-u', '-z', '-x', '4', str(nex)])
+    out, _ = capsys.readouterr()
+    assert 'NCHAR=1' in out
+
+
+@pytest.mark.parametrize(
+    'trees,options,check',
+    [
+        (
+            ['tree1', 'tree2', 'tree3'],
+            ['-d', '1,3'],
+            lambda o: ('tree1' not in o) and ('tree2' in o) and ('tree3' not in o)),
+        (
+                ['tree1', 'tree2', 'tree3'],
+                ['-r', '3'],
+                lambda o: ('tree1' not in o) and ('tree2' not in o) and ('tree3' in o)),
+        (
+                ['tree1', 'tree2', 'tree3'],
+                ['-n', '2'],
+                lambda o: len(re.findall('tree[0-9]', o)) == 2),
+        (
+                ['tree1', 'tree2', 'tree3'],
+                ['-c', '-t'],
+                lambda o: '[comment]' not in o),
+    ]
+)
+def test_trees(trees, options, check, capsys, tmpdir):
+    trees = ['tree {0} = (a[comment]);'.format(t) for t in trees]
+    n = _make_nexus(tmpdir, 'begin trees;\n{0}\nend;\n'.format('\n'.join(trees)))
+    main(['trees', str(n)] + options)
+    out, _ = capsys.readouterr()
+    assert check(out)
 
 
 def test_combine(capsys, tmpdir, examples):
