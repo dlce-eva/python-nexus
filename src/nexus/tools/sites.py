@@ -1,6 +1,5 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
-from collections import Counter
-from collections.abc import Iterable
+import collections
 
 from nexus.writer import NexusWriter
 
@@ -21,7 +20,7 @@ def iter_unique_sites(nexus_obj):
         (this only really makes sense if the data is coded as presence/absence)
     """
     for i in range(0, nexus_obj.data.nchar):
-        members = Counter()
+        members = collections.Counter()
         missing = 0
         for taxa, characters in nexus_obj.data:
             c = characters[i]
@@ -167,7 +166,7 @@ def count_binary_set_size(nexus_obj):
         2: 20,
     }
     """
-    tally = Counter()
+    tally = collections.Counter()
     for char_id in nexus_obj.data.characters:
         char = nexus_obj.data.characters[char_id]
         tally[len([v for v in char.values() if v == '1'])] += 1
