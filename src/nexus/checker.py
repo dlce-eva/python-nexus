@@ -1,17 +1,15 @@
+import string
 import statistics
+import collections
 
-from collections import Counter
-from string import ascii_lowercase, ascii_uppercase, digits
-
-SAFE_CHARACTERS = ascii_uppercase + ascii_lowercase + digits + '-_'
+SAFE_CHARACTERS = string.ascii_letters + string.digits + '-_'
 
 
 class Checker(object):
 
     EMPTY_STATES = ('?', '-', '0')
 
-    def __init__(self, nex, verbose=False):
-        self.verbose = verbose
+    def __init__(self, nex):
         self.errors, self.messages = [], []
         self.check(nex)
 
@@ -38,7 +36,7 @@ class DuplicateLabelChecker(Checker):
     Checks for Duplicate Character Labels
     """
     def check(self, nex):
-        labels = Counter(nex.data.charlabels.values())
+        labels = collections.Counter(nex.data.charlabels.values())
         for label in labels:
             if labels[label] > 1:
                 self.errors.append("Duplicate Label (n=%d): %s" % (labels[label], label))
@@ -82,7 +80,7 @@ class UnusualStateChecker(Checker):
     THRESHOLD = 0.001  # anything less than this is flagged
 
     def check(self, nex):
-        states = Counter()
+        states = collections.Counter()
         for s in nex.data.matrix.values():
             states.update(s)
         total = sum(states.values())
@@ -100,7 +98,7 @@ class EmptyCharacterChecker(Checker):
     MIN_COUNT = 0
 
     def check(self, nex):
-        tally = Counter()
+        tally = collections.Counter()
         for taxon in nex.data.matrix:
             tally.update([
                 i for i, c in enumerate(nex.data.matrix[taxon], 0)
@@ -111,8 +109,7 @@ class EmptyCharacterChecker(Checker):
             n = tally.get(i, 0)
             if n == self.MIN_COUNT:
                 if 'ascert' in nex.data.charlabels.get(i, '').lower():  # ignore
-                    if self.verbose:
-                        self.log("Character %d is an ascertainment character" % i)
+                    self.log("Character %d is an ascertainment character" % i)
                 else:
                     self.errors.append("Character %d has count %d" % (i, self.MIN_COUNT))
         return not self.has_errors
@@ -159,7 +156,7 @@ class BEASTAscertainmentChecker(Checker):
         # are they empty?
         for a in ascert:
             states = [nex.data.matrix[t][a] for t in nex.data.matrix]
-            states = Counter([s for s in states if s not in self.EMPTY_STATES])
+            states = collections.Counter([s for s in states if s not in self.EMPTY_STATES])
             if len(states):
                 self.errors.append(
                     "Character %d - %s should be an ascertainment character but has data (%r)" % (

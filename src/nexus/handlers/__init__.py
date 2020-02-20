@@ -57,10 +57,9 @@ class GenericHandler(object):
         """
         Removes comments from lines
 
-        >>> g = GenericHandler()
-        >>> g.remove_comments("Hello [world]")
+        >>> GenericHandler.remove_comments("Hello [world]")
         'Hello '
-        >>> g.remove_comments("He[bite]ll[me]o")
+        >>> GenericHandler.remove_comments("He[bite]ll[me]o")
         'Hello'
 
         :param line: string

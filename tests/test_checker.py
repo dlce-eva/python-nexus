@@ -128,7 +128,7 @@ def test_EmptyCharacterChecker_ignore_ascert():
         C              001
         ;
     """)
-    c = EmptyCharacterChecker(nex, verbose=True)
+    c = EmptyCharacterChecker(nex)
     assert len(c.errors) == 1  # and not two!
     assert len(c.messages) == 1
 

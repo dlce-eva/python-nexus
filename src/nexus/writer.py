@@ -57,7 +57,7 @@ class NexusWriter(FileWriterMixin):
 
     @property
     def characters(self):
-        return self.data.keys()
+        return list(self.data.keys())
 
     @property
     def ntrees(self):
@@ -77,26 +77,23 @@ class NexusWriter(FileWriterMixin):
         symbols = [s for s in symbols if s not in ('-', '?')]
         return symbols
 
-    def _make_charlabel_block(self):
+    def _iter_charlabels(self):
         """Generates a character label block"""
-        out = ["CHARSTATELABELS"]
+        yield "CHARSTATELABELS"
         for i, char in enumerate(sorted(self.characters), 1):
-            out.append("\t\t%d %s," % (i, self.clean(str(char))))
-        out[-1] = out[-1].strip(',')  # remove trailing comma
-        out.append(";")
-        return "\n".join(out)
+            yield "\t\t%d %s%s" % (
+                i, self.clean(str(char)), '' if i == len(self.characters) else ',')
+        yield ";"
 
-    def _make_matrix_block(self, interleave):
+    def _iter_matrix(self, interleave):
         """Generates a matrix block"""
         max_taxon_size = max([len(t) for t in self.taxa]) + 3
 
-        out = []
         if interleave:
             for c in sorted(self.characters):
                 for t in self.taxa:
-                    out.append("%s %s" % (
-                        t.ljust(max_taxon_size), self.data[c].get(t, self.MISSING)))
-                out.append("")
+                    yield "%s %s" % (t.ljust(max_taxon_size), self.data[c].get(t, self.MISSING))
+                yield ""
         else:
             for t in sorted(self.taxa):
                 s = []
@@ -105,8 +102,7 @@ class NexusWriter(FileWriterMixin):
                     if len(value) > 1:  # wrap equivocal states in ()'s
                         value = "(%s)" % value
                     s.append(value)
-                out.append("%s %s" % (t.ljust(max_taxon_size), ''.join(s)))
-        return "\n".join(out)
+                yield "%s %s" % (t.ljust(max_taxon_size), ''.join(s))
 
     def make_treeblock(self):
         return "\n".join(["    %s" % t.lstrip().strip() for t in self.trees])
@@ -148,9 +144,7 @@ class NexusWriter(FileWriterMixin):
         (basically a wrapper around make_nexus)
 
         :param interleave: Generate interleaved matrix or not
-        :type interleave: Boolean
         :param charblock: Include a characters block or not
-        :type charblock: Boolean
 
         :return: String
         """
@@ -182,8 +176,8 @@ class NexusWriter(FileWriterMixin):
             datablock = DATA_TEMPLATE % {
                 'ntax': len(self.taxa),
                 'nchar': len(self.characters),
-                'charblock': self._make_charlabel_block() if charblock else '',
-                'matrix': self._make_matrix_block(interleave=interleave),
+                'charblock': '\n'.join(self._iter_charlabels()) if charblock else '',
+                'matrix': '\n'.join(self._iter_matrix(interleave=interleave)),
                 'interleave': 'INTERLEAVE' if interleave else '',
                 'comments': self._make_comments(),
                 'symbols': ''.join(sorted(self.symbols)),

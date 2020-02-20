@@ -10,15 +10,7 @@ def iter_constant_sites(nexus_obj):
     Returns a list of zero-based indices of the constant sites in a nexus
     """
     for i in range(0, nexus_obj.data.nchar):
-        states = []
-        for taxa, data in nexus_obj.data:
-            c = data[i]
-            if c in ('?', '-'):
-                continue  # pragma: no cover
-            elif c not in states:
-                states.append(c)
-
-        if len(states) == 1:
+        if len({data[i] for _, data in nexus_obj.data if data[i] not in {'?', '-'}}) == 1:
             yield i
 
 
@@ -61,12 +53,8 @@ def count_site_values(nexus_obj, characters=('-', '?')):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    if not isinstance(characters, Iterable):
-        raise TypeError("characters should be iterable")
-
-    tally = {}
+    tally = {taxon: 0 for taxon, _ in nexus_obj.data}
     for taxon, sites in nexus_obj.data:
-        tally[taxon] = tally.get(taxon, 0)
         for site in sites:
             if site in characters:
                 tally[taxon] += 1
@@ -172,8 +160,6 @@ def count_binary_set_size(nexus_obj):
     :type nexus_obj: NexusReader
 
     :return: A Dictionary
-    :raises AssertionError: if nexus_obj is not a nexus
-    :raises NexusFormatException: if nexus_obj does not have a `data` block
 
     e.g. {
         0: 0,

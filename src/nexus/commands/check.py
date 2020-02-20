@@ -19,12 +19,6 @@ def register(parser):
         help="add ascertainment checks",
         action='store_true'
     )
-    parser.add_argument(
-        '-v', "--verbose",
-        help="more output",
-        default=True,
-        action='store_true'
-    )
 
 
 def run(args):
@@ -44,4 +38,4 @@ def run(args):
                 print("\t%s" % w)
 
     for checker in checkers:
-        checker(nex, verbose=args.verbose).status()
+        checker(nex).status()

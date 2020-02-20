@@ -8,13 +8,8 @@ def combine_nexuses(nexuslist):
     Combines a list of NexusReader instances into a single nexus
 
     :param nexuslist: A list of NexusReader instances
-    :type nexuslist: List
 
     :return: A NexusWriter instance
-
-    :raises TypeError: if nexuslist is not a list of NexusReader instances
-    :raises IOError: if unable to read an file in nexuslist
-    :raises NexusFormatException: if a nexus file does not have a `data` block
     """
     out = NexusWriter()
     # check they're all nexus instances and get all block types

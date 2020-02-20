@@ -16,9 +16,7 @@ def shufflenexus(nexus_obj, resample=False):
     :type resample: Integer
 
     :return: A shuffled NexusReader instance
-    :raises AssertionError: if nexus_obj is not a nexus
     :raises ValueError: if resample is not False or a positive Integer
-    :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     if resample is False:
         resample = nexus_obj.data.nchar
