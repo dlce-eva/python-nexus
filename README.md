@@ -4,7 +4,8 @@ A Generic nexus (.nex, .trees) reader/writer for python.
 
 [![Build Status](https://travis-ci.org/shh-dlce/python-nexus.svg?branch=master)](https://travis-ci.org/shh-dlce/python-nexus)
 [![codecov](https://codecov.io/gh/shh-dlce/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/shh-dlce/python-nexus)
-[![DOI](https://zenodo.org/badge/22704/SimonGreenhill/python-nexus.svg)](https://zenodo.org/badge/latestdoi/22704/SimonGreenhill/python-nexus)
+[![PyPI](https://img.shields.io/pypi/v/python-nexus.svg)](https://pypi.org/project/python-nexus)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.595426.svg)](https://doi.org/10.5281/zenodo.595426)
 
 
 ## Description
