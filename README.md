@@ -2,8 +2,8 @@
 
 A Generic nexus (.nex, .trees) reader/writer for python.
 
-[![Build Status](https://travis-ci.org/SimonGreenhill/python-nexus.svg?branch=master)](https://travis-ci.org/SimonGreenhill/python-nexus)
-[![Coverage Status](https://coveralls.io/repos/SimonGreenhill/python-nexus/badge.svg?branch=master&service=github)](https://coveralls.io/github/SimonGreenhill/python-nexus?branch=master)
+[![Build Status](https://travis-ci.org/shh-dlce/python-nexus.svg?branch=master)](https://travis-ci.org/shh-dlce/python-nexus)
+[![codecov](https://codecov.io/gh/shh-dlce/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/shh-dlce/python-nexus)
 [![DOI](https://zenodo.org/badge/22704/SimonGreenhill/python-nexus.svg)](https://zenodo.org/badge/latestdoi/22704/SimonGreenhill/python-nexus)
 
 Copyright (c) 2009-2019, Simon J. Greenhill <simon@simon.net.nz>
