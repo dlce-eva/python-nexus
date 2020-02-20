@@ -30,23 +30,20 @@ def _recode_to_binary(char, keep_zero=False):
     >>> recode['Latin']
     '10'
     """
-
     newdata = {}
 
     # unwanted states
     unwanted_states = ['-', '?']
     if not keep_zero:
         unwanted_states.append('0')
-    
+
     if not all(isinstance(v, str) for v in char.values()):
         raise ValueError('Data must be strings: %r' % char.values())
 
     # preprocess taxa states and get unique states
     states = set()
     for taxon, value in char.items():
-        char[taxon] = [
-            v for v in value.replace(" ", ",").split(",") if v not in unwanted_states
-        ]
+        char[taxon] = [v for v in value.replace(" ", ",").split(",") if v not in unwanted_states]
         states.update(char[taxon])
 
     states = sorted(states)
@@ -60,6 +57,7 @@ def _recode_to_binary(char, keep_zero=False):
         assert len(newdata[taxon]) == num_states
 
     return newdata
+
 
 def binarise(nexus_obj, keep_zero=False):
     """
@@ -88,9 +86,9 @@ def binarise(nexus_obj, keep_zero=False):
         label = nexus_obj.data.charlabels[i]  # character label
         char = nexus_obj.data.characters[label]  # character dict
         recoding = _recode_to_binary(char, keep_zero)  # recode
-        
+
         new_char_length = len(recoding[list(recoding.keys())[0]])
-        
+
         # loop over recoded data
         for j in range(new_char_length):
             for taxon, state in recoding.items():

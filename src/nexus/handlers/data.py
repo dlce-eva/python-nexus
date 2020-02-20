@@ -1,6 +1,6 @@
 import re
 import warnings
-from collections import defaultdict
+import collections
 
 from nexus.handlers import GenericHandler
 from nexus.handlers import QUOTED_PATTERN, WHITESPACE_PATTERN, BEGIN_PATTERN, END_PATTERN
@@ -20,14 +20,14 @@ class DataHandler(GenericHandler):
         r"""format\b(.*?);""",
         re.IGNORECASE | re.DOTALL | re.MULTILINE
     )
-    
+
     def __init__(self):
         self.charlabels = {}
         self.attributes = []
         self.format = {}
         self.gaps = None
         self.missing = None
-        self.matrix = defaultdict(list)
+        self.matrix = collections.defaultdict(list)
         self._sitecache = {}  # cache for site patterns to parsed sites
         self._characters = None  # cache for characters list
         self._symbols = None  # cache for symbols list
@@ -45,12 +45,12 @@ class DataHandler(GenericHandler):
     def nchar(self):
         """Number of Characters"""
         return len(self.matrix[list(self.matrix.keys())[0]])
-    
+
     @property
     def taxa(self):
         """Taxa list"""
         return list(self.matrix.keys())
-    
+
     @property
     def symbols(self):
         """Distinct symbols in matrix"""
@@ -58,20 +58,20 @@ class DataHandler(GenericHandler):
             self._symbols = set()
             [self._symbols.update(vals) for vals in self.matrix.values()]
         return self._symbols
-    
+
     @property
     def characters(self):
         if not self._characters:
-            self._characters = defaultdict(dict)
+            self._characters = collections.defaultdict(dict)
             for taxon in self.taxa:
                 for index, _ in enumerate(self.matrix[taxon]):
                     label = self.charlabels.get(index, index)
                     self._characters[label][taxon] = self.matrix[taxon][index]
         return self._characters
-    
+
     def is_missing_or_gap(self, state):
         return True if state in ('-', '?') else False
-    
+
     def parse_format_line(self, data):
         """
         Parses a format line, and returns a dictionary of tokens
@@ -87,7 +87,7 @@ class DataHandler(GenericHandler):
             line = self._format_line_pattern.findall(data)[0]
         except IndexError:
             return None
-        
+
         line = line.lower()
         line = line.replace(" =", "=").replace("= ", "=")  # standardise
         for chunk in WHITESPACE_PATTERN.split(line):
@@ -189,7 +189,7 @@ class DataHandler(GenericHandler):
         data = self._parse_charstate_block(data)
 
         _dim_taxa, _dim_chars = None, None
-        
+
         seen_matrix = False
         for line in data:
             lline = line.lower().strip()
@@ -208,7 +208,7 @@ class DataHandler(GenericHandler):
                     _dim_chars = int(NCHAR_PATTERN.findall(line)[0])
                 except IndexError:  # pragma: no cover
                     pass
-                    
+
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)
             # handle format line
@@ -257,14 +257,13 @@ class DataHandler(GenericHandler):
                 self.charlabels[char_index] = char
                 char_index += 1
         return new_data.split("\n")
-    
+
     def write(self):
         """
         Generates a string containing a nexus data block.
 
         :return: String
         """
-
         def _make_format_line(self):
             """
             Generates a format string.
@@ -287,7 +286,7 @@ class DataHandler(GenericHandler):
                         ]))
                     fstring.append("%s=%s" % (key, value))
             return " ".join(fstring) + ";"
-        
+
         out = []
         out.append('begin data;')
         for att in self.attributes:

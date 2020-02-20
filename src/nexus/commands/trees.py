@@ -1,8 +1,6 @@
 """
 Performs some functions on trees
 """
-import argparse
-
 from random import sample
 
 from nexus.cli_util import add_nexus, get_reader, add_output, write_output, list_of_ranges

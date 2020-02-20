@@ -9,10 +9,7 @@ Reading a Nexus
 >>> EXAMPLE_DIR = os.path.join(os.path.dirname(__file__), 'examples')
 >>>
 >>> from nexus import NexusReader
->>> n = NexusReader()
->>> n.read_file(os.path.join(EXAMPLE_DIR, 'example.nex'))
-...
->>> n = NexusReader(os.path.join(EXAMPLE_DIR, 'example.nex'))
+>>> n = NexusReader.from_file(os.path.join(EXAMPLE_DIR, 'example.nex'))
 ...
 
 # display blocks found in data file
@@ -49,7 +46,7 @@ Reading a Nexus
 `tree` blocks
 -------------
 
->>> n = NexusReader(os.path.join(EXAMPLE_DIR, 'example.trees'))
+>>> n = NexusReader.from_file(os.path.join(EXAMPLE_DIR, 'example.trees'))
 >>> n.trees.ntrees
 3
 >>> n.trees.trees[0][0:60]
@@ -91,47 +88,11 @@ n.make_nexus(interleave=True, charblock=True)
 n.write_to_file(filename="output.nex", interleave=True, charblock=True)
 
 """
-__author__ = 'Simon Greenhill <simon@simon.net.nz>'
-__version__ = "1.7"
-PACKAGE_NAME = "python-nexus"
-PACKAGE_VERSION = __version__
-VERSION = __version__
-PACKAGE_AUTHOR = "Simon J. Greenhill"
-PACKAGE_COPYRIGHT = "Copyright 2009-2019 Simon J. Greenhill"
-PACKAGE_LICENSE = """
-Copyright (c) 2009-2019, Simon J. Greenhill
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification
-are permitted provided that the following conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
-
-    3. Neither the name of python-nexus nor the names of its contributors may
-       be used to endorse or promote products derived from this software
-       without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
-
 from nexus.reader import NexusReader
 from nexus.writer import NexusWriter
 from nexus import handlers
 from nexus.exceptions import NexusFormatException
 from nexus import tools
 
+__version__ = "1.7"
 __all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools"]

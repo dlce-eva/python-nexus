@@ -1,7 +1,7 @@
 """Contains Nexus Manipulation Tools that operate on Site/Characters"""
+from collections import Counter
 from collections.abc import Iterable
 
-from collections import Counter
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
@@ -51,14 +51,14 @@ def find_unique_sites(nexus_obj):
 
     unique = []
     for i in range(0, nexus_obj.data.nchar):
-        members = {}
+        members = Counter()
         missing = 0
         for taxa, characters in nexus_obj.data:
             c = characters[i]
             if c in ('?', '-'):
                 missing += 1
             else:
-                members[c] = members.get(c, 0) + 1
+                members.update([c])
 
         # a character is unique if there's only two states
         # AND there's a state with 1 member
@@ -68,7 +68,6 @@ def find_unique_sites(nexus_obj):
                 if state != '0' and count == 1:
                     unique.append(i)
     return unique
-
 
 
 def count_site_values(nexus_obj, characters=('-', '?')):
@@ -97,7 +96,6 @@ def count_site_values(nexus_obj, characters=('-', '?')):
             if site in characters:
                 tally[taxon] += 1
     return tally
-
 
 
 def new_nexus_without_sites(nexus_obj, sites_to_remove):
@@ -160,7 +158,6 @@ def tally_by_site(nexus_obj):
             tally[site][state] = tally[site].get(state, [])
             tally[site][state].append(taxon)
     return tally
-
 
 
 def tally_by_taxon(nexus_obj):

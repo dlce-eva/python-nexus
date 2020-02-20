@@ -134,9 +134,7 @@ class TreeHandler(GenericHandler):
             match = self.translate_regex.search(tree, index)
             if not match:
                 break
-            m = dict(zip(
-                ['start', 'taxon', 'comment', 'branch'], match.groups()
-            ))
+            m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))
             m['match'] = tree[match.start():match.end() + 1]
             m['end'] = tree[match.end()]
             matches.append(m)

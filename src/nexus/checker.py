@@ -1,5 +1,3 @@
-from warnings import warn
-
 import statistics
 
 from collections import Counter
@@ -7,19 +5,20 @@ from string import ascii_lowercase, ascii_uppercase, digits
 
 SAFE_CHARACTERS = ascii_uppercase + ascii_lowercase + digits + '-_'
 
+
 class Checker(object):
-    
+
     EMPTY_STATES = ('?', '-', '0')
-    
+
     def __init__(self, nex, verbose=False):
         self.verbose = verbose
         self.errors, self.messages = [], []
         self.check(nex)
-        
+
     @property
     def has_errors(self):
         return len(self.errors) > 0
-    
+
     def check(self, nex):  # pragma: no cover
         raise NotImplementedError("Should be subclassed")
 
@@ -42,9 +41,7 @@ class DuplicateLabelChecker(Checker):
         labels = Counter(nex.data.charlabels.values())
         for label in labels:
             if labels[label] > 1:
-                self.errors.append(
-                    "Duplicate Label (n=%d): %s" % (labels[label], label)
-                )
+                self.errors.append("Duplicate Label (n=%d): %s" % (labels[label], label))
         return not self.has_errors
 
 
@@ -57,9 +54,7 @@ class PotentiallyUnsafeTaxaLabelsChecker(Checker):
             bad = [char for char in taxon if char not in SAFE_CHARACTERS]
             if len(bad):
                 self.errors.append(
-                    "Potentially Unsafe Taxon Label: %s: %s" % (
-                        taxon, " ".join(bad)
-                ))
+                    "Potentially Unsafe Taxon Label: %s: %s" % (taxon, " ".join(bad)))
         return not self.has_errors
 
 
@@ -74,19 +69,18 @@ class LabelChecker(Checker):
         if nlabels != nex.data.nchar:
             self.errors.append(
                 "Incorrect number of character labels (expected %d, got %d)" % (
-                nex.data.nchar, nlabels
-            ))
+                    nex.data.nchar, nlabels))
         return not self.has_errors
 
 
 class UnusualStateChecker(Checker):
     """
     Checks for unusual states.
-    
+
     Returns errors if there are states with counts of less than `THRESHOLD`.
     """
     THRESHOLD = 0.001  # anything less than this is flagged
-    
+
     def check(self, nex):
         states = Counter()
         for s in nex.data.matrix.values():
@@ -104,7 +98,7 @@ class EmptyCharacterChecker(Checker):
     `EMPTY_STATES`. By default: ('?', '-', '0')
     """
     MIN_COUNT = 0
-    
+
     def check(self, nex):
         tally = Counter()
         for taxon in nex.data.matrix:
@@ -112,17 +106,15 @@ class EmptyCharacterChecker(Checker):
                 i for i, c in enumerate(nex.data.matrix[taxon], 0)
                 if c not in self.EMPTY_STATES
             ])
-        
+
         for i in range(0, nex.data.nchar):
             n = tally.get(i, 0)
             if n == self.MIN_COUNT:
-                if 'ascert' in nex.data.charlabels.get(i, '').lower(): # ignore
+                if 'ascert' in nex.data.charlabels.get(i, '').lower():  # ignore
                     if self.verbose:
                         self.log("Character %d is an ascertainment character" % i)
                 else:
-                    self.errors.append(
-                        "Character %d has count %d" % (i, self.MIN_COUNT)
-                    )
+                    self.errors.append("Character %d has count %d" % (i, self.MIN_COUNT))
         return not self.has_errors
 
 
@@ -133,31 +125,29 @@ class SingletonCharacterChecker(EmptyCharacterChecker):
 class LowStateCountChecker(Checker):
     """
     Checks for taxa with low character states.
-    
-    Returns errors if there are taxa with counts of less than 3 standard 
+
+    Returns errors if there are taxa with counts of less than 3 standard
     deviations
     """
     THRESHOLD = 3  # 3 x the standard deviation
-    
+
     def check(self, nex):
         counts = {}
         for taxon in nex.data.matrix:
             counts[taxon] = len([
-                c for c in nex.data.matrix[taxon] if c not in self.EMPTY_STATES
-            ])
-        
+                c for c in nex.data.matrix[taxon] if c not in self.EMPTY_STATES])
+
         med = statistics.median(counts.values())
         sd = statistics.stdev(counts.values())
-        sd_threshold = med - (self.THRESHOLD * sd) 
-        
+        sd_threshold = med - (self.THRESHOLD * sd)
+
         for taxon in sorted(counts):
             if counts[taxon] <= sd_threshold:
                 self.errors.append(
                     "Taxon %s has a low state count (%d, median = %0.2f - %0.2f)" % (
-                    taxon, counts[taxon], med, sd_threshold
-                ))
+                        taxon, counts[taxon], med, sd_threshold))
         return not self.has_errors
-        
+
 
 class BEASTAscertainmentChecker(Checker):
     """
@@ -172,10 +162,9 @@ class BEASTAscertainmentChecker(Checker):
             states = Counter([s for s in states if s not in self.EMPTY_STATES])
             if len(states):
                 self.errors.append(
-                "Character %d - %s should be an ascertainment character but has data (%r)" % (
-                    a, nex.data.charlabels[a], states
-                ))
-        
+                    "Character %d - %s should be an ascertainment character but has data (%r)" % (
+                        a, nex.data.charlabels[a], states))
+
         # if we have more than one then we should have assumptions block
         if len(ascert) > 1:
             if 'assumptions' not in [k.lower() for k in nex.blocks.keys()]:

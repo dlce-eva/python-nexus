@@ -1,6 +1,7 @@
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
+
 def multistatise(nexus_obj, charlabel=None):
     """
     Returns a multistate variant of the given `nexus_obj`.
@@ -13,23 +14,21 @@ def multistatise(nexus_obj, charlabel=None):
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-    
+
     if not charlabel:
         charlabel = getattr(nexus_obj, 'short_filename', 1)
-    
+
     states = {}
     for taxon in nexus_obj.data.matrix:
         states[taxon] = []
         sequence = nexus_obj.data.matrix[taxon]
         for site_idx, value in enumerate(sequence):
             if site_idx > 26:
-                raise ValueError(
-                    "Too many characters to handle! - run out of A-Z"
-                )
+                raise ValueError("Too many characters to handle! - run out of A-Z")
             assert value == str(value), "%r is not a string" % value
             if value == '1':
                 states[taxon].append(chr(65 + site_idx))
-    
+
     nexout = NexusWriter()
     for taxon in states:
         if not states[taxon]:

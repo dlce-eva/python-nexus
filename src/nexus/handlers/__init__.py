@@ -68,11 +68,11 @@ class GenericHandler(object):
         :return: String
         """
         return "\n".join(self.block)
-    
+
     def is_mesquite_attribute(self, line):
         """
         Returns True if the line is a mesquite attribute
-        
+
         :return: Boolean
         """
         if MESQUITE_TITLE_PATTERN.match(line):

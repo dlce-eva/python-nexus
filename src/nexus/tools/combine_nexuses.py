@@ -1,4 +1,5 @@
 import os
+
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
@@ -22,7 +23,7 @@ def combine_nexuses(nexuslist):
     for nex in nexuslist:
         check_for_valid_NexusReader(nex)
         blocks.update(list(nex.blocks))
-    
+
     for block in blocks:
         if block == 'data':
             out = combine_datablocks(out, nexuslist)
@@ -48,12 +49,8 @@ def combine_datablocks(out, nexuslist):
             nexus_label = os.path.splitext(nex.short_filename)[0]
         else:
             nexus_label = str(nex_id)
-        
-        out.add_comment(
-            "%d - %d: %s" %
-            (charpos, charpos + nex.data.nchar - 1, nexus_label)
-        )
-        
+
+        out.add_comment("%d - %d: %s" % (charpos, charpos + nex.data.nchar - 1, nexus_label))
         # handle data
         for site_idx, site in enumerate(sorted(nex.data.characters), 0):
             data = nex.data.characters.get(site)
@@ -65,4 +62,3 @@ def combine_datablocks(out, nexuslist):
             for taxon, value in data.items():
                 out.add(taxon, label, value)
     return out
-    

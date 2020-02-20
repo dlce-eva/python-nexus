@@ -1,7 +1,8 @@
-from random import shuffle, randrange
+import random
 
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
+
 
 def shufflenexus(nexus_obj, resample=False):
     """
@@ -34,16 +35,14 @@ def shufflenexus(nexus_obj, resample=False):
         raise ValueError('resample must be a positive integer or False!')
 
     newnexus = NexusWriter()
-    newnexus.add_comment(
-        "Randomised Nexus generated from %s" % nexus_obj.filename
-    )
+    newnexus.add_comment("Randomised Nexus generated from %s" % nexus_obj.filename)
 
     for i in range(resample):
         # pick existing character
-        character = randrange(0, nexus_obj.data.nchar)
+        character = random.randrange(0, nexus_obj.data.nchar)
         chars = nexus_obj.data.characters[character]
         site_values = [chars[taxon] for taxon in nexus_obj.data.taxa]
-        shuffle(site_values)
+        random.shuffle(site_values)
         for taxon in nexus_obj.data.taxa:
             newnexus.add(taxon, i, site_values.pop(0))
     return newnexus
