@@ -1,13 +1,12 @@
-#!/usr/bin/env python
-from setuptools import setup
-from nexus import __version__ as version
-from nexus import __doc__ as long_desc
+from setuptools import setup, find_packages
+
 
 setup(
     name="python-nexus",
-    version=version,
+    version="2.0.0.dev0",
     description="A nexus (phylogenetics) file reader (.nex, .trees)",
-    long_description=long_desc,
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     classifiers=[
         "Programming Language :: Python",
         "Intended Audience :: Science/Research",
@@ -15,38 +14,41 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     keywords="phylogenetics nexus newick paup splitstree",
-    author="Simon Greenhill",
+    author="Simon Greenhill and Robert Forkel",
     author_email="simon@simon.net.nz",
-    url="https://github.com/SimonGreenhill/python-nexus",
-    license="BSD",
-    packages=['nexus', 'nexus.tools', 'nexus.handlers', 'nexus.test', 'nexus.bin'],
-    package_dir={'nexus': 'nexus'},
+    url="https://github.com/shh-dlce/python-nexus",
+    license="BSD-2-Clause",
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     include_package_data=True,
-    package_data={'nexus': [
-        'examples/*.nex', 'examples/*.trees',
-        'test/regression/*.nex', 'test/regression/*.trees',
-    ]},
-    test_suite="nexus.test.nexus_suite",
-    extras_require={'test': 'pytest'},
-    scripts=[
-        'nexus/bin/nexus_anonymise.py',
-        'nexus/bin/nexus_binary2multistate.py',
-        'nexus/bin/nexus_combine_nexus.py',
-        'nexus/bin/nexus_deinterleave.py',
-        'nexus/bin/nexus_describecharacter.py',
-        'nexus/bin/nexus_describetaxa.py',
-        'nexus/bin/nexus_multistate2binary.py',
-        'nexus/bin/nexus_nexusmanip.py',
-        'nexus/bin/nexus_randomise.py',
-        'nexus/bin/nexus_tally.py',
-        'nexus/bin/nexus_to_fasta.py',
-        'nexus/bin/nexus_treemanip.py',
+    zip_safe=False,
+    test_suite="tests",
+    entry_points={
+        'console_scripts': [
+            'nexus=nexus.__main__:main',
+        ],
+    },
+    platforms='any',
+    python_requires='>=3.5',
+    install_requires=[
+        'newick',
+        'clldutils>=3.5',
+        'termcolor',
     ],
+    extras_require={
+        'dev': ['flake8', 'wheel', 'twine'],
+        'test': [
+            'mock',
+            'pytest>=4.3',
+            'pytest-mock',
+            'pytest-cov',
+            'coverage>=4.2',
+        ],
+    },
 )

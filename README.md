@@ -2,15 +2,10 @@
 
 A Generic nexus (.nex, .trees) reader/writer for python.
 
-[![Build Status](https://travis-ci.org/SimonGreenhill/python-nexus.svg?branch=master)](https://travis-ci.org/SimonGreenhill/python-nexus)
-[![Coverage Status](https://coveralls.io/repos/SimonGreenhill/python-nexus/badge.svg?branch=master&service=github)](https://coveralls.io/github/SimonGreenhill/python-nexus?branch=master)
+[![Build Status](https://travis-ci.org/shh-dlce/python-nexus.svg?branch=master)](https://travis-ci.org/shh-dlce/python-nexus)
+[![codecov](https://codecov.io/gh/shh-dlce/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/shh-dlce/python-nexus)
 [![DOI](https://zenodo.org/badge/22704/SimonGreenhill/python-nexus.svg)](https://zenodo.org/badge/latestdoi/22704/SimonGreenhill/python-nexus)
 
-Copyright (c) 2009-2019, Simon J. Greenhill <simon@simon.net.nz>
-
- * http://simon.net.nz/python-nexus/
- * https://github.com/SimonGreenhill/python-nexus
- 
 
 ## Description
 
@@ -19,6 +14,10 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v2.0:
+    - Refactored cli. The package now installs a **single** command `nexus`,
+      providing several [subcommands](src/nexus/commands).
+    - Dropped python 2 compatibility.
  * v1.7:
     - added rudimentary tree handling to `NexusWriter` objects:
         
@@ -58,46 +57,45 @@ collection of nexus manipulation scripts.
 ## Usage
 
 Reading a Nexus:
-    
-    from nexus import NexusReader
-    n = NexusReader()
-    n.read_file('examples/example.nex')
-
-or, more simply: 
-
-    n = NexusReader('examples/example.nex')
+```python
+>>> from nexus import NexusReader
+>>> n = NexusReader.from_file('nexus/examples/example.nex')
+```    
 
 You can also load from a string:
-
-    n = NexusReader()
-    n.read_string('#NEXUS\n\nbegin foo; ... end;')
-
+```python
+>>> n = NexusReader.from_string('#NEXUS\n\nbegin foo; ... end;')
+```
 
 NexusReader will load each of the nexus `blocks` it identifies using specific `handlers`. 
-
-    n.blocks
-    {   'data': <NexusDataBlock: 2 characters from 4 taxa>, 
-        'trees': <NexusTreeBlock: 2 trees>
-    }
+```python
+>>> n.blocks
+{'foo': <nexus.handlers.GenericHandler object at 0x7f55d94140f0>}
+>>> n = NexusReader('nexus/examples/example.nex')
+>>> n.blocks
+{'data': <NexusDataBlock: 2 characters from 4 taxa>}
+```
 
 A dictionary mapping blocks to handlers is available at .handlers:
-
-    print(n.handlers)
-    {
-        'data': DataHandler,
-        'characters': DataHandler,
-        'trees': TreeHandler,
-        'taxa': TaxaHandler,
-    }
+```python
+>>> n.handlers
+{
+    'trees': <class 'nexus.handlers.tree.TreeHandler'>, 
+    'taxa': <class 'nexus.handlers.taxa.TaxaHandler'>, 
+    'characters': <class 'nexus.handlers.data.CharacterHandler'>, 
+    'data': <class 'nexus.handlers.data.DataHandler'>
+}
+```
 
 Any blocks that aren't in this dictionary will be parsed using GenericHandler.
 
 NexusReader can then write the nexus to a string using .write() or to another 
 file using .write_to_file(filename):
-
-    output = n.write()
-    # or 
-    n.write_to_file("mynewnexus.nex")
+```python
+>>> output = n.write()
+>>> # or 
+>>> n.write_to_file("mynewnexus.nex")
+```
 
 NOTE: if you want more fine-grained control over generating nexus files, then try
 NexusWriter discussed below.

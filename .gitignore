@@ -8,3 +8,4 @@ build
 htmlcov/*
 .tox/
 .pytest_cache/
+.idea/
