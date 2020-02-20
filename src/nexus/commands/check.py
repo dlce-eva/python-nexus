@@ -3,8 +3,7 @@ Check nexus files for errors
 """
 import warnings
 
-from nexus.cli_util import add_nexus
-from nexus import NexusReader
+from nexus.cli_util import add_nexus, get_reader
 from nexus.checker import CHECKERS
 
 
@@ -33,7 +32,7 @@ def run(args):
 
     with warnings.catch_warnings(record=True) as warned:
         warnings.simplefilter("always")
-        nex = NexusReader(args.filename)
+        nex = get_reader(args)
 
         if len(warned):
             print("Warnings encountered in reading nexus:")

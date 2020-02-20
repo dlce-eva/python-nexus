@@ -234,14 +234,10 @@ class DataHandler(GenericHandler):
 
         # Warn if format string (ntaxa or nchar) does not give the right answer
         if _dim_taxa is not None and self.ntaxa != _dim_taxa:
-            warnings.warn(
-                "Expected %d taxa, got %d" % (self.ntaxa, _dim_taxa)
-            )
+            warnings.warn("Expected %d taxa, got %d" % (self.ntaxa, _dim_taxa))
 
         if _dim_chars is not None and self.nchar != _dim_chars:
-            warnings.warn(
-                "Expected %d characters, got %d" % (self.nchar, _dim_chars)
-            )
+            warnings.warn("Expected %d characters, got %d" % (self.nchar, _dim_chars))
 
     def _parse_charstate_block(self, data):
         """

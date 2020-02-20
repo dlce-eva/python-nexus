@@ -12,10 +12,34 @@ def _make_nexus(tmpdir, block):
     return n
 
 
-def test_check(capsys, examples):
-    main(['check', str(examples / 'example.nex')])
+def test_help(capsys):
+    main([])
+    out, _ = capsys.readouterr()
+    assert 'usage' in out
+
+
+def test_check(capsys, examples, mocker, tmpdir):
+    main(['check', '-e', '-a', str(examples / 'example.nex')], log=mocker.Mock())
     out, _ = capsys.readouterr()
     assert '0 errors' in out
+
+    n = _make_nexus(
+        tmpdir,
+        """Begin data;
+Dimensions ntax=4 nchar=1;
+Format datatype=standard symbols="01" gap=-;
+Matrix
+Harry              00
+Simon              01
+Betty              10
+Louise             11
+    ;
+End;
+"""
+    )
+    main(['check', str(n)])
+    out, _ = capsys.readouterr()
+    assert 'Warnings encountered' in out
 
 
 def test_tally(capsys, examples):
@@ -32,6 +56,13 @@ def test_describecharacter(capsys, examples):
     main(['describecharacter', '0', str(examples / 'example.nex')])
     out, _ = capsys.readouterr()
     assert 'Harry, Simon' in out
+
+    main(['describecharacter', 'CHAR_A', str(examples / 'example-characters.nex')])
+    out, _ = capsys.readouterr()
+    assert 'A, B, C' in out
+
+    with pytest.raises(IndexError):
+        main(['describecharacter', '1', str(examples / 'example-characters.nex')])
 
 
 def test_describetaxa(capsys, examples):

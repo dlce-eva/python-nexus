@@ -6,11 +6,6 @@ A Generic nexus (.nex, .trees) reader/writer for python.
 [![codecov](https://codecov.io/gh/shh-dlce/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/shh-dlce/python-nexus)
 [![DOI](https://zenodo.org/badge/22704/SimonGreenhill/python-nexus.svg)](https://zenodo.org/badge/latestdoi/22704/SimonGreenhill/python-nexus)
 
-Copyright (c) 2009-2019, Simon J. Greenhill <simon@simon.net.nz>
-
- * http://simon.net.nz/python-nexus/
- * https://github.com/SimonGreenhill/python-nexus
- 
 
 ## Description
 
@@ -19,6 +14,10 @@ collection of nexus manipulation scripts.
 
 ## Versions:
 
+ * v2.0:
+    - Refactored cli. The package now installs a **single** command `nexus`,
+      providing several [subcommands](src/nexus/commands).
+    - Dropped python 2 compatibility.
  * v1.7:
     - added rudimentary tree handling to `NexusWriter` objects:
         
@@ -60,19 +59,12 @@ collection of nexus manipulation scripts.
 Reading a Nexus:
 ```python
 >>> from nexus import NexusReader
->>> n = NexusReader()
->>> n.read_file('nexus/examples/example.nex')
+>>> n = NexusReader.from_file('nexus/examples/example.nex')
 ```    
-
-or, more simply: 
-```python
->>> n = NexusReader('nexus/examples/example.nex')
-```
 
 You can also load from a string:
 ```python
->>> n = NexusReader()
->>> n.read_string('#NEXUS\n\nbegin foo; ... end;')
+>>> n = NexusReader.from_string('#NEXUS\n\nbegin foo; ... end;')
 ```
 
 NexusReader will load each of the nexus `blocks` it identifies using specific `handlers`. 

@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 from termcolor import colored
@@ -31,14 +32,18 @@ def list_of_ranges(dstring):
     return sorted(out)
 
 
+def path_or_stdin(string):
+    return None if string == '-' else PathType(type='file')(string)
+
+
 def add_nexus(parser, many=False):
     kw = {}
     if many:
         kw['nargs'] = '+'
     parser.add_argument(
         "filename",
-        help='Path to Nexus file',
-        type=PathType(type='file'),
+        help='Path to Nexus file, or "-" to read from stdin',
+        type=path_or_stdin,
         **kw)
 
 
@@ -46,12 +51,17 @@ def add_output(parser):
     parser.add_argument(
         "-o", "--output",
         default=None,
-        help="output nexus file, if not specified, output will be printed to stdout")
+        help="output nexus file, if not specified, output will be printed to stdout. "
+             "To prevent log messages messing up the output, set '--log-level=WARN'.")
 
 
 def get_reader(args, many=False, required_blocks=None):
-    res = [NexusReader.from_file(f) for f in args.filename] \
-        if many else [NexusReader.from_file(args.filename)]
+    res = []
+    for f in (args.filename if many else [args.filename]):
+        if f is None:
+            res.append(NexusReader.from_string(sys.stdin.read()))
+        else:
+            res.append(NexusReader.from_file(f))
     if required_blocks:
         for nex in res:
             for block in required_blocks:

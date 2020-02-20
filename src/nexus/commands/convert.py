@@ -28,7 +28,7 @@ class Converter(FileWriterMixin):
                 res.append('>%s' % taxon)
                 for line in textwrap.wrap("".join(self.nex.data.matrix[taxon]), 70):
                     res.append(line)
-        else:
+        else:  # pragma: no cover
             raise NotImplementedError(format)
 
         return '\n'.join(res)

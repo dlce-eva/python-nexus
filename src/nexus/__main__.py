@@ -26,7 +26,7 @@ def main(args=None, catch_all=False, parsed_args=None, log=None):
             return args.main(args) or 0
         except KeyboardInterrupt:  # pragma: no cover
             return 0
-        except ParserError as e:
+        except ParserError as e:  # pragma: no cover
             print(e)
             return main([args._command, '-h'])
         except Exception as e:  # pragma: no cover

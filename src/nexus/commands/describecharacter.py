@@ -29,9 +29,7 @@ def print_character_stats(nexus_obj, character_index):
     :param character_index: The character index of the character to summarise
     :type character_index: Int or String
 
-    :raises AssertionError: if nexus_obj is not a nexus
     :raises IndexError: if character_index is not in nexus data block
-    :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
     index = None
     if character_index in nexus_obj.data.characters:
@@ -39,7 +37,7 @@ def print_character_stats(nexus_obj, character_index):
     else:
         try:
             character_index = int(character_index)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             pass
 
         if character_index in nexus_obj.data.characters:

@@ -2,6 +2,7 @@ import os
 from nexus.writer import NexusWriter
 from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
+
 def combine_nexuses(nexuslist):
     """
     Combines a list of NexusReader instances into a single nexus
