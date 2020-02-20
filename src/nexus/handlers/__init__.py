@@ -24,27 +24,26 @@ class GenericHandler(object):
             representation (used to regenerate a nexus file).
         3. block - a list of raw strings in this block
     """
-    def __init__(self):
+    def __init__(self, data=None):
         """Initialise datastore in <block> under <keyname>"""
-        self.block = []
-
-    def parse(self, data):
-        """
-        Parses a generic nexus block from `data`.
-
-        :param data: nexus block data
-        :type data: string
-
-        :return: None
-        """
-        self.block.extend(data)
-        # save comments
+        self.block = data or []
         self.comments = []
-        for line in data:
+
+        # save comments
+        for line in self.block:
             if line.strip().startswith("[") and line.strip().endswith("]"):
                 self.comments.append(line)
 
-    def remove_comments(self, line):
+    def write(self):
+        """
+        Generates a string containing a generic nexus block for this data.
+
+        :return: String
+        """
+        return "\n".join(self.block)
+
+    @staticmethod
+    def remove_comments(line):
         """
         Removes comments from lines
 
@@ -61,15 +60,8 @@ class GenericHandler(object):
         """
         return COMMENT_PATTERN.sub('', line)
 
-    def write(self):
-        """
-        Generates a string containing a generic nexus block for this data.
-
-        :return: String
-        """
-        return "\n".join(self.block)
-
-    def is_mesquite_attribute(self, line):
+    @staticmethod
+    def is_mesquite_attribute(line):
         """
         Returns True if the line is a mesquite attribute
 

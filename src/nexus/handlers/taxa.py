@@ -13,47 +13,15 @@ class TaxaHandler(GenericHandler):
     is_dimensions = re.compile(r"""dimensions\s*ntax\s*=\s*(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
 
-    def __init__(self):
+    def __init__(self, data=None):
+        super(TaxaHandler, self).__init__(data)
         self.taxa = []
         self.attributes = []
         self.annotations = {}
-        super(TaxaHandler, self).__init__()
 
-    def __getitem__(self, index):
-        return self.taxa[index]
-
-    @property
-    def ntaxa(self):
-        return len(self.taxa)
-
-    def _parse_taxa(self, line):
-        taxa = [t.replace(";", "").strip() for t in line.split(" ")]
-        for taxon in taxa:
-            # remove initial comment
-            taxon = TAXON_PLACEHOLDER.sub('', taxon)
-            # get annotations
-            annot = TAXON_ANNOTATION.match(taxon)
-            if annot:
-                taxon, annot = annot.groups()
-            # remove quotes
-            taxon = QUOTED_PATTERN.sub('\\1', taxon)
-
-            if taxon and taxon not in self.taxa:
-                yield (taxon, annot)
-
-    def parse(self, data):
-        """
-        Parses a `taxa` nexus block from `data`.
-
-        :param data: nexus block data
-        :type data: string
-
-        :return: None
-        """
-        super(TaxaHandler, self).parse(data)
         in_taxlabel_block = False
         found_ntaxa = None
-        for line in data:
+        for line in self.block:
             line = QUOTED_PATTERN.sub('\\1', line)
             if self.is_dimensions.match(line):
                 found_ntaxa = int(self.is_dimensions.findall(line)[0])
@@ -78,6 +46,28 @@ class TaxaHandler(GenericHandler):
             raise NexusFormatException(
                 "Number of found taxa (%d) doesn't match dimensions declaration (%d)" % (
                     self.ntaxa, found_ntaxa))
+
+    def __getitem__(self, index):
+        return self.taxa[index]
+
+    @property
+    def ntaxa(self):
+        return len(self.taxa)
+
+    def _parse_taxa(self, line):
+        taxa = [t.replace(";", "").strip() for t in line.split(" ")]
+        for taxon in taxa:
+            # remove initial comment
+            taxon = TAXON_PLACEHOLDER.sub('', taxon)
+            # get annotations
+            annot = TAXON_ANNOTATION.match(taxon)
+            if annot:
+                taxon, annot = annot.groups()
+            # remove quotes
+            taxon = QUOTED_PATTERN.sub('\\1', taxon)
+
+            if taxon and taxon not in self.taxa:
+                yield (taxon, annot)
 
     def write(self):
         """

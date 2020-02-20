@@ -48,7 +48,8 @@ class TreeHandler(GenericHandler):
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
-    def __init__(self):
+    def __init__(self, data=None):
+        super(TreeHandler, self).__init__(data)
         # does the treefile have a translate block?
         self.was_translated = False
         # has detranslate been called?
@@ -56,35 +57,12 @@ class TreeHandler(GenericHandler):
         self.translators = {}
         self.attributes = []
         self.trees = []
-        super(TreeHandler, self).__init__()
-
-    def __getitem__(self, index):
-        return self.trees[index]
-
-    @property
-    def taxa(self):
-        return self.translators.values()
-
-    @property
-    def ntrees(self):
-        return len(self.trees)
-
-    def parse(self, data):
-        """
-        Parses a `tree` nexus block from `data`.
-
-        :param data: nexus block data
-        :type data: string
-
-        :return: None
-        """
-        super(TreeHandler, self).parse(data)
 
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
         translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.\_\-]+)[,;]?""")
 
         lost_in_translation = False
-        for line in data:
+        for line in self.block:
             # look for translation start, and turn on lost_in_translation
             if translate_start.match(line):
                 lost_in_translation = True
@@ -113,10 +91,21 @@ class TreeHandler(GenericHandler):
                 self.trees.append(Tree(line))
 
         # get taxa if not translated.
-        if not self.translators:
+        if (not self.translators) and self.trees:
             taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
+
+    def __getitem__(self, index):
+        return self.trees[index]
+
+    @property
+    def taxa(self):
+        return self.translators.values()
+
+    @property
+    def ntrees(self):
+        return len(self.trees)
 
     def detranslate(self):
         """Detranslates all trees in the file"""

@@ -21,7 +21,8 @@ class DataHandler(GenericHandler):
         re.IGNORECASE | re.DOTALL | re.MULTILINE
     )
 
-    def __init__(self):
+    def __init__(self, data=None):
+        super(DataHandler, self).__init__(data)
         self.charlabels = {}
         self.attributes = []
         self.format = {}
@@ -31,10 +32,57 @@ class DataHandler(GenericHandler):
         self._sitecache = {}  # cache for site patterns to parsed sites
         self._characters = None  # cache for characters list
         self._symbols = None  # cache for symbols list
-        super(DataHandler, self).__init__()
+
+        self.format = self.parse_format_line("\n".join(self.block))
+        self.block = self._parse_charstate_block(self.block)
+
+        _dim_taxa, _dim_chars = None, None
+
+        seen_matrix = False
+        for line in self.block:
+            lline = line.lower().strip()
+            # end...
+            if END_PATTERN.match(lline):
+                continue
+            # Dimensions line
+            elif lline.startswith('dimensions '):
+                try:  # try for ntaxa
+                    _dim_taxa = int(NTAX_PATTERN.findall(line)[0])
+                except IndexError:  # pragma: no cover
+                    pass
+                try:  # and nchar
+                    _dim_chars = int(NCHAR_PATTERN.findall(line)[0])
+                except IndexError:  # pragma: no cover
+                    pass
+            elif self.is_mesquite_attribute(line):
+                self.attributes.append(line)
+            # handle format line
+            elif lline.startswith('format'):
+                continue
+            elif lline.startswith('matrix'):
+                seen_matrix = True
+                continue
+            elif BEGIN_PATTERN.match(line):
+                continue
+            elif seen_matrix:
+                line = self.remove_comments(line)
+                try:  # NORMALISE WHITESPACE
+                    taxon, sites = WHITESPACE_PATTERN.split(line, 1)
+                except ValueError:
+                    continue
+
+                taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
+                self.add_taxon(taxon, self._parse_sites(sites.strip()))
+
+        # Warn if format string (ntaxa or nchar) does not give the right answer
+        if _dim_taxa is not None and self.ntaxa != _dim_taxa:
+            warnings.warn("Expected %d taxa, got %d" % (self.ntaxa, _dim_taxa))
+
+        if _dim_chars is not None and self.nchar != _dim_chars:
+            warnings.warn("Expected %d characters, got %d" % (self.nchar, _dim_chars))
 
     def __getitem__(self, index):
-        return (self.taxa[index], self.matrix.get(self.taxa[index]))
+        return self.taxa[index], self.matrix.get(self.taxa[index])
 
     @property
     def ntaxa(self):
@@ -44,7 +92,7 @@ class DataHandler(GenericHandler):
     @property
     def nchar(self):
         """Number of Characters"""
-        return len(self.matrix[list(self.matrix.keys())[0]])
+        return len(self.matrix[self.taxa[0]])
 
     @property
     def taxa(self):
@@ -172,72 +220,6 @@ class DataHandler(GenericHandler):
         :return: None
         """
         del(self.matrix[taxon])
-
-    def parse(self, data):
-        """
-        Parses a `data` block
-
-        :param data: data block
-        :type data: string
-
-        :return: None
-        :raises NexusFormatException: If parsing fails
-        :raises NotImplementedError: If parsing encounters an unknown section
-        """
-        super(DataHandler, self).parse(data)
-        self.format = self.parse_format_line("\n".join(data))
-        data = self._parse_charstate_block(data)
-
-        _dim_taxa, _dim_chars = None, None
-
-        seen_matrix = False
-        for line in data:
-            lline = line.lower().strip()
-            # end...
-            if END_PATTERN.match(lline):
-                continue
-            # Dimensions line
-            elif lline.startswith('dimensions '):
-                # try for ntaxa
-                try:
-                    _dim_taxa = int(NTAX_PATTERN.findall(line)[0])
-                except IndexError:  # pragma: no cover
-                    pass
-                # and nchar
-                try:
-                    _dim_chars = int(NCHAR_PATTERN.findall(line)[0])
-                except IndexError:  # pragma: no cover
-                    pass
-
-            elif self.is_mesquite_attribute(line):
-                self.attributes.append(line)
-            # handle format line
-            elif lline.startswith('format'):
-                continue
-            elif lline.startswith('matrix'):
-                seen_matrix = True
-                continue
-            # ignore a few things..
-            elif BEGIN_PATTERN.match(line):
-                continue
-            elif seen_matrix:
-                line = self.remove_comments(line)
-
-                # NORMALISE WHITESPACE
-                try:
-                    taxon, sites = WHITESPACE_PATTERN.split(line, 1)
-                except ValueError:
-                    continue
-
-                taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
-                self.add_taxon(taxon, self._parse_sites(sites.strip()))
-
-        # Warn if format string (ntaxa or nchar) does not give the right answer
-        if _dim_taxa is not None and self.ntaxa != _dim_taxa:
-            warnings.warn("Expected %d taxa, got %d" % (self.ntaxa, _dim_taxa))
-
-        if _dim_chars is not None and self.nchar != _dim_chars:
-            warnings.warn("Expected %d characters, got %d" % (self.nchar, _dim_chars))
 
     def _parse_charstate_block(self, data):
         """
