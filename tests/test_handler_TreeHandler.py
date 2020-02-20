@@ -10,6 +10,7 @@ def test_block_find(trees):
     # did we get a tree block?
     assert 'trees' in trees.blocks
 
+
 def test_treecount(trees):
     # did we find 3 trees?
     assert len(trees.blocks['trees'].trees) == 3
@@ -47,6 +48,7 @@ def test_repr(trees):
 
 def test_write_produces_end(trees):
     assert "end;" in trees.trees.write()
+    assert len([_ for _ in trees.trees[0].newick_tree.walk()]) == 25
 
 
 def test_block_findt(trees_translated):
@@ -166,6 +168,7 @@ def test_rooted():
     """)
     assert len(nex.trees.trees) == 1
     assert nex.trees.trees == ['tree [&] = (0,1,2);']
+    assert nex.trees.trees[0].rooted is None  # we only recognize [&R]!
 
 
 def test_unrooted():
@@ -182,6 +185,7 @@ def test_unrooted():
     """)
     assert len(nex.trees.trees) == 1
     assert nex.trees.trees == ['tree [&U] = (0,1,2);']
+    assert nex.trees.trees[0].rooted is False
 
 
 def test_labelled_unrooted():
@@ -267,7 +271,10 @@ def test_error_on_duplicate_taxa():
 
 
 def test_read_BEAST_format(trees_beast):
-    assert trees_beast.trees[0].startswith('tree STATE_201000')
+    assert trees_beast.trees[0].name == 'STATE_201000'
+    assert len([_ for _ in trees_beast.trees[0].newick_tree.walk()]) == 75
+    trees_beast.trees.detranslate()
+    assert 'F38' in set(n.name for n in trees_beast.trees[0].newick_tree.walk())
 
 
 def test_block_findb(trees_beast):

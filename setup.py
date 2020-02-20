@@ -36,6 +36,7 @@ setup(
     platforms='any',
     python_requires='>=3.5',
     install_requires=[
+        'newick',
         'clldutils>=3.5',
         'termcolor',
     ],

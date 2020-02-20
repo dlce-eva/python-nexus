@@ -1,6 +1,38 @@
 import re
+
+from clldutils.text import strip_brackets, split_text_with_context
+import newick
+
 from nexus.handlers import GenericHandler
 from nexus.exceptions import NexusFormatException
+
+
+class Tree(str):
+    @property
+    def name(self):
+        m = re.search(r'tree\s+(?P<name>[^=]+)\s*=', strip_brackets(self, {'[': ']'}))
+        return m.group('name').strip()
+
+    @property
+    def rooted(self):
+        """
+        Three-valued attribute, specifying whether tree is rooted, unrooted or unspecified.
+
+        :return: `True`|`False`|`None`
+        """
+        m = re.search(r'\[&(?P<rooting>[RU])\]', self)
+        if m:
+            return m.group('rooting') == 'R'
+        return None
+
+    @property
+    def newick_string(self):
+        prefix = split_text_with_context(self, separators='(', brackets={'[': ']'})[0]
+        return self[len(prefix):].strip()
+
+    @property
+    def newick_tree(self):
+        return newick.loads(self.newick_string)[0]
 
 
 class TreeHandler(GenericHandler):
@@ -73,13 +105,12 @@ class TreeHandler(GenericHandler):
                         raise NexusFormatException(
                             "Duplicate Taxon %s in translate block" % taxon
                         )
-                        
                     self.translators[taxon_id] = taxon
                 if line.endswith(';'):
                     lost_in_translation = False
 
             elif self.is_tree.search(line):
-                self.trees.append(line)
+                self.trees.append(Tree(line))
 
         # get taxa if not translated.
         if not self.translators:
@@ -92,7 +123,7 @@ class TreeHandler(GenericHandler):
         if self._been_detranslated:
             return
         for idx, tree in enumerate(self.trees):
-            self.trees[idx] = self._detranslate_tree(tree, self.translators)
+            self.trees[idx] = Tree(self._detranslate_tree(tree, self.translators))
         self._been_detranslated = True
 
     def _findall_chunks(self, tree):

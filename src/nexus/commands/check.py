@@ -10,16 +10,20 @@ from nexus.checker import CHECKERS
 def register(parser):
     add_nexus(parser)
     parser.add_argument(
-        '-e', "--extra", dest='extra',
-        help="add extra checks", action='store_true'
+        '-e', "--extra",
+        help="add extra checks",
+        action='store_true'
     )
     parser.add_argument(
-        '-a', "--ascertainment", dest='ascertainment',
-        help="add ascertainment checks", action='store_true'
+        '-a', "--ascertainment",
+        help="add ascertainment checks",
+        action='store_true'
     )
     parser.add_argument(
-        '-v', "--verbose", dest='verbose',
-        help="more output", action='store_true'
+        '-v', "--verbose",
+        help="more output",
+        default=True,
+        action='store_true'
     )
 
 
