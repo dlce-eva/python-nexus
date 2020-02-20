@@ -27,7 +27,9 @@ class Tree(str):
 
     @property
     def newick_string(self):
+        # Find the string up to the first "(" which is not inside a comment ...
         prefix = split_text_with_context(self, separators='(', brackets={'[': ']'})[0]
+        # ... the remainder of the line should be the newick representation of the tree:
         return self[len(prefix):].strip()
 
     @property
