@@ -4,13 +4,6 @@ from nexus import NexusReader
 from nexus.tools import count_site_values
 
 
-def test_errorcheck():
-    with pytest.raises(TypeError):
-        count_site_values("I am a string")
-    with pytest.raises(TypeError):
-        count_site_values(0)
-
-
 def test_errorcheck_characters(nex):
     with pytest.raises(TypeError):
         count_site_values(nex, None)

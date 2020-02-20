@@ -1,7 +1,6 @@
 import os
 
 from nexus.writer import NexusWriter
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 
 def combine_nexuses(nexuslist):
@@ -21,7 +20,6 @@ def combine_nexuses(nexuslist):
     # check they're all nexus instances and get all block types
     blocks = set()
     for nex in nexuslist:
-        check_for_valid_NexusReader(nex)
         blocks.update(list(nex.blocks))
 
     for block in blocks:
@@ -36,7 +34,6 @@ def combine_nexuses(nexuslist):
 
 def combine_treeblocks(out, nexuslist):
     for nex in nexuslist:
-        check_for_valid_NexusReader(nex, required_blocks=['trees'])
         out.trees.extend(nex.trees.trees)
     return out
 
@@ -44,7 +41,6 @@ def combine_treeblocks(out, nexuslist):
 def combine_datablocks(out, nexuslist):
     charpos = 0
     for nex_id, nex in enumerate(nexuslist, 1):
-        check_for_valid_NexusReader(nex, required_blocks=['data'])
         if nex.short_filename:
             nexus_label = os.path.splitext(nex.short_filename)[0]
         else:

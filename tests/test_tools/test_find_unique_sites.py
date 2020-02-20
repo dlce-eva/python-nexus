@@ -1,9 +1,9 @@
 from nexus import NexusReader
-from nexus.tools import find_unique_sites
+from nexus.tools import iter_unique_sites
 
 
 def test_find_unique_sites_1(nex):
-    assert not find_unique_sites(nex)
+    assert not list(iter_unique_sites(nex))
 
 
 def test_find_unique_sites_2():
@@ -16,7 +16,7 @@ def test_find_unique_sites_2():
     Betty              1110000
     Louise             1111000
     ;""")
-    unique = find_unique_sites(nexus)
+    unique = list(iter_unique_sites(nexus))
 
     # site 1 should NOT be in the uniques (3x1 and 1x0)
     # - i.e. are we ignoring sites with ONE absent taxon

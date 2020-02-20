@@ -1,7 +1,6 @@
 import random
 
 from nexus.writer import NexusWriter
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 
 def shufflenexus(nexus_obj, resample=False):
@@ -21,8 +20,6 @@ def shufflenexus(nexus_obj, resample=False):
     :raises ValueError: if resample is not False or a positive Integer
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
     if resample is False:
         resample = nexus_obj.data.nchar
 

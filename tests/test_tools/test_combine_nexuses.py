@@ -46,16 +46,6 @@ def nex3():
             ;""")
 
 
-def test_failure_on_nonlist_1():
-    with pytest.raises(TypeError):
-        combine_nexuses("I am not a list")
-
-
-def test_failure_on_nonlist_2():
-    with pytest.raises(TypeError):
-        combine_nexuses(["hello"])
-
-
 def test_combine_simple(nex1, nex2):
     newnex = combine_nexuses([nex1, nex2])
     assert newnex.data['0.1']['Harry'] == '1'

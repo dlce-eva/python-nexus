@@ -24,16 +24,6 @@ def test_exception_resample_negativeinteger(nex2):
         shufflenexus(nex2, -1)
 
 
-def test_exception_nexus_obj_1():
-    with pytest.raises(TypeError):
-        shufflenexus("I am a string")
-
-
-def test_exception_nexus_obj_2():
-    with pytest.raises(TypeError):
-        shufflenexus(0)
-
-
 def test_resample_1(nex2):
     nexus_obj = shufflenexus(nex2, 1)
     assert len(nexus_obj.characters) == 1

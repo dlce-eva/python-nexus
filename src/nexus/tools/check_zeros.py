@@ -1,6 +1,5 @@
 import collections
 
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 from nexus.tools.sites import new_nexus_without_sites
 
 
@@ -28,8 +27,6 @@ def check_zeros(nexus_obj, absences=None, missing=None):
         `char` dictionary is not a string (i.e.
         integer or None values)
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
     absences = absences if absences else ['0']
     missing = missing if missing else ['-', '?']
 

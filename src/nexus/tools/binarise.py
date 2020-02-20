@@ -1,5 +1,4 @@
 from nexus.writer import NexusWriter
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 
 def _recode_to_binary(char, keep_zero=False):
@@ -79,7 +78,6 @@ def binarise(nexus_obj, keep_zero=False):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     n = NexusWriter()
 
     for i in sorted(nexus_obj.data.charlabels):

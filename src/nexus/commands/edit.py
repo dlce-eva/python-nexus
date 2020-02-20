@@ -6,8 +6,8 @@ import collections
 from nexus.cli_util import add_nexus, get_reader, add_output, write_output, list_of_ranges
 from nexus.tools import count_site_values
 from nexus.tools import check_zeros
-from nexus.tools import find_constant_sites
-from nexus.tools import find_unique_sites
+from nexus.tools import iter_constant_sites
+from nexus.tools import iter_unique_sites
 from nexus.tools import new_nexus_without_sites
 
 
@@ -59,11 +59,11 @@ def run(args):
 
     const, unique, zeros, remove = [], [], [], []
     if args.constant:
-        const = find_constant_sites(nexus)
+        const = list(iter_constant_sites(nexus))
         if const:
             args.log.info("Constant Sites: %s" % ",".join([str(i + 1) for i in const]))
     if args.unique:
-        unique = find_unique_sites(nexus)
+        unique = list(iter_unique_sites(nexus))
         if unique:
             args.log.info("Unique Sites: %s" % ",".join([str(i + 1) for i in unique]))
     if args.zeros:

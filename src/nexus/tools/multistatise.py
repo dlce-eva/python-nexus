@@ -1,5 +1,4 @@
 from nexus.writer import NexusWriter
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 
 def multistatise(nexus_obj, charlabel=None):
@@ -13,8 +12,6 @@ def multistatise(nexus_obj, charlabel=None):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
     if not charlabel:
         charlabel = getattr(nexus_obj, 'short_filename', 1)
 

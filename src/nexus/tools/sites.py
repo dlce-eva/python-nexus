@@ -3,23 +3,12 @@ from collections import Counter
 from collections.abc import Iterable
 
 from nexus.writer import NexusWriter
-from nexus.tools.check_for_valid_NexusReader import check_for_valid_NexusReader
 
 
-def find_constant_sites(nexus_obj):
+def iter_constant_sites(nexus_obj):
     """
-    Returns a list of the constant sites in a nexus
-
-    :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader
-
-    :return: A list of constant site positions.
-    :raises AssertionError: if nexus_obj is not a nexus
-    :raises NexusFormatException: if nexus_obj does not have a `data` block
+    Returns a list of zero-based indices of the constant sites in a nexus
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
-    const = []
     for i in range(0, nexus_obj.data.nchar):
         states = []
         for taxa, data in nexus_obj.data:
@@ -30,26 +19,15 @@ def find_constant_sites(nexus_obj):
                 states.append(c)
 
         if len(states) == 1:
-            const.append(i)
-    return const
+            yield i
 
 
-def find_unique_sites(nexus_obj):
+def iter_unique_sites(nexus_obj):
     """
     Returns a list of the unique sites in a binary nexus
     i.e. sites with only one taxon belonging to them.
         (this only really makes sense if the data is coded as presence/absence)
-
-    :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader
-
-    :return: A list of unique site positions.
-    :raises AssertionError: if nexus_obj is not a nexus
-    :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
-    unique = []
     for i in range(0, nexus_obj.data.nchar):
         members = Counter()
         missing = 0
@@ -66,8 +44,7 @@ def find_unique_sites(nexus_obj):
         if len(members) == 2:
             for state, count in members.items():
                 if state != '0' and count == 1:
-                    unique.append(i)
-    return unique
+                    yield i
 
 
 def count_site_values(nexus_obj, characters=('-', '?')):
@@ -86,8 +63,6 @@ def count_site_values(nexus_obj, characters=('-', '?')):
     """
     if not isinstance(characters, Iterable):
         raise TypeError("characters should be iterable")
-
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
 
     tally = {}
     for taxon, sites in nexus_obj.data:
@@ -113,8 +88,6 @@ def new_nexus_without_sites(nexus_obj, sites_to_remove):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
-
     # make new nexus
     nexout = NexusWriter()
     nexout.add_comment(
@@ -150,7 +123,6 @@ def tally_by_site(nexus_obj):
         'site2': {'state1': ['taxon2'], 'state0': ['taxon1', 'taxon3'], }
     }
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     tally = {}
     for site, data in nexus_obj.data.characters.items():
         tally[site] = tally.get(site, {})
@@ -179,7 +151,6 @@ def tally_by_taxon(nexus_obj):
         'taxon2': {'state1': ['site2'], 'state0': ['site1', 'site3'], }
     }
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     tally = {}
     for taxon, characters in nexus_obj.data:
         tally[taxon] = {}
@@ -210,7 +181,6 @@ def count_binary_set_size(nexus_obj):
         2: 20,
     }
     """
-    check_for_valid_NexusReader(nexus_obj, required_blocks=['data'])
     tally = Counter()
     for char_id in nexus_obj.data.characters:
         char = nexus_obj.data.characters[char_id]
