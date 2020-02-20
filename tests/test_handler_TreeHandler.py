@@ -42,10 +42,6 @@ def test_write(trees, examples):
     assert expected == written
 
 
-def test_repr(trees):
-    assert repr(trees.trees) == '<NexusTreeBlock: 3 trees>'
-
-
 def test_write_produces_end(trees):
     assert "end;" in trees.trees.write()
     assert len([_ for _ in trees.trees[0].newick_tree.walk()]) == 25

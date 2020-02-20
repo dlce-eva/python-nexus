@@ -30,9 +30,6 @@ expected = {
     'Louise': ['1', '1'],
 }
 
-def test_repr(nex):
-    assert repr(nex.data) == "<NexusDataBlock: 2 characters from 4 taxa>"
-
 def test_block_find(nex):
     assert 'data' in nex.blocks
     assert hasattr(nex, 'data')

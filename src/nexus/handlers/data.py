@@ -21,8 +21,8 @@ class DataHandler(GenericHandler):
         re.IGNORECASE | re.DOTALL | re.MULTILINE
     )
 
-    def __init__(self, data=None):
-        super(DataHandler, self).__init__(data)
+    def __init__(self, **kw):
+        super(DataHandler, self).__init__(**kw)
         self.charlabels = {}
         self.attributes = []
         self.format = {}
@@ -118,7 +118,7 @@ class DataHandler(GenericHandler):
         return self._characters
 
     def is_missing_or_gap(self, state):
-        return True if state in ('-', '?') else False
+        return state in ('-', '?')
 
     def parse_format_line(self, data):
         """
@@ -136,11 +136,10 @@ class DataHandler(GenericHandler):
         except IndexError:
             return None
 
-        line = line.lower()
-        line = line.replace(" =", "=").replace("= ", "=")  # standardise
+        line = line.lower().replace(" =", "=").replace("= ", "=")  # standardise
         for chunk in WHITESPACE_PATTERN.split(line):
             try:
-                key, value = chunk.split("=")
+                key, value = chunk.split("=", maxsplit=1)
                 value = QUOTED_PATTERN.sub('\\1', value)
             except ValueError:
                 key, value = chunk, True
@@ -240,7 +239,7 @@ class DataHandler(GenericHandler):
                 char_index += 1
         return new_data.split("\n")
 
-    def write(self):
+    def iter_lines(self):
         """
         Generates a string containing a nexus data block.
 
@@ -269,34 +268,23 @@ class DataHandler(GenericHandler):
                     fstring.append("%s=%s" % (key, value))
             return " ".join(fstring) + ";"
 
-        out = []
-        out.append('begin data;')
         for att in self.attributes:
-            out.append("\t%s" % att)
-        out.append('\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar))
-        out.append(_make_format_line(self))
+            yield "\t%s" % att
+        yield '\tdimensions ntax=%d nchar=%d;' % (self.ntaxa, self.nchar)
+        yield _make_format_line(self)
         # handle char block
         if self.charlabels:
-            out.append('\tcharstatelabels')
+            yield '\tcharstatelabels'
             max_id = max(self.charlabels)
             for char_id in sorted(self.charlabels):
-                out.append('\t\t%d %s%s' % (
-                    char_id + 1,  # zero-indexing
-                    self.charlabels[char_id],
-                    ',' if char_id < max_id else ''
-                ))
-            out.append('\t;')
-        out.append("matrix")
+                yield '\t\t%d %s%s' % (  # zero-indexing
+                    char_id + 1, self.charlabels[char_id], ',' if char_id < max_id else '')
+            yield '\t;'
+        yield "matrix"
         max_taxon_len = max([len(_) for _ in self.matrix])
         for taxon in sorted(self.matrix):
-            out.append("%s %s" % (taxon.ljust(max_taxon_len), ''.join(self.matrix[taxon])))
-        out.append(" ;")
-        out.append("end;")
-        return "\n".join(out)
-
-    def __repr__(self):
-        return "<NexusDataBlock: %d characters from %d taxa>" % \
-            (self.nchar, self.ntaxa)
+            yield "%s %s" % (taxon.ljust(max_taxon_len), ''.join(self.matrix[taxon]))
+        yield " ;"
 
 
 class CharacterHandler(DataHandler):

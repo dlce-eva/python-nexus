@@ -19,13 +19,14 @@ class GenericHandler(object):
 
     Handlers have (at least) the following attributes:
 
-        1. parse(self, data) - the function for parsing the block
-        2. write(self, data) - a function for returning the block to a text
+        1. __init__(self, **kw) - the function for parsing the block
+        2. iter_lines(self) - a function for returning the block to a text
             representation (used to regenerate a nexus file).
         3. block - a list of raw strings in this block
     """
-    def __init__(self, data=None):
+    def __init__(self, name=None, data=None):
         """Initialise datastore in <block> under <keyname>"""
+        self.name = name
         self.block = data or []
         self.comments = []
 
@@ -34,13 +35,22 @@ class GenericHandler(object):
             if line.strip().startswith("[") and line.strip().endswith("]"):
                 self.comments.append(line)
 
+    def iter_lines(self):
+        for i, line in enumerate(self.block):
+            if (i == 0 and BEGIN_PATTERN.search(line)) or \
+                    (i == len(self.block) - 1 and END_PATTERN.search(line)):
+                continue
+            yield line
+
     def write(self):
         """
-        Generates a string containing a generic nexus block for this data.
-
-        :return: String
+        Generates a string containing a nexus block.
         """
-        return "\n".join(self.block)
+        return "".join(
+            ['begin {0};\n'.format(self.name)] +
+            [l + '\n' for l in self.iter_lines()] +
+            ['end;\n']
+        )
 
     @staticmethod
     def remove_comments(line):
@@ -64,11 +74,5 @@ class GenericHandler(object):
     def is_mesquite_attribute(line):
         """
         Returns True if the line is a mesquite attribute
-
-        :return: Boolean
         """
-        if MESQUITE_TITLE_PATTERN.match(line):
-            return True
-        elif MESQUITE_LINK_PATTERN.match(line):
-            return True
-        return False
+        return bool(MESQUITE_TITLE_PATTERN.match(line)) or bool(MESQUITE_LINK_PATTERN.match(line))

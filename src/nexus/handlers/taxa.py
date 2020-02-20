@@ -13,8 +13,8 @@ class TaxaHandler(GenericHandler):
     is_dimensions = re.compile(r"""dimensions\s*ntax\s*=\s*(\d+)""", re.IGNORECASE)
     is_taxlabel_block = re.compile(r"""\btaxlabels\b""", re.IGNORECASE)
 
-    def __init__(self, data=None):
-        super(TaxaHandler, self).__init__(data)
+    def __init__(self, **kw):
+        super(TaxaHandler, self).__init__(**kw)
         self.taxa = []
         self.attributes = []
         self.annotations = {}
@@ -69,28 +69,16 @@ class TaxaHandler(GenericHandler):
             if taxon and taxon not in self.taxa:
                 yield (taxon, annot)
 
-    def write(self):
-        """
-        Generates a string containing a taxa block for this data.
-
-        :return: String
-        """
+    def iter_lines(self):
         def wrap(s):
             return s if ' ' not in s else "'%s'" % s
 
-        out = ['begin taxa;']
-        # handle any attributes
         for att in self.attributes:
-            out.append("\t%s" % att)
-        out.append('\tdimensions ntax=%d;' % self.ntaxa)
-        out.append('\ttaxlabels')
+            yield "\t%s" % att
+        yield '\tdimensions ntax=%d;' % self.ntaxa
+        yield '\ttaxlabels'
         # taxa labels
         for idx, taxon in enumerate(self.taxa, 1):
             taxon = "%s%s" % (taxon, self.annotations.get(taxon, ''))
-            out.append("\t[%d] %s" % (idx, wrap(taxon)))
-        out.append(';')
-        out.append('end;')
-        return "\n".join(out)
-
-    def __repr__(self):
-        return "<NexusTaxaBlock: %d taxa>" % self.ntaxa
+            yield "\t[%d] %s" % (idx, wrap(taxon))
+        yield ';'

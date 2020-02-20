@@ -22,10 +22,6 @@ def test_iterable(nex2):
         assert taxa == expected[idx]
 
 
-def test_repr(nex2):
-    assert repr(nex2.blocks['taxa']) == "<NexusTaxaBlock: 4 taxa>"
-
-
 def test_wrap_label_in_quotes_only_when_needed(nex2):
     nex2.taxa.taxa[0] = "long name"
     output = nex2.taxa.write()

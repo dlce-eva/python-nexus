@@ -48,8 +48,8 @@ class TreeHandler(GenericHandler):
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
-    def __init__(self, data=None):
-        super(TreeHandler, self).__init__(data)
+    def __init__(self, **kw):
+        super(TreeHandler, self).__init__(**kw)
         # does the treefile have a translate block?
         self.was_translated = False
         # has detranslate been called?
@@ -115,12 +115,13 @@ class TreeHandler(GenericHandler):
             self.trees[idx] = Tree(self._detranslate_tree(tree, self.translators))
         self._been_detranslated = True
 
-    def _findall_chunks(self, tree):
+    @staticmethod
+    def _findall_chunks(tree):
         """Helper function to find groups used by detranslate."""
         matches = []
         index = 0
         while True:
-            match = self.translate_regex.search(tree, index)
+            match = TreeHandler.translate_regex.search(tree, index)
             if not match:
                 break
             m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))
@@ -163,27 +164,16 @@ class TreeHandler(GenericHandler):
                 tree = tree.replace(found['match'], sub)
         return tree
 
-    def write(self):
-        """
-        Generates a string containing a trees block.
-
-        :return: String
-        """
-        out = ['begin trees;']
+    def iter_lines(self):
         for attr in self.attributes:
-            out.append("\t" + attr)
+            yield "\t" + attr
         if self.was_translated and not self._been_detranslated:
-            out.append('\ttranslate')
-            for index in sorted([int(k) for k in self.translators.keys()]):
-                out.append("\t%d %s," % (index, self.translators[str(index)]))
-            # handle last taxa label in translate block
-            out[-1] = out[-1].replace(',', '')
+            yield '\ttranslate'
+            translator_keys = [int(k) for k in self.translators.keys()]
+            for i, index in enumerate(sorted(translator_keys), start=1):
+                yield "\t%d %s%s" % (
+                    index, self.translators[str(index)], '' if i == len(translator_keys) else ',')
             # work around bug https://github.com/CompEvol/beast2/issues/713
-            out.append(';')
+            yield ';'
         for tree in self.trees:
-            out.append("\t" + tree)
-        out.append('end;\n')
-        return "\n".join(out)
-
-    def __repr__(self):
-        return "<NexusTreeBlock: %d trees>" % self.ntrees
+            yield "\t" + tree

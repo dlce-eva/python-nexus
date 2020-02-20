@@ -15,8 +15,9 @@ def test_generic_readwrite():
     ]
     nex = NexusReader.from_string("\n".join(expected))
     for line in nex.sets.write().split("\n"):
-        e = expected.pop(0).strip()
-        assert line.strip() == e
+        if line:
+            e = expected.pop(0).strip()
+            assert line.strip() == e
 
 
 def test_write_produces_end():
