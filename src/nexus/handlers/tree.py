@@ -11,7 +11,8 @@ class Tree(str):
     @property
     def name(self):
         m = re.search(r'tree\s+(?P<name>[^=]+)\s*=', strip_brackets(self, {'[': ']'}))
-        return m.group('name').strip()
+        if m:
+            return m.group('name').strip()
 
     @property
     def rooted(self):

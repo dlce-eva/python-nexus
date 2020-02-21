@@ -293,7 +293,7 @@ def test_charactersc(nexc):
 
 def test_writec(nexc):
     expected_patterns = [
-        r'^begin data;$',
+        r'^begin characters;$',
         r'^\s+dimensions ntax=5 nchar=5;$',
         r'^\s+format gap=- missing=\?;$',
         r'^\s+charstatelabels$',

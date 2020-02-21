@@ -75,8 +75,7 @@ class NexusReader(object):
         for block, lines in (blocks.items() if isinstance(blocks, dict) else blocks):
             if block in self.blocks:
                 raise NexusFormatException("Duplicate Block %s" % block)
-            self.blocks[block] = HANDLERS.get(block, GenericHandler)(
-                name='data' if block == 'characters' else block, data=lines)
+            self.blocks[block] = HANDLERS.get(block, GenericHandler)(name=block, data=lines)
 
         if self.blocks.get('characters') and not self.blocks.get('data'):
             self.blocks['data'] = self.blocks['characters']
