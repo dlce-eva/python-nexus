@@ -35,10 +35,6 @@ def register(parser):
         action="store_true",
         default=False,
         help="Remove taxa translation block from the trees")
-    parser.add_argument(
-        "-q", "--quiet", dest="quiet",
-        action="store_true", default=False,
-        help="Be quiet (no logging information displayed)")
 
 
 def run(args):
