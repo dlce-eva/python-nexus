@@ -76,6 +76,7 @@ def get_reader(args, many=False, required_blocks=None):
 
 def write_output(writer, args):
     if args.output:
-        print('Output written to {0}'.format(writer.write_to_file(args.output, **vars(args))))
+        writer.write_to_file(args.output)
+        print('Output written to {0}'.format(args.output))
     else:
-        print(writer.write(**vars(args)))
+        print(writer.write())
