@@ -173,8 +173,6 @@ class NexusReader(object):
         Writes the nexus to a file.
 
         :return: None
-
-        :raises IOError: If file writing fails.
         """
         with pathlib.Path(filename).open('w', encoding='utf8') as handle:
             handle.writelines(self.write())
