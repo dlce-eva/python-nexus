@@ -53,7 +53,7 @@ def test_delete_taxa(nex):
             'Expected "%s"' % expected
 
     # should NOT be here
-    assert re.search('^Simon\s+01$', written, re.MULTILINE) is None, \
+    assert re.search(r'^Simon\s+01$', written, re.MULTILINE) is None, \
         'Expected Taxon "Simon" to be Deleted'
 
 
