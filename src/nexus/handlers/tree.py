@@ -40,7 +40,7 @@ class Tree(str):
 
 class TreeHandler(GenericHandler):
     """Handler for `trees` blocks"""
-    is_tree = re.compile(r"""tree .*=.*;""", re.IGNORECASE)
+    is_tree = re.compile(r"""tree\s+.*=.*;""", re.IGNORECASE)
 
     translate_regex = re.compile(r"""
         ([,(])              # boundary
