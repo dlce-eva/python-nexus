@@ -47,8 +47,8 @@ class GenericHandler(object):
         Generates a string containing a nexus block.
         """
         return "".join(
-            ['begin {0};\n'.format(self.name)] +
-            [l + '\n' for l in self.iter_lines()] +
+            ['begin {0};\n'.format(self.name)] +  # noqa: W504
+            [line + '\n' for line in self.iter_lines()] +  # noqa: W504
             ['end;\n']
         )
 
