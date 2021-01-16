@@ -15,7 +15,10 @@ collection of nexus manipulation scripts.
 
 ## Versions:
  * dev:
-     - fixed parsing of an unusual MrBayes format treefile.
+    - fixed parsing of an unusual MrBayes format treefile.
+    - fixed logging error in write_to_nexus()
+ * v2.1:
+    - fix minor bug with parsing of data/characters blocks.
  * v2.0:
     - Refactored cli. The package now installs a **single** command `nexus`,
       providing several [subcommands](src/nexus/commands).
