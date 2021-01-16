@@ -2,8 +2,8 @@
 
 A Generic nexus (.nex, .trees) reader/writer for python.
 
-[![Build Status](https://github.com/shh-dlce/python-nexus/workflows/tests/badge.svg)](https://github.com/shh-dlce/python-nexus/actions?query=workflow%3Atests)
-[![codecov](https://codecov.io/gh/shh-dlce/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/shh-dlce/python-nexus)
+[![Build Status](https://github.com/dlce-eva/python-nexus/workflows/tests/badge.svg)](https://github.com/dlce-eva/python-nexus/actions?query=workflow%3Atests)
+[![codecov](https://codecov.io/gh/dlce-eva/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/dlce-eva/python-nexus)
 [![PyPI](https://img.shields.io/pypi/v/python-nexus.svg)](https://pypi.org/project/python-nexus)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.595426.svg)](https://doi.org/10.5281/zenodo.595426)
 
