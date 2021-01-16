@@ -14,7 +14,8 @@ python-nexus provides simple nexus file-format reading/writing tools, and a smal
 collection of nexus manipulation scripts.
 
 ## Versions:
-
+ * dev:
+     - fixed parsing of an unusual MrBayes format treefile.
  * v2.0:
     - Refactored cli. The package now installs a **single** command `nexus`,
       providing several [subcommands](src/nexus/commands).
