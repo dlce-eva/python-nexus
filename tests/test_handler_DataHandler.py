@@ -315,3 +315,9 @@ def test_writec(nexc):
     for expected in expected_patterns:
         assert re.search(expected, written, re.MULTILINE), \
             'Expected "%s"' % expected
+
+
+def test_wrapped_data(examples):
+    r = NexusReader.from_file(examples / 'example-wrapped-data.nex')
+    assert r.data.format['gap'] == '-'
+    assert len(r.data.taxa) == 3 and r.data.nchar == 471

@@ -9,6 +9,22 @@ NTAX_PATTERN = re.compile(r"""ntax=(\d+)""", re.IGNORECASE)
 NCHAR_PATTERN = re.compile(r"""nchar=(\d+)""", re.IGNORECASE)
 
 
+def iter_block(lines):
+    seen_matrix = False
+    for line in lines:
+        lline = line.lower().strip()
+        if END_PATTERN.match(lline):
+            continue
+        elif lline.startswith('format'):
+            continue
+        elif BEGIN_PATTERN.match(line):
+            continue
+        elif lline.startswith('matrix'):
+            seen_matrix = True
+            continue
+        yield line, lline, seen_matrix
+
+
 class DataHandler(GenericHandler):
     """Handler for data matrices"""
 
@@ -38,14 +54,10 @@ class DataHandler(GenericHandler):
 
         _dim_taxa, _dim_chars = None, None
 
-        seen_matrix = False
-        for line in self.block:
-            lline = line.lower().strip()
-            # end...
-            if END_PATTERN.match(lline):
-                continue
+        read_data = False
+        for line, lline, in_matrix in iter_block(self.block):
             # Dimensions line
-            elif lline.startswith('dimensions '):
+            if lline.startswith('dimensions '):
                 try:  # try for ntaxa
                     _dim_taxa = int(NTAX_PATTERN.findall(line)[0])
                 except IndexError:  # pragma: no cover
@@ -56,23 +68,31 @@ class DataHandler(GenericHandler):
                     pass
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)
-            # handle format line
-            elif lline.startswith('format'):
-                continue
-            elif lline.startswith('matrix'):
-                seen_matrix = True
-                continue
-            elif BEGIN_PATTERN.match(line):
-                continue
-            elif seen_matrix:
+            elif in_matrix:
                 line = self.remove_comments(line)
                 try:  # NORMALISE WHITESPACE
                     taxon, sites = WHITESPACE_PATTERN.split(line, 1)
+                    read_data = True
                 except ValueError:
                     continue
 
                 taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
                 self.add_taxon(taxon, self._parse_sites(sites.strip()))
+
+        if not read_data:
+            # Let's try to read a "wrapped" matrix:
+            taxon, sites = None, ''
+            for line, lline, in_matrix in iter_block(self.block):
+                if (not in_matrix) or (not lline):
+                    continue  # pragma: no cover
+                if not taxon:
+                    assert not WHITESPACE_PATTERN.search(line.strip())
+                    taxon = QUOTED_PATTERN.sub('\\1', line.strip())
+                else:
+                    sites += line.strip()
+                    if len(sites) == _dim_chars:
+                        self.add_taxon(taxon, self._parse_sites(sites))
+                        taxon, sites = None, ''
 
         # Warn if format string (ntaxa or nchar) does not give the right answer
         if _dim_taxa is not None and self.ntaxa != _dim_taxa:
