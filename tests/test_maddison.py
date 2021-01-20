@@ -28,7 +28,7 @@ def test_characters(maddison):
     assert 'characters' in maddison.blocks
     assert maddison.blocks['characters'].nchar == 20
     assert maddison.blocks['characters'].ntaxa == 4
-    assert maddison.blocks['characters'].format['datatype'] == 'dna'
+    assert maddison.blocks['characters'].format['datatype'] == 'DNA'
     for taxon in expected:
         assert taxon in maddison.blocks['characters'].matrix
         assert maddison.blocks['characters'].matrix[taxon] == expected[taxon]

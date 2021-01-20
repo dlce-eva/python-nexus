@@ -1,5 +1,6 @@
 """Tests for DataHandler"""
 import re
+import sys
 import warnings
 
 import pytest
@@ -103,11 +104,11 @@ def test_parse_format_line():
 
     fmt = 'FORMAT datatype=RNA missing=? symbols="ACGU" labels interleave;'
     f = d.parse_format_line(fmt)
-    assert f['datatype'] == 'rna', \
+    assert f['datatype'] == 'RNA', \
         "Expected 'rna', but got '%s'" % f['datatype']
     assert f['missing'] == '?', \
         "Expected '?', but got '%s'" % f['missing']
-    assert f['symbols'] == 'acgu', \
+    assert f['symbols'] == 'ACGU', \
         "Expected 'acgu', but got '%s'" % f['symbols']
     assert f['labels'] is True, \
         "Expected <True>, but got '%s'" % f['labels']
@@ -210,7 +211,7 @@ def test_ntaxa_recovery(nex2):
 
 def test_format_string2(nex2):
     expected = {
-        'datatype': 'dna',
+        'datatype': 'DNA',
         'missing': '?',
         'gap': '-',
         'symbols': 'atgc',
@@ -315,3 +316,13 @@ def test_writec(nexc):
     for expected in expected_patterns:
         assert re.search(expected, written, re.MULTILINE), \
             'Expected "%s"' % expected
+
+
+def test_wrapped_data(examples):
+    r = NexusReader.from_file(examples / 'example-wrapped-data.nex')
+    assert r.data.format['gap'] == '-'
+    assert len(r.data.taxa) == 3 and r.data.nchar == 471
+    sites = r.data.matrix[r.data.taxa[-1]]
+    assert len([s for s in sites if s == r.data.format['gap']]) == 5
+    if sys.version_info > (3, 5):
+        assert len([s for s in sites if s == r.data.format['missing']]) == 85
