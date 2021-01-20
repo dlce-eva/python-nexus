@@ -342,7 +342,7 @@ def test_DataHandler_ParsingGlitch_parse_format_line():
     """
     d = DataHandler()
     f = d.parse_format_line('FORMAT DATATYPE=STANDARD GAP=- MISSING=? SYMBOLS = "012345";')
-    assert f['datatype'] == 'standard', \
+    assert f['datatype'] == 'STANDARD', \
         "Expected 'standard', but got '%s'" % f['datatype']
     assert f['symbols'] == '012345', \
         "Expected '012345', but got '%s'" % f['symbols']

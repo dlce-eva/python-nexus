@@ -164,9 +164,7 @@ class DataHandler(GenericHandler):
             except ValueError:
                 key, value = chunk, True
             if key:
-                key = key.lower()
-                out[key] = value if key in ['missing', 'gap'] else \
-                    (value.lower() if isinstance(value, str) else value)
+                out[key.lower()] = value
         return out
 
     def _parse_sites(self, sites):
