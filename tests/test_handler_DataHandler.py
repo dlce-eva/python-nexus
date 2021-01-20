@@ -1,5 +1,6 @@
 """Tests for DataHandler"""
 import re
+import sys
 import warnings
 
 import pytest
@@ -323,4 +324,5 @@ def test_wrapped_data(examples):
     assert len(r.data.taxa) == 3 and r.data.nchar == 471
     sites = r.data.matrix[r.data.taxa[-1]]
     assert len([s for s in sites if s == r.data.format['gap']]) == 5
-    assert len([s for s in sites if s == r.data.format['missing']]) == 85
+    if sys.version_info > (3, 5):
+        assert len([s for s in sites if s == r.data.format['missing']]) == 85
