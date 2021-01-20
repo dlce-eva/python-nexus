@@ -81,7 +81,7 @@ class DataHandler(GenericHandler):
 
         if not read_data:
             # Let's try to read a "wrapped" matrix:
-            taxon, sites = None, ''
+            taxon, sites = None, []
             for line, lline, in_matrix in iter_block(self.block):
                 if (not in_matrix) or (not lline):
                     continue  # pragma: no cover
@@ -89,10 +89,10 @@ class DataHandler(GenericHandler):
                     assert not WHITESPACE_PATTERN.search(line.strip())
                     taxon = QUOTED_PATTERN.sub('\\1', line.strip())
                 else:
-                    sites += line.strip()
+                    sites.extend(self._parse_sites(line.strip()))
                     if len(sites) == _dim_chars:
-                        self.add_taxon(taxon, self._parse_sites(sites))
-                        taxon, sites = None, ''
+                        self.add_taxon(taxon, sites)
+                        taxon, sites = None, []
 
         # Warn if format string (ntaxa or nchar) does not give the right answer
         if _dim_taxa is not None and self.ntaxa != _dim_taxa:
@@ -196,7 +196,6 @@ class DataHandler(GenericHandler):
         if sites not in self._sitecache:
             # Slow parser for multistate
             if '(' in parsed:
-                multistate = False
                 todo, parsed = parsed, []  # switch places.
                 while todo:
                     site = todo.pop(0)
