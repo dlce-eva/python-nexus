@@ -321,3 +321,6 @@ def test_wrapped_data(examples):
     r = NexusReader.from_file(examples / 'example-wrapped-data.nex')
     assert r.data.format['gap'] == '-'
     assert len(r.data.taxa) == 3 and r.data.nchar == 471
+    sites = r.data.matrix[r.data.taxa[-1]]
+    assert len([s for s in sites if s == r.data.format['gap']]) == 5
+    assert len([s for s in sites if s == r.data.format['missing']]) == 85

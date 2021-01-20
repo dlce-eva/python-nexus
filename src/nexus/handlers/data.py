@@ -156,7 +156,7 @@ class DataHandler(GenericHandler):
         except IndexError:
             return None
 
-        line = line.lower().replace(" =", "=").replace("= ", "=")  # standardise
+        line = line.replace(" =", "=").replace("= ", "=")  # standardise
         for chunk in WHITESPACE_PATTERN.split(line):
             try:
                 key, value = chunk.split("=", maxsplit=1)
@@ -164,7 +164,9 @@ class DataHandler(GenericHandler):
             except ValueError:
                 key, value = chunk, True
             if key:
-                out[key] = value
+                key = key.lower()
+                out[key] = value if key in ['missing', 'gap'] else \
+                    (value.lower() if isinstance(value, str) else value)
         return out
 
     def _parse_sites(self, sites):
