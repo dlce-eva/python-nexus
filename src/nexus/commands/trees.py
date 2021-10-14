@@ -3,6 +3,7 @@ Performs some functions on trees
 """
 from random import sample
 
+from clldutils.clilib import add_random_seed
 from nexus.cli_util import add_nexus, get_reader, add_output, write_output, list_of_ranges
 
 
@@ -25,6 +26,7 @@ def register(parser):
         type=int,
         default=0,
         help="Randomly sample N trees from the treefile")
+    add_random_seed(parser)
     parser.add_argument(
         "-c", "--removecomments",
         action="store_true",
