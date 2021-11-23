@@ -1,13 +1,13 @@
 import re
 
-COMMENT_PATTERN = re.compile(r"""(\[.*?\])""")
+COMMENT_PATTERN = re.compile(r"""(\[.*?])""")
 QUOTED_PATTERN = re.compile(r"""^["'](.*)["']$""")
 WHITESPACE_PATTERN = re.compile(r"""\s+""")
 MESQUITE_TITLE_PATTERN = re.compile(r"""^TITLE\s+(.*);$""", re.IGNORECASE)
 MESQUITE_LINK_PATTERN = re.compile(
     r"""^LINK\s+(.*?)\s+=\s+(.*);$""", re.IGNORECASE
 )
-BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*\]);""", re.IGNORECASE)
+BEGIN_PATTERN = re.compile(r"""begin (\w+)(\s*|\[.*]);""", re.IGNORECASE)
 END_PATTERN = re.compile(r"""end\s*;""", re.IGNORECASE)
 
 

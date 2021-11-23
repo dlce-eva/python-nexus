@@ -12,7 +12,7 @@ def multistatise(nexus_obj, charlabel=None):
     :raises AssertionError: if nexus_obj is not a nexus
     :raises NexusFormatException: if nexus_obj does not have a `data` block
     """
-    charlabel = charlabel or getattr(nexus_obj, 'short_filename', 1)
+    charlabel = charlabel or getattr(nexus_obj, 'short_filename', 1) or 1
 
     states = {}
     for taxon in nexus_obj.data.matrix:

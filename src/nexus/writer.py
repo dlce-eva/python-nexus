@@ -118,6 +118,12 @@ class NexusWriter(FileWriterMixin):
     def add(self, taxon, character, value):
         """Adds a `character` for the given `taxon` and sets it to `value`"""
         assert self.is_binary is False, "Unable to add data to a binarised nexus form"
+        assert isinstance(character, (str, int)), 'Character must not be of type {}'.format(
+            type(character))
+        if self.characters:
+            assert all(isinstance(c, str) for c in [character] + self.characters) or \
+                all(isinstance(c, int) for c in [character] + self.characters), \
+                "Characters of mixed type are not supported"
         value = str(value)
         # have multiple entries
         if taxon in self.data[character]:

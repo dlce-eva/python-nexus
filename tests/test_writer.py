@@ -25,6 +25,15 @@ def test_invalid():
         w.write()
 
 
+def test_mixed_type_characters():
+    n = NexusWriter()
+    n.add('taxon1', 'Character1', 'A')
+    n.add('taxon2', 'Character1', 'C')
+    n.add('taxon3', 'Character1', 'A')
+    with pytest.raises(AssertionError):
+        n.add('taxon1', 2, 1)
+
+
 def test_generic_format(writer):
     assert writer.make_nexus().startswith('#NEXUS')
 

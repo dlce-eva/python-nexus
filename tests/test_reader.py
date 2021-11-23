@@ -50,6 +50,7 @@ def test_from_string(nex_string):
     nex = NexusReader.from_string(nex_string)
     assert 'data' in nex.blocks
     assert 'Simon' in nex.blocks['data'].matrix
+    assert 'taxa' in repr(nex.blocks['data'])
 
 
 def test_read_string_returns_self():
@@ -69,6 +70,7 @@ def test_read_string_returns_self():
 
 def test_write(examples):
     nex = NexusReader(examples / 'example.trees')
+    assert nex.write().startswith('#NEXUS')
     assert examples.joinpath('example.trees').read_text(encoding='utf8') == nex.write()
 
 

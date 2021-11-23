@@ -104,6 +104,9 @@ class DataHandler(GenericHandler):
     def __getitem__(self, index):
         return self.taxa[index], self.matrix.get(self.taxa[index])
 
+    def __repr__(self):
+        return '<NexusDataBlock: {0.nchar} characters from {0.ntaxa} taxa>'.format(self)
+
     @property
     def ntaxa(self):
         """Number of Taxa"""
