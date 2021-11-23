@@ -5,7 +5,7 @@ import collections
 
 from nexus.util import FileWriterMixin
 
-TEMPLATE = """
+TEMPLATE = """\
 #NEXUS
 %(datablock)s
 %(treeblock)s

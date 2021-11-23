@@ -25,6 +25,10 @@ def test_invalid():
         w.write()
 
 
+def test_generic_format(writer):
+    assert writer.make_nexus().startswith('#NEXUS')
+
+
 def test_char_adding1(writer):
     """Test Character Addition 1"""
     assert writer.data['char1']['French'] == '1'
