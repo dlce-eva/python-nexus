@@ -13,16 +13,9 @@ A Generic nexus (.nex, .trees) reader/writer for python.
 python-nexus provides simple nexus file-format reading/writing tools, and a small
 collection of nexus manipulation scripts.
 
-## Versions:
- * v2.2:
-    - fixed parsing of an unusual MrBayes format treefile.
-    - fixed logging error in write_to_nexus()
- * v2.1:
-    - fix minor bug with parsing of data/characters blocks.
- * v2.0:
-    - Refactored cli. The package now installs a **single** command `nexus`,
-      providing several [subcommands](src/nexus/commands).
-    - Dropped python 2 compatibility.
+Note: Due to a name clash with another python package, this package must be **installed** as
+`pip install python-nexus` but **imported** as `import nexus`.
+
 
 ## Usage
 
@@ -67,7 +60,7 @@ file using `NexusReader.write_to_file`:
 >>> n.write_to_file("mynewnexus.nex")
 ```
 
-NOTE: if you want more fine-grained control over generating nexus files, then try
+Note: if you want more fine-grained control over generating nexus files, then try
 `NexusWriter` discussed below.
 
 
@@ -187,7 +180,7 @@ You can also iterate over the sites (rather than the taxa):
 
 ```
 
-NOTE: that sites are zero-indexed!
+Note: that sites are zero-indexed!
 
 ### `trees` block handler
 
