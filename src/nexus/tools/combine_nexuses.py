@@ -1,9 +1,10 @@
 import os
 
-from nexus.writer import NexusWriter
+from nexus import NexusWriter
+from .util import get_nexus_reader
 
 
-def combine_nexuses(nexuslist):
+def combine_nexuses(*nexuslist):
     """
     Combines a list of NexusReader instances into a single nexus
 
@@ -11,6 +12,9 @@ def combine_nexuses(nexuslist):
 
     :return: A NexusWriter instance
     """
+    if len(nexuslist) == 1 and isinstance(nexuslist[0], (list, tuple)):
+        nexuslist = nexuslist[0]
+    nexuslist = [get_nexus_reader(nex) for nex in nexuslist]
     out = NexusWriter()
     # check they're all nexus instances and get all block types
     blocks = set()

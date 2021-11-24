@@ -1,8 +1,10 @@
 import collections
 
 from nexus.tools.sites import new_nexus_without_sites
+from .util import with_nexus_reader
 
 
+@with_nexus_reader
 def check_zeros(nexus_obj, absences=None, missing=None):
     """
     Checks for sites in the nexus that are coded as all empty.
@@ -41,6 +43,7 @@ def check_zeros(nexus_obj, absences=None, missing=None):
     return bad
 
 
+@with_nexus_reader
 def remove_zeros(nexus_obj, absences=None, missing=None):
     """
     Removes sites in the nexus that are coded as all empty.

@@ -2,8 +2,10 @@
 import collections
 
 from nexus.writer import NexusWriter
+from .util import with_nexus_reader
 
 
+@with_nexus_reader
 def iter_constant_sites(nexus_obj):
     """
     Returns a list of zero-based indices of the constant sites in a nexus
@@ -13,6 +15,7 @@ def iter_constant_sites(nexus_obj):
             yield i
 
 
+@with_nexus_reader
 def iter_unique_sites(nexus_obj):
     """
     Returns a list of the unique sites in a binary nexus

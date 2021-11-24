@@ -1,4 +1,5 @@
 from nexus.writer import NexusWriter
+from .util import with_nexus_reader
 
 
 def _recode_to_binary(char, keep_zero=False):
@@ -58,6 +59,7 @@ def _recode_to_binary(char, keep_zero=False):
     return newdata
 
 
+@with_nexus_reader
 def binarise(nexus_obj, keep_zero=False):
     """
     Returns a binary variant of the given `nexus_obj`.

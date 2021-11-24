@@ -24,26 +24,26 @@ def nex1():
 
 @pytest.fixture
 def nex2():
-    return NexusReader.from_string("""Begin data;
+    return """Begin data;
             Dimensions ntax=2 nchar=1;
             Format datatype=standard symbols="34" gap=-;
             Matrix
             Harry              3
             Simon              4
             ;"""
-    )
 
 
 @pytest.fixture
-def nex3():
-    return NexusReader.from_string("""Begin data;
+def nex3(tmp_path):
+    tmp_path.joinpath('2.nex').write_text("""Begin data;
             Dimensions ntax=3 nchar=1;
             Format datatype=standard symbols="345" gap=-;
             Matrix
             Betty              3
             Boris              4
             Simon              5
-            ;""")
+            ;""", encoding='utf8')
+    return tmp_path / '2.nex'
 
 
 def test_combine_simple(nex1, nex2):
@@ -68,7 +68,8 @@ def test_combine_simple_generated_formatline(nex1, nex2):
 
 
 def test_combine_missing(nex1, nex3):
-    newnex = combine_nexuses([nex1, nex3])
+    newnex = combine_nexuses(nex1, nex3)
+    print(newnex.data)
     assert newnex.data['0.1']['Harry'] == '1'
     assert newnex.data['0.1']['Simon'] == '2'
     assert newnex.data['2.1']['Betty'] == '3'
@@ -88,6 +89,11 @@ def test_combine_missing_generated_formatline(nex1, nex3):
     assert re.search(r"""\bNTAX=4\b""", newnex)
     assert re.search(r"""\bNCHAR=2\b""", newnex)
     assert re.search(r'\sSYMBOLS="12345"[\s;]', newnex)
+
+
+def test_combine_iterated(nex1):
+    res = combine_nexuses(combine_nexuses(nex1))
+    assert res
 
 
 def test_combine_with_character_labels():

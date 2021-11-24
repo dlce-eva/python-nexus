@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="python-nexus",
-    version="2.3.1.dev0",
+    version="2.4.0",
     description="A nexus (phylogenetics) file reader (.nex, .trees)",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

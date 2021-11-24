@@ -19,6 +19,15 @@ Note: Due to a name clash with another python package, this package must be **in
 
 ## Usage
 
+### CLI
+
+`python-nexus` installs a command `nexus` for cli use. You can inspect its help via
+```shell
+nexus -h
+```
+
+### Python API
+
 Reading a Nexus:
 ```python
 >>> from nexus import NexusReader
@@ -64,7 +73,7 @@ Note: if you want more fine-grained control over generating nexus files, then tr
 `NexusWriter` discussed below.
 
 
-## Block Handlers:
+### Block Handlers:
 
 There are specific "Handlers" to parse certain known nexus blocks, including the
 common 'data', 'trees', and 'taxa' blocks. Any blocks that are unknown will be 
@@ -82,7 +91,7 @@ ALL handlers extend the `GenericHandler` class and have the following methods.
 
 
 
-### `generic` block handler
+#### `generic` block handler
 
 The generic block handler simply stores each line of the block in `.block`:
 
@@ -90,7 +99,7 @@ The generic block handler simply stores each line of the block in `.block`:
     ['line1', 'line2', ... ]
 
 
-### `data` block handler
+#### `data` block handler
 
 These are the main blocks encountered in nexus files - and contain the data matrix.
 
@@ -182,7 +191,7 @@ You can also iterate over the sites (rather than the taxa):
 
 Note: that sites are zero-indexed!
 
-### `trees` block handler
+#### `trees` block handler
 
 If there's a `trees` block, then you can do the following
 
@@ -219,7 +228,7 @@ a `nexus.Node` object for a tree:
 ```
 
 
-### `taxa` block handler
+#### `taxa` block handler
 
 Programs like SplitsTree understand "TAXA" blocks in Nexus files:
 
@@ -246,7 +255,7 @@ NOTE: with this alternate nexus format the Characters blocks *should* be parsed 
 DataHandler.
 
 
-# Writing a Nexus File using NexusWriter
+### Writing a Nexus File using NexusWriter
 
 
 `NexusWriter` provides more fine-grained control over writing nexus files, and 

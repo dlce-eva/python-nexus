@@ -1,5 +1,11 @@
 # Changes
 
+
+## v2.4
+
+Refactored `nexus.tools` API, for better programmatic usability of the tools.
+
+
 ## v2.3
 
 - test on py 3.10

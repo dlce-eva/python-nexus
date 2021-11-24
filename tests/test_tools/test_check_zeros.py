@@ -29,7 +29,7 @@ def nex():
     ]
 )
 def test_check_zeros(nex, kw, expected):
-    assert expected == check_zeros(nex, **kw)
+    assert expected == check_zeros(nex.write(), **kw)
 
 
 def test_remove_zeros(nex):

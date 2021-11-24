@@ -1,8 +1,10 @@
 import random
 
 from nexus.writer import NexusWriter
+from .util import with_nexus_reader
 
 
+@with_nexus_reader
 def shufflenexus(nexus_obj, resample=False):
     """
     Shuffles the characters between each taxon to create a new nexus

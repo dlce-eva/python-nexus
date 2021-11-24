@@ -1,23 +1,20 @@
 """Tests for utils in bin directory"""
 import pytest
 
-from nexus.commands.trees import run_deltree
-from nexus.commands.trees import run_random
-from nexus.commands.trees import run_removecomments
-from nexus.commands.trees import run_resample
+from nexus.tools import delete_trees, sample_trees, strip_comments_in_trees
 
 
-def test_run_deltree(trees, mocker):
-    new_nex = run_deltree([2], trees, mocker.Mock())
+def test_run_deltree(trees):
+    new_nex = delete_trees(trees, [2])
     assert len(new_nex.trees.trees) == 2
     assert new_nex.trees.ntrees == 2
     assert new_nex.trees[0].startswith('tree tree.0.1065.603220')
     assert new_nex.trees[1].startswith('tree tree.20000.883.396049')
 
 
-def test_run_resample_1(trees, mocker):
+def test_run_resample_1(trees):
     # shouldn't resample anything..
-    new_nex = run_resample(1, trees, mocker.Mock())
+    new_nex = sample_trees(trees, every_nth=1)
     assert len(new_nex.trees.trees) == 3
     assert new_nex.trees.ntrees == 3
     assert new_nex.trees[0].startswith('tree tree.0.1065.603220')
@@ -25,22 +22,22 @@ def test_run_resample_1(trees, mocker):
     assert new_nex.trees[2].startswith('tree tree.20000.883.396049')
 
 
-def test_run_removecomments(trees_beast, mocker):
-    new_nex = run_removecomments(trees_beast, mocker.Mock())
+def test_run_removecomments(trees_beast):
+    new_nex = strip_comments_in_trees(trees_beast)
     assert '[&lnP=-15795.47019648783]' not in new_nex.trees[0]
 
 
-def test_run_randomise_sample1(trees_translated, mocker):
-    new_nex = run_random(1, trees_translated, mocker.Mock())
+def test_run_randomise_sample1(trees_translated):
+    new_nex = sample_trees(trees_translated, 1)
     assert new_nex.trees.ntrees == len(new_nex.trees.trees) == 1
 
 
-def test_run_randomise_sample2(trees_translated, mocker):
-    new_nex = run_random(2, trees_translated, mocker.Mock())
+def test_run_randomise_sample2(trees_translated):
+    new_nex = sample_trees(trees_translated, 2)
     assert new_nex.trees.ntrees == len(new_nex.trees.trees) == 2
 
 
-def test_run_randomise_sample_toobig(trees_translated, mocker):
+def test_run_randomise_sample_toobig(trees_translated):
     # raises ValueError, sample size too big (only 3 trees in this file)
     with pytest.raises(ValueError):
-        run_random(10, trees_translated, mocker.Mock())
+        sample_trees(trees_translated, 10)

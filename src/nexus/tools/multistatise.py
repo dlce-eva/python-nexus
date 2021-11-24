@@ -1,6 +1,8 @@
 from nexus.writer import NexusWriter
+from .util import with_nexus_reader
 
 
+@with_nexus_reader
 def multistatise(nexus_obj, charlabel=None):
     """
     Returns a multistate variant of the given `nexus_obj`.
