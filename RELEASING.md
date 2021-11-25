@@ -15,6 +15,7 @@ flake8 src
 - Update the version number, by removing the trailing `.dev0` in:
   - `setup.py`
   - `src/nexus/__init__.py`
+  - edit `CHANGES.md`
 
 - Create the release commit:
 ```shell

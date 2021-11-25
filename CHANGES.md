@@ -1,6 +1,11 @@
 # Changes
 
 
+## v2.4.1
+
+Fixed performance regression in `NexusWriter.add`.
+
+
 ## v2.4
 
 Refactored `nexus.tools` API, for better programmatic usability of the tools.
