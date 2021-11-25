@@ -31,7 +31,7 @@ def test_mixed_type_characters():
     n.add('taxon2', 'Character1', 'C')
     n.add('taxon3', 'Character1', 'A')
     with pytest.raises(AssertionError):
-        n.add('taxon1', 2, 1)
+        n.add('taxon1', 2, 1, check=True)
 
 
 def test_generic_format(writer):
