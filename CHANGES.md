@@ -1,6 +1,12 @@
 # Changes
 
 
+## v2.5.1
+
+Fixed bug where the wrong decorator order would prevent tree manipulation
+tools to work on str or Path input.
+
+
 ## v2.5
 
 Added tree tools allowing tree manipulation using the `newick.Node` objects.
