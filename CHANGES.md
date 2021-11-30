@@ -1,6 +1,11 @@
 # Changes
 
 
+## unreleased
+
+Added tree tools allowing tree manipulation using the `newick.Node` objects.
+
+
 ## v2.4.1
 
 Fixed performance regression in `NexusWriter.add`.

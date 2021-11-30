@@ -3,7 +3,12 @@ import pytest
 
 from nexus.reader import NexusReader
 from nexus.exceptions import NexusFormatException
-from nexus.handlers.tree import TreeHandler
+from nexus.handlers.tree import TreeHandler, Tree
+
+
+def test_Tree():
+    t = Tree('tree name = (A,B)C;')
+    assert t == Tree.from_newick(t.newick_tree, name=t.name, rooted=t.rooted)
 
 
 def test_block_find(trees):

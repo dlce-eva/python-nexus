@@ -1,4 +1,5 @@
 import re
+import typing
 
 from clldutils.text import strip_brackets, split_text_with_context
 import newick
@@ -8,6 +9,15 @@ from nexus.exceptions import NexusFormatException
 
 
 class Tree(str):
+    @classmethod
+    def from_newick(cls,
+                    new: typing.Union[str, newick.Node],
+                    name: str = 'tree',
+                    rooted: typing.Union[bool, None] = None):
+        rooting = '' if rooted is None else '[&{}] '.format('R' if rooted else 'U')
+        new = new if isinstance(new, str) else new.newick
+        return cls('tree {} = {}{}{}'.format(name, rooting, new, '' if new.endswith(';') else ';'))
+
     @property
     def name(self):
         m = re.search(r'tree\s+(?P<name>[^=]+)\s*=', strip_brackets(self, {'[': ']'}))
@@ -21,7 +31,7 @@ class Tree(str):
 
         :return: `True`|`False`|`None`
         """
-        m = re.search(r'\[&(?P<rooting>[RU])\]', self)
+        m = re.search(r'\[&(?P<rooting>[RU])]', self)
         if m:
             return m.group('rooting') == 'R'
         return None

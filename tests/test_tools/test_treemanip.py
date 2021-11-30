@@ -1,7 +1,28 @@
 """Tests for utils in bin directory"""
 import pytest
 
-from nexus.tools import delete_trees, sample_trees, strip_comments_in_trees
+from nexus.tools import (
+    delete_trees, sample_trees, strip_comments_in_trees, visit_tree_nodes, visit_trees)
+
+
+def test_visit_tree_nodes(trees):
+    def rename(n):
+        n.name = n.name.lower() if n.name else n.name
+    assert 'chris' not in trees.write()
+    res = visit_tree_nodes(trees, rename)
+    assert 'chris' in res.write()
+
+
+def test_visit_trees(trees):
+    def prune_chris(tree):
+        tree.prune_by_names(['Chris'])
+        return tree
+    assert 'Chris' in trees.write()
+    res = visit_trees(trees, prune_chris)
+    print(res.trees.trees)
+    assert 'Chris' not in res.write()
+    leafs = res.trees.trees[0].newick_tree.get_leaf_names()
+    assert 'Bruce' in leafs and ('Chris' not in leafs)
 
 
 def test_run_deltree(trees):
