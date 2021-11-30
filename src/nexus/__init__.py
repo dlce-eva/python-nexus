@@ -7,5 +7,5 @@ from nexus import handlers
 from nexus.exceptions import NexusFormatException
 from nexus import tools
 
-__version__ = "2.4.2.dev0"
+__version__ = "2.5.0"
 __all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools"]

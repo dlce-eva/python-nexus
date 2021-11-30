@@ -1,7 +1,7 @@
 # Changes
 
 
-## unreleased
+## v2.5
 
 Added tree tools allowing tree manipulation using the `newick.Node` objects.
 
