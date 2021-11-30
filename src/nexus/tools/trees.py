@@ -22,8 +22,8 @@ def replace_trees(func):
     return _
 
 
-@replace_trees
 @with_nexus_reader
+@replace_trees
 def visit_trees(nexus_obj, visitor, log=None):
     """
     Manipulate all trees in a `NexusReader` by running a callable with the following signature:
@@ -41,8 +41,8 @@ def visit_trees(nexus_obj, visitor, log=None):
             yield Tree.from_newick(res, name=tree.name, rooted=tree.rooted)
 
 
-@replace_trees
 @with_nexus_reader
+@replace_trees
 def visit_tree_nodes(nexus_obj, visitor, log=None):
     """
     Manipulate all trees in a `NexusReader` by running a callable on each node of each tree.
@@ -55,8 +55,8 @@ def visit_tree_nodes(nexus_obj, visitor, log=None):
         yield Tree.from_newick(ntree, name=tree.name, rooted=tree.rooted)
 
 
-@replace_trees
 @with_nexus_reader
+@replace_trees
 def delete_trees(nexus_obj, delitems, log=None):
     """
     :param nexus_obj: A `NexusReader` instance
@@ -75,8 +75,8 @@ def delete_trees(nexus_obj, delitems, log=None):
             yield tree
 
 
-@replace_trees
 @with_nexus_reader
+@replace_trees
 def sample_trees(nexus_obj, num_trees=None, every_nth=None, log=None):
     """
     Returns a specified number (`num_trees`) of random trees from the nexus.
@@ -107,8 +107,8 @@ def sample_trees(nexus_obj, num_trees=None, every_nth=None, log=None):
     yield from trees
 
 
-@replace_trees
 @with_nexus_reader
+@replace_trees
 def strip_comments_in_trees(nexus_obj, log=None):
     """
     Removes comments from the trees in a nexus

@@ -5,11 +5,19 @@ from nexus.tools import (
     delete_trees, sample_trees, strip_comments_in_trees, visit_tree_nodes, visit_trees)
 
 
+def test_decorator_order(trees, tmp_path):
+    tmp_path.joinpath('t.nex').write_text(trees.write(), encoding='utf8')
+    new_nex = delete_trees(trees.write(), [2])
+    assert len(new_nex.trees.trees) == 2
+    new_nex = delete_trees(tmp_path / 't.nex', [2])
+    assert len(new_nex.trees.trees) == 2
+
+
 def test_visit_tree_nodes(trees):
     def rename(n):
         n.name = n.name.lower() if n.name else n.name
     assert 'chris' not in trees.write()
-    res = visit_tree_nodes(trees, rename)
+    res = visit_tree_nodes(trees.write(), rename)
     assert 'chris' in res.write()
 
 
@@ -18,7 +26,7 @@ def test_visit_trees(trees):
         tree.prune_by_names(['Chris'])
         return tree
     assert 'Chris' in trees.write()
-    res = visit_trees(trees, prune_chris)
+    res = visit_trees(trees.write(), prune_chris)
     print(res.trees.trees)
     assert 'Chris' not in res.write()
     leafs = res.trees.trees[0].newick_tree.get_leaf_names()
