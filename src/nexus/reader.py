@@ -164,6 +164,9 @@ class NexusReader(object):
         blocks = []
         for block in self.blocks.values():
             if block in blocks:
+                # We skip copies of blocks - which might have happened to provide shortcuts for
+                # semantically identical but differently named blocks, such as "data" and
+                # "characters".
                 continue
             blocks.append(block)
         for block in blocks:
