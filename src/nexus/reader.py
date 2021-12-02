@@ -32,7 +32,6 @@ class NexusReader(object):
         self.characters = None
         self.trees = None
         self.taxa = None
-        self._data_for_characters_shortcut = False
 
         if blocks:
             self._set_blocks(blocks)
@@ -80,7 +79,6 @@ class NexusReader(object):
 
         if self.blocks.get('characters') and not self.blocks.get('data'):
             self.blocks['data'] = self.blocks['characters']
-            self._data_for_characters_shortcut = True
 
         for block in self.blocks:
             setattr(self, block, self.blocks[block])
@@ -164,8 +162,8 @@ class NexusReader(object):
         """
         out = ["#NEXUS\n"]
         blocks = []
-        for name, block in self.blocks.items():
-            if name == 'data' and self._data_for_characters_shortcut:
+        for block in self.blocks.values():
+            if block in blocks:
                 continue
             blocks.append(block)
         for block in blocks:
