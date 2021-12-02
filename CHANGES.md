@@ -1,6 +1,12 @@
 # Changes
 
 
+## v2.5.2
+
+Fixed bug whereby a duplicate characters block was written by `NexusReader`
+in case a `'data'` block was inserted as shortcut to `CharacterHandler`.
+
+
 ## v2.5.1
 
 Fixed bug where the wrong decorator order would prevent tree manipulation
