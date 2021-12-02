@@ -161,10 +161,18 @@ class NexusReader(object):
         :return: String
         """
         out = ["#NEXUS\n"]
-        for block in self.blocks:
-            out.append(self.blocks[block].write())
+        blocks = []
+        for block in self.blocks.values():
+            if block in blocks:
+                # We skip copies of blocks - which might have happened to provide shortcuts for
+                # semantically identical but differently named blocks, such as "data" and
+                # "characters".
+                continue
+            blocks.append(block)
+        for block in blocks:
+            out.append(block.write())
             # empty line after block if needed
-            if len(self.blocks) > 1:
+            if len(blocks) > 1:
                 out.append("\n")
         return "\n".join(out)
 

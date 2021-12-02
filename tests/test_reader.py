@@ -19,6 +19,11 @@ def test_reader_from_blocks():
     assert hasattr(n, 'custom')
 
 
+def test_roundtrip(examples):
+    nex = NexusReader(examples.joinpath('example2.nex'))
+    _ = NexusReader.from_string(nex.write())
+
+
 def test_read_file(nex, examples):
     """Test the Core functionality of NexusReader"""
     assert 'data' in nex.blocks
