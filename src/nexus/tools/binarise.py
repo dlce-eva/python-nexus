@@ -22,7 +22,9 @@ def _recode_to_binary(char, keep_zero=False):
         `char` dictionary is not a string (i.e.
         integer or None values)
 
-    >>> recode = _recode_to_binary({'Maori': '1', 'Dutch': '2', 'Latin': '1'})
+    >>> states, recode = _recode_to_binary({'Maori': '1', 'Dutch': '2', 'Latin': '1'})
+    >>> states
+    ['1', '2']
     >>> recode['Maori']
     '10'
     >>> recode['Dutch']
@@ -46,7 +48,7 @@ def _recode_to_binary(char, keep_zero=False):
         char[taxon] = [v for v in value.replace(" ", ",").split(",") if v not in unwanted_states]
         states.update(char[taxon])
 
-    states = sorted(states)
+    states = tuple(sorted(states))
     num_states = len(states)
     for taxon, values in char.items():
         newdata[taxon] = ['0' for _ in range(num_states)]
@@ -56,7 +58,7 @@ def _recode_to_binary(char, keep_zero=False):
         newdata[taxon] = "".join(newdata[taxon])
         assert len(newdata[taxon]) == num_states
 
-    return newdata
+    return (states, newdata)
 
 
 @with_nexus_reader
@@ -85,15 +87,15 @@ def binarise(nexus_obj, keep_zero=False):
     for i in sorted(nexus_obj.data.charlabels):
         label = nexus_obj.data.charlabels[i]  # character label
         char = nexus_obj.data.characters[label]  # character dict
-        recoding = _recode_to_binary(char, keep_zero)  # recode
+        states, recoding = _recode_to_binary(char, keep_zero)  # recode
 
         new_char_length = len(recoding[list(recoding.keys())[0]])
 
         # loop over recoded data
         for j in range(new_char_length):
-            for taxon, state in recoding.items():
+            for taxon, value in recoding.items():
                 # make new label
-                new_label = "%s_%d" % (str(label), j)
+                new_label = "%s_%s" % (str(label), states[j])
                 # add to nexus
-                n.add(taxon, new_label, state[j])
+                n.add(taxon, new_label, value[j])
     return n
