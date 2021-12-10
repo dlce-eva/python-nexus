@@ -257,7 +257,8 @@ class DataHandler(GenericHandler):
             for char in charblock.split(","):
                 char = char.strip()
                 if not len(char):
-                    warnings.warn("Encountered an empty character label at position %d" % char_index)
+                    warnings.warn(
+                        "Encountered an empty character label at position %d" % char_index)
                     continue
                 char = char_number_pattern.sub('\\2', char)
                 self.charlabels[char_index] = char
