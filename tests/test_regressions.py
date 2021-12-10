@@ -1,7 +1,7 @@
 """Regression Tests"""
 import os
 import re
-import unittest
+import warnings
 
 import pytest
 
@@ -359,3 +359,32 @@ def test_TreeHandler_MrBayes(regression):
     """
     nex = NexusReader(regression / 'mrbayes.trees')
     assert len(nex.trees.trees) == 1
+
+
+def test_DataHandler_trailing_comma():
+    """Trailing comma in charstatelabels creates an empty character at N+1"""
+    with warnings.catch_warnings(record=True) as w:
+        nex = NexusReader.from_string("""
+            BEGIN DATA;
+                DIMENSIONS NTAX=3 NCHAR=1;
+                FORMAT MISSING=? GAP=- SYMBOLS="01";
+                CHARSTATELABELS
+                1 ALL,
+            ;
+
+            MATRIX
+            A        1
+            B        0
+            C        0
+            ;
+            END;
+            """)
+        assert len(w) == 1, 'Expected 1 warning, got %r' % w
+        assert issubclass(w[0].category, UserWarning)
+        assert "empty character label" in str(w[-1].message)
+        assert nex.data.nchar == 1
+        assert len(nex.data.charlabels) == 1
+        assert len(nex.data.characters) == 1
+    
+
+    
