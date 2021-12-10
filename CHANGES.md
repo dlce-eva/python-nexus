@@ -1,6 +1,12 @@
 # Changes
 
 
+## v2.6.0
+
+Labelling of charstates in the recode-to-binary tool now matches the original
+states .
+
+
 ## v2.5.2
 
 Fixed bug whereby a duplicate characters block was written by `NexusReader`
