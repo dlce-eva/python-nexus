@@ -105,9 +105,9 @@ class TreeHandler(GenericHandler):
                     lost_in_translation = False
 
             elif self.is_tree.search(line):
-                seen_trees += 1
-                if seen_trees > self.burnin:
+                if seen_trees >= self.burnin:
                     self.trees.append(Tree(line))
+                seen_trees += 1
 
         # get taxa if not translated.
         if (not self.translators) and self.trees:

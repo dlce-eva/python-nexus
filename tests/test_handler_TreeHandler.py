@@ -506,6 +506,7 @@ def test_BEAST_format():
 
 
 def test_burnin(examples):
+    # start with three trees
     nex = NexusReader.from_file(examples / 'example.trees', burnin=0)
     assert len(nex.trees.trees) == 3, len(nex.trees.trees)
 
@@ -522,6 +523,8 @@ def test_sample_trees(examples):
 
 
 def test_burnin_and_sample_trees(examples):
-    nex = NexusReader.from_file(examples / 'example.trees', burnin=1, sample_trees=1)
+    nex = NexusReader.from_file(examples / 'example.trees', burnin=2, sample_trees=1)
     assert len(nex.trees.trees) == 1, len(nex.trees.trees)
-
+    # ensure that the sampled tree is the only that could be sampled after the
+    # the burn-in was removed
+    assert nex.trees.trees[0].startswith('tree tree.20000.883.396049'), 'incorrect tree sampled'

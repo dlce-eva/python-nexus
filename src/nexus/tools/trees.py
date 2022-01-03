@@ -105,8 +105,6 @@ def _sample_trees(trees, num_trees=None, every_nth=None):
     elif num_trees:
         if num_trees > ntrees:
             raise ValueError("Treefile only has %d trees in it." % ntrees)
-        if num_trees == ntrees:  # pragma: no cover
-            return trees  # um. ok.
         yield from random.sample(trees, num_trees)
     elif every_nth:
         yield from [tree for index, tree in enumerate(trees, 1) if index % every_nth == 0]
