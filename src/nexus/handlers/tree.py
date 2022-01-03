@@ -71,10 +71,14 @@ class TreeHandler(GenericHandler):
         self.attributes = []
         self.trees = []
 
+        self.burnin = kw.get('burnin', 0)
+        self.sample_trees = kw.get('sample_trees', None)
+
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
         translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.\_\-]+)[,;]?""")
 
         lost_in_translation = False
+        seen_trees = 0
         for line in self.block:
             # look for translation start, and turn on lost_in_translation
             if translate_start.match(line):
@@ -101,13 +105,20 @@ class TreeHandler(GenericHandler):
                     lost_in_translation = False
 
             elif self.is_tree.search(line):
-                self.trees.append(Tree(line))
+                seen_trees += 1
+                if seen_trees > self.burnin:
+                    self.trees.append(Tree(line))
 
         # get taxa if not translated.
         if (not self.translators) and self.trees:
             taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
+        
+        # sample trees if requested
+        if self.sample_trees:
+            from nexus.tools.trees import _sample_trees
+            self.trees = list(_sample_trees(self.trees, self.sample_trees))
 
     def __getitem__(self, index):
         return self.trees[index]

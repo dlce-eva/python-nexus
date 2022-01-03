@@ -75,36 +75,71 @@ def delete_trees(nexus_obj, delitems, log=None):
             yield tree
 
 
-@with_nexus_reader
-@replace_trees
-def sample_trees(nexus_obj, num_trees=None, every_nth=None, log=None):
+
+def _sample_trees(trees, num_trees=None, every_nth=None):
     """
-    Returns a specified number (`num_trees`) of random trees from the nexus.
+    Returns a specified number (`num_trees`) of random trees from the nexus,
+    or samples `every_nth` tree from the nexus file.
+    
+    Intended for internal use only, the wrapper `sample_trees` is intended for 
+    general use.
+
+    :param trees: A list of trees
+    :type trees: List
 
     :param num_trees: The number of trees to resample
     :type num_trees: Integer
 
-    :param nexus_obj: A `NexusReader` instance
-    :type nexus_obj: NexusReader
+    :param every_nth: The number of trees to at every step.
+    :type every_nth: Integer
 
-    :return: A NexusReader instance.
+    :return: A generator of trees
 
     :raises ValueError: if num_trees is larger than population
+    :raises ValueError: if both num_trees and every_nth is specified.
+    :raises ValueError: if neither num_trees nor every_nth is specified.
     """
-    assert (num_trees or every_nth) and not (num_trees and every_nth), \
-        "One of num_trees and every_nth must be selected"
-    if num_trees:
-        if num_trees > nexus_obj.trees.ntrees:
-            raise ValueError("Treefile only has %d trees in it." % nexus_obj.trees.ntrees)
-        if num_trees == nexus_obj.trees.ntrees:  # pragma: no cover
-            return nexus_obj  # um. ok.
-        trees = random.sample(nexus_obj.trees.trees, num_trees)
+    ntrees = len(trees)
+    if num_trees and every_nth:
+        raise ValueError("Can only handle one operation (`num_trees` OR `every_nth`) at once.")
+    elif num_trees:
+        if num_trees > ntrees:
+            raise ValueError("Treefile only has %d trees in it." % ntrees)
+        if num_trees == ntrees:  # pragma: no cover
+            return trees  # um. ok.
+        yield from random.sample(trees, num_trees)
+    elif every_nth:
+        yield from [tree for index, tree in enumerate(trees, 1) if index % every_nth == 0]
     else:
-        trees = [tree for index, tree in enumerate(nexus_obj.trees, 1) if index % every_nth == 0]
+        raise ValueError("One of num_trees and every_nth must be selected.")
+    
 
+# wraps _sample trees to handle CLI niceties like @with_nexus_reader
+@with_nexus_reader
+@replace_trees
+def sample_trees(nexus_obj, num_trees=None, every_nth=None, log=None):
+    """
+    Returns a specified number (`num_trees`) of random trees from the nexus,
+    or samples `every_nth` tree from the nexus file.
+
+    :param nexus_obj: A `NexusReader` instance.
+    :type nexus_obj: NexusReader
+
+    :param num_trees: The number of trees to resample
+    :type num_trees: Integer
+
+    :param every_nth: The number of trees to at every step.
+    :type every_nth: Integer
+
+    :return: A generator of trees
+    """
     if log:
-        log.info("%d trees read. Sampling %d" % (nexus_obj.trees.ntrees, len(trees)))
-    yield from trees
+        if num_trees:
+            log.info("%d trees read. Sampling %d" % (nexus_obj.trees.ntrees, num_trees))
+        elif every_nth:
+            log.info("%d trees read. Sampling every %d" % (nexus_obj.trees.ntrees, every_nth))
+
+    yield from _sample_trees(nexus_obj.trees.trees, num_trees=num_trees, every_nth=every_nth)
 
 
 @with_nexus_reader

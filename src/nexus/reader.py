@@ -32,6 +32,9 @@ class NexusReader(object):
         self.characters = None
         self.trees = None
         self.taxa = None
+        
+        self.burnin = blocks.pop('burnin', 0)
+        self.sample_trees = blocks.pop('sample_trees', None)
 
         if blocks:
             self._set_blocks(blocks)
@@ -42,7 +45,7 @@ class NexusReader(object):
             self._set_blocks(NexusReader._blocks_from_file(filename))
 
     @classmethod
-    def from_file(cls, filename, encoding='utf-8-sig'):
+    def from_file(cls, filename, encoding='utf-8-sig', **kw):
         """
         Loads and Parses a Nexus File
 
@@ -50,14 +53,14 @@ class NexusReader(object):
         :raises IOError: If file reading fails.
         :return: `NexusReader` object.
         """
-        res = cls()
+        res = cls(**kw)
         res._set_blocks(NexusReader._blocks_from_file(filename, encoding=encoding))
         res.filename = filename
         res.short_filename = pathlib.Path(filename).name
         return res
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string, **kw):
         """
         Loads and Parses a Nexus from a string
 
@@ -66,7 +69,7 @@ class NexusReader(object):
 
         :return: None
         """
-        res = cls()
+        res = cls(**kw)
         res._set_blocks(NexusReader._blocks_from_string(string))
         return res
 
@@ -75,7 +78,9 @@ class NexusReader(object):
         for block, lines in (blocks.items() if isinstance(blocks, dict) else blocks):
             if block in self.blocks:
                 raise NexusFormatException("Duplicate Block %s" % block)
-            self.blocks[block] = HANDLERS.get(block, GenericHandler)(name=block, data=lines)
+            self.blocks[block] = HANDLERS.get(block, GenericHandler)(
+                name=block, data=lines, burnin=self.burnin, sample_trees=self.sample_trees
+            )
 
         if self.blocks.get('characters') and not self.blocks.get('data'):
             self.blocks['data'] = self.blocks['characters']

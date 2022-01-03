@@ -41,7 +41,7 @@ def test_run_deltree(trees):
     assert new_nex.trees[1].startswith('tree tree.20000.883.396049')
 
 
-def test_run_resample_1(trees):
+def test_sample_trees_1(trees):
     # shouldn't resample anything..
     new_nex = sample_trees(trees, every_nth=1)
     assert len(new_nex.trees.trees) == 3
@@ -66,7 +66,15 @@ def test_run_randomise_sample2(trees_translated):
     assert new_nex.trees.ntrees == len(new_nex.trees.trees) == 2
 
 
-def test_run_randomise_sample_toobig(trees_translated):
+def test_sample_trees_error(trees_translated):
     # raises ValueError, sample size too big (only 3 trees in this file)
     with pytest.raises(ValueError):
         sample_trees(trees_translated, 10)
+
+    # neither num_trees nor every_nth selected
+    with pytest.raises(ValueError):
+        sample_trees(trees_translated, None, None)
+
+    # both num_trees and every_nth selected
+    with pytest.raises(ValueError):
+        sample_trees(trees_translated, 1, 1)

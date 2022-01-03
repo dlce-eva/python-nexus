@@ -24,7 +24,7 @@ class GenericHandler(object):
             representation (used to regenerate a nexus file).
         3. block - a list of raw strings in this block
     """
-    def __init__(self, name=None, data=None):
+    def __init__(self, name=None, data=None, **kw):
         """Initialise datastore in <block> under <keyname>"""
         self.name = name
         self.block = data or []

@@ -503,3 +503,25 @@ def test_BEAST_format():
     trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
     assert trans == newtree, \
         "Unable to correctly detranslate a BEAST tree"
+
+
+def test_burnin(examples):
+    nex = NexusReader.from_file(examples / 'example.trees', burnin=0)
+    assert len(nex.trees.trees) == 3, len(nex.trees.trees)
+
+    nex = NexusReader.from_file(examples / 'example.trees', burnin=2)
+    assert len(nex.trees.trees) == 1, len(nex.trees.trees)
+
+    nex = NexusReader.from_file(examples / 'example.trees', burnin=3)
+    assert len(nex.trees.trees) == 0, len(nex.trees.trees)
+
+
+def test_sample_trees(examples):
+    nex = NexusReader.from_file(examples / 'example.trees', sample_trees=1)
+    assert len(nex.trees.trees) == 1, len(nex.trees.trees)
+
+
+def test_burnin_and_sample_trees(examples):
+    nex = NexusReader.from_file(examples / 'example.trees', burnin=1, sample_trees=1)
+    assert len(nex.trees.trees) == 1, len(nex.trees.trees)
+
