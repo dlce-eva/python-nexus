@@ -5,7 +5,7 @@ from clldutils.text import strip_brackets, split_text_with_context
 import newick
 
 from nexus.handlers import GenericHandler
-from nexus.exceptions import NexusFormatException
+from nexus.exceptions import NexusFormatException, TranslateTableException
 
 
 class Tree(str):
@@ -157,7 +157,7 @@ class TreeHandler(GenericHandler):
 
         :return: String of detranslated tree
         """
-        for found in self._findall_chunks(tree):
+        for i, found in enumerate(self._findall_chunks(tree), 1):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
                 if found['comment'] and found['branch']:
@@ -175,6 +175,11 @@ class TreeHandler(GenericHandler):
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
                 tree = tree.replace(found['match'], sub)
+        if len(translatetable) and len(translatetable) != i:
+            raise TranslateTableException(
+                "Mismatch between translate table size (n=%d) and expected taxa in trees (n=%d)" %(
+                len(translatetable), i
+            ))
         return tree
 
     def iter_lines(self):
