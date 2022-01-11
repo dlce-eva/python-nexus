@@ -405,3 +405,16 @@ def test_TreeHandler_TranslateBlockMismatch(regression):
     with pytest.raises(TranslateTableException):
         nex = NexusReader(regression / 'tree_translate_mismatch.trees')
         nex.trees.detranslate()
+
+
+def test_TreeHandler_TranslateBlockWithComments(regression):
+    """
+    Test reading of treefile that contains no translate block, so taxa are 
+    identified from parsing the first tree. If the tree contains comments of the
+    form "x(y)" then these used to get parsed incorrectly (as extra taxa).
+    """
+    nex = NexusReader(regression / 'tree_default_translate_with_comments.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 40
+    assert list(nex.trees.taxa)[39] == "tli"
+

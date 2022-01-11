@@ -103,9 +103,13 @@ class TreeHandler(GenericHandler):
             elif self.is_tree.search(line):
                 self.trees.append(Tree(line))
 
-        # get taxa if not translated.
+        # if there is not translate block then get the list of taxa 
+        # from the first tree.
         if (not self.translators) and self.trees:
-            taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
+            # remove comments first to avoid issues with comments like
+            # "var(median) = y"
+            onetree = self.remove_comments(self.trees[0])
+            taxa = re.findall(r"""[(),](\w+)[:),]""", onetree)
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
 
