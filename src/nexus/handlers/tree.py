@@ -72,7 +72,7 @@ class TreeHandler(GenericHandler):
         self.trees = []
 
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
-        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.\_\-]+)[,;]?""")
+        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\*\.\_\-]+)[,;]?""")
 
         lost_in_translation = False
         for line in self.block:

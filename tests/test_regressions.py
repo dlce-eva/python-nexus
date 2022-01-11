@@ -388,3 +388,11 @@ def test_DataHandler_trailing_comma():
     
 
     
+def test_TreeHandler_Taxon_with_asterisk(regression):
+    """
+    Test reading of treefile that contains a taxon with an asterisk in it.
+    """
+    nex = NexusReader(regression / 'tree_with_asterisk_in_taxa.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 38
+    assert list(nex.trees.taxa)[35 - 1] == "*R35"  # zero indexed, so 35th pos - 1
