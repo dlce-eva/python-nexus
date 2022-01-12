@@ -103,8 +103,7 @@ class TreeHandler(GenericHandler):
             elif self.is_tree.search(line):
                 self.trees.append(Tree(line))
 
-        # if there is not translate block then get the list of taxa 
-        # from the first tree.
+        # if there is not translate block then get the list of taxa from the first tree.
         if (not self.translators) and self.trees:
             # remove comments first to avoid issues with comments like
             # "var(median) = y"
@@ -161,7 +160,8 @@ class TreeHandler(GenericHandler):
 
         :return: String of detranslated tree
         """
-        for i, found in enumerate(self._findall_chunks(tree), 1):
+        i = 0
+        for i, found in enumerate(self._findall_chunks(tree), start=1):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
                 if found['comment'] and found['branch']:
@@ -181,9 +181,8 @@ class TreeHandler(GenericHandler):
                 tree = tree.replace(found['match'], sub)
         if len(translatetable) and len(translatetable) != i:
             raise TranslateTableException(
-                "Mismatch between translate table size (n=%d) and expected taxa in trees (n=%d)" %(
-                len(translatetable), i
-            ))
+                "Mismatch between translate table size (n={}) and expected taxa in trees "
+                "(n={})".format(len(translatetable), i))
         return tree
 
     def iter_lines(self):
