@@ -381,7 +381,7 @@ def test_tree_digits(findall):
         },
     }
     found = findall("tree a = ((1,2),3);")
-    assert len(found) == 3
+    assert len(found) == len(expected)
     for match in expected:
         for key in expected[match]:
             assert expected[match][key] == found[match][key]
@@ -412,7 +412,7 @@ def test_tree_with_branchlengths(findall):
         },
     }
     found = findall("tree a = ((1:0.1,2:0.2):0.9,3:0.3):0.9;")
-    assert len(found) == 3
+    assert len(found) == len(expected)
     for match in expected:
         for key in expected[match]:
             assert expected[match][key] == found[match][key]
@@ -445,7 +445,7 @@ def test_tree_complex(findall):
     found = findall(
         "tree a = ((1:[&var=1]0.1,2:[&var=2]0.2):[&var=3]0.9,3:[&var=4]0.3):[&var=5]0.9;"
     )
-    assert len(found) == 3
+    assert len(found) == len(expected)
     for match in expected:
         for key in expected[match]:
             assert expected[match][key] == found[match][key]

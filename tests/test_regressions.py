@@ -7,7 +7,7 @@ import pytest
 
 from nexus.reader import NexusReader
 from nexus.handlers.data import DataHandler
-
+from nexus.exceptions import TranslateTableException
 
 @pytest.fixture
 def bad_chars(regression):
@@ -385,6 +385,36 @@ def test_DataHandler_trailing_comma():
         assert nex.data.nchar == 1
         assert len(nex.data.charlabels) == 1
         assert len(nex.data.characters) == 1
-    
 
     
+def test_TreeHandler_Taxon_with_asterisk(regression):
+    """
+    Test reading of treefile that contains a taxon with an asterisk in it.
+    """
+    nex = NexusReader(regression / 'tree_with_asterisk_in_taxa.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 38
+    assert list(nex.trees.taxa)[35 - 1] == "*R35"  # zero indexed, so 35-1
+
+
+def test_TreeHandler_TranslateBlockMismatch(regression):
+    """
+    Test that a warning is generated when a treefile has an incorrectly sized
+    translate block.
+    """
+    with pytest.raises(TranslateTableException):
+        nex = NexusReader(regression / 'tree_translate_mismatch.trees')
+        nex.trees.detranslate()
+
+
+def test_TreeHandler_TranslateBlockWithComments(regression):
+    """
+    Test reading of treefile that contains no translate block, so taxa are 
+    identified from parsing the first tree. If the tree contains comments of the
+    form "x(y)" then these used to get parsed incorrectly (as extra taxa).
+    """
+    nex = NexusReader(regression / 'tree_default_translate_with_comments.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 40
+    assert list(nex.trees.taxa)[39] == "tli"
+

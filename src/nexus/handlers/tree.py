@@ -5,7 +5,7 @@ from clldutils.text import strip_brackets, split_text_with_context
 import newick
 
 from nexus.handlers import GenericHandler
-from nexus.exceptions import NexusFormatException
+from nexus.exceptions import NexusFormatException, TranslateTableException
 
 
 class Tree(str):
@@ -72,7 +72,7 @@ class TreeHandler(GenericHandler):
         self.trees = []
 
         translate_start = re.compile(r"""^translate$""", re.IGNORECASE)
-        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\.\_\-]+)[,;]?""")
+        translation_pattern = re.compile(r"""(\d+)\s(['"\w\d\*\.\_\-]+)[,;]?""")
 
         lost_in_translation = False
         for line in self.block:
@@ -103,9 +103,12 @@ class TreeHandler(GenericHandler):
             elif self.is_tree.search(line):
                 self.trees.append(Tree(line))
 
-        # get taxa if not translated.
+        # if there is not translate block then get the list of taxa from the first tree.
         if (not self.translators) and self.trees:
-            taxa = re.findall(r"""[(),](\w+)[:),]""", self.trees[0])
+            # remove comments first to avoid issues with comments like
+            # "var(median) = y"
+            onetree = self.remove_comments(self.trees[0])
+            taxa = re.findall(r"""[(),](\w+)[:),]""", onetree)
             for taxon_id, t in enumerate(taxa, 1):
                 self.translators[taxon_id] = t
 
@@ -157,7 +160,8 @@ class TreeHandler(GenericHandler):
 
         :return: String of detranslated tree
         """
-        for found in self._findall_chunks(tree):
+        i = 0
+        for i, found in enumerate(self._findall_chunks(tree), start=1):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
                 if found['comment'] and found['branch']:
@@ -175,6 +179,10 @@ class TreeHandler(GenericHandler):
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
                 tree = tree.replace(found['match'], sub)
+        if len(translatetable) and len(translatetable) != i:
+            raise TranslateTableException(
+                "Mismatch between translate table size (n={}) and expected taxa in trees "
+                "(n={})".format(len(translatetable), i))
         return tree
 
     def iter_lines(self):

@@ -108,24 +108,26 @@ End;""")
             ['-d', '1,3'],
             lambda o: ('tree1' not in o) and ('tree2' in o) and ('tree3' not in o)),
         (
-                ['tree1', 'tree2', 'tree3'],
-                ['-r', '3'],
-                lambda o: ('tree1' not in o) and ('tree2' not in o) and ('tree3' in o)),
+            ['tree1', 'tree2', 'tree3'],
+            ['-r', '3'],
+            lambda o: ('tree1' not in o) and ('tree2' not in o) and ('tree3' in o)),
         (
-                ['tree1', 'tree2', 'tree3'],
-                ['-n', '2'],
-                lambda o: len(re.findall('tree[0-9]', o)) == 2),
+            ['tree1', 'tree2', 'tree3'],
+            ['-n', '2'],
+            lambda o: len(re.findall('tree[0-9]', o)) == 2),
         (
-                ['tree1', 'tree2', 'tree3'],
-                ['-c', '-t'],
-                lambda o: '[comment]' not in o),
+            ['tree1', 'tree2', 'tree3'],
+            ['-c', '-t'],
+            lambda o: '[comment]' not in o),
     ]
 )
 def test_trees(trees, options, check, capsys, tmpdir):
     trees = ['tree {0} = (a[comment]);'.format(t) for t in trees]
+    x = 'begin trees;\n{0}\nend;\n'.format('\n'.join(trees))
     n = _make_nexus(tmpdir, 'begin trees;\n{0}\nend;\n'.format('\n'.join(trees)))
     main(['trees', str(n)] + options)
     out, _ = capsys.readouterr()
+    print(out)
     assert check(out)
 
 
