@@ -61,6 +61,18 @@ class TreeHandler(GenericHandler):
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
+
+    translate_regex_beast = re.compile(r"""
+        ([,(])              # boundary
+        ([A-Z0-9_\-\.]+)    # taxa-id
+        (\[.+?\])?          # minimally match an optional comment chunk
+        :?                  # optional colon
+        (\[.+?\])           # minimally match an optional comment chunk
+        (\d+(\.\d+)?)       # optional branchlengths
+        (?=[),])?           # end boundary
+    """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
+
+
     def __init__(self, **kw):
         super(TreeHandler, self).__init__(**kw)
         # does the treefile have a translate block?
@@ -134,10 +146,17 @@ class TreeHandler(GenericHandler):
     @staticmethod
     def _findall_chunks(tree):
         """Helper function to find groups used by detranslate."""
+        
+        # check for beast tree or not -> decide which regex to use
+        if '{' in tree and '[' in tree:  # sufficient?
+            regex = TreeHandler.translate_regex_beast
+        else:
+            regex = TreeHandler.translate_regex
+            
         matches = []
         index = 0
         while True:
-            match = TreeHandler.translate_regex.search(tree, index)
+            match = regex.search(tree, index)
             if not match:
                 break
             m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))

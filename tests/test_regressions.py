@@ -418,3 +418,15 @@ def test_TreeHandler_TranslateBlockWithComments(regression):
     assert len(nex.trees.taxa) == 40
     assert list(nex.trees.taxa)[39] == "tli"
 
+
+def test_TreeHandler_BeastTranslate(regression):
+    """
+    Test handling of BEAST Translate Block
+    """
+    nex = NexusReader(regression / 'detranslate-beast.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 19
+    nex.trees.detranslate()
+    assert len(nex.trees.taxa) == 19
+    assert list(nex.trees.taxa)[1] == "B"
+
