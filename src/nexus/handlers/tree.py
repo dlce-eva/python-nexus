@@ -61,7 +61,6 @@ class TreeHandler(GenericHandler):
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
-
     translate_regex_beast = re.compile(r"""
         ([,(])              # boundary
         ([A-Z0-9_\-\.]+)    # taxa-id
@@ -71,7 +70,6 @@ class TreeHandler(GenericHandler):
         (\d+(\.\d+)?)       # optional branchlengths
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
-
 
     def __init__(self, **kw):
         super(TreeHandler, self).__init__(**kw)
@@ -146,13 +144,13 @@ class TreeHandler(GenericHandler):
     @staticmethod
     def _findall_chunks(tree):
         """Helper function to find groups used by detranslate."""
-        
+
         # check for beast tree or not -> decide which regex to use
         if '{' in tree and '[' in tree:  # sufficient?
             regex = TreeHandler.translate_regex_beast
         else:
             regex = TreeHandler.translate_regex
-            
+
         matches = []
         index = 0
         while True:
