@@ -1,6 +1,11 @@
 # Changes
 
 
+## v2.7.0
+
+Better handling of detranslate for BEAST trees.
+
+
 ## v2.6.0
 
 Labelling of charstates in the recode-to-binary tool now matches the original
