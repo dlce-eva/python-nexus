@@ -67,6 +67,7 @@ class TreeHandler(GenericHandler):
         (\[.+?\])?          # minimally match an optional comment chunk
         :?                  # optional colon
         (\[.+?\])           # minimally match an optional comment chunk
+        :?                  # optional colon
         (\d+(\.\d+)?)       # optional branchlengths
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)

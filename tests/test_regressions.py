@@ -430,3 +430,15 @@ def test_TreeHandler_BeastTranslate(regression):
     assert len(nex.trees.taxa) == 19
     assert list(nex.trees.taxa)[1] == "B"
 
+
+
+def test_TreeHandler_BeastTranslate_2(regression):
+    """
+    Test handling of BEAST Translate Block in Phlorest.
+    """
+    nex = NexusReader(regression / 'detranslate-beast-2.trees')
+    assert len(nex.trees.trees) == 1
+    assert len(nex.trees.taxa) == 10
+    nex.trees.detranslate()
+    assert len(nex.trees.taxa) == 10
+    assert list(nex.trees.taxa)[1] == "B"
