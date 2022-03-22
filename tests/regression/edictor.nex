@@ -1,0 +1,22 @@
+#NEXUS
+
+BEGIN CHARACTERS;
+    concept_1=1-2; [HAND]
+    concept_2=3-4; [LEG]
+
+END; [CHARACTERS]
+BEGIN DATA;
+DIMENSIONS NTAX=3 NCHAR=4;
+FORMAT DATATYPE=STANDARD SYMBOLS="10" GAP=- MISSING=? INTERLEAVE=yes;
+MATRIX
+A            1000
+B            1000
+C            1000
+;
+END;
+
+begin assumptions;
+	charset concept_1=1-2; [HAND]
+	charset concept_2=3-4; [LEG]
+
+end;
