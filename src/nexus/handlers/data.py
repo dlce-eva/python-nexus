@@ -36,6 +36,9 @@ class DataHandler(GenericHandler):
         r"""format\b(.*?);""",
         re.IGNORECASE | re.DOTALL | re.MULTILINE
     )
+    _label_pattern = re.compile(
+        r"""(.+?)=(.+?);"""
+    )
 
     def __init__(self, **kw):
         super(DataHandler, self).__init__(**kw)
@@ -51,7 +54,6 @@ class DataHandler(GenericHandler):
 
         self.format = self.parse_format_line("\n".join(self.block))
         self.block = self._parse_charstate_block(self.block)
-
         _dim_taxa, _dim_chars = None, None
 
         read_data = False
@@ -68,6 +70,7 @@ class DataHandler(GenericHandler):
                     pass
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)
+                
             elif in_matrix:
                 line = self.remove_comments(line)
                 try:  # NORMALISE WHITESPACE
@@ -78,6 +81,12 @@ class DataHandler(GenericHandler):
 
                 taxon = QUOTED_PATTERN.sub('\\1', taxon.strip())
                 self.add_taxon(taxon, self._parse_sites(sites.strip()))
+            elif self._label_pattern.findall(line):
+                for label in self._label_pattern.findall(line):
+                    for site in self.parse_range(label[1]):
+                        # note we subtract 1 from the site index in the nexus
+                        # file as this is zero indexed in DataHandler.matrix.
+                        self.charlabels[site - 1] = label[0]
 
         if not read_data:
             # Let's try to read a "wrapped" matrix:
@@ -115,7 +124,11 @@ class DataHandler(GenericHandler):
     @property
     def nchar(self):
         """Number of Characters"""
-        return len(self.matrix[self.taxa[0]])
+        if self.taxa and self.matrix:
+            return len(self.matrix[self.taxa[0]])
+        elif self.charlabels:
+            return len(self.charlabels)
+        return 0  # pragma: no cover
 
     @property
     def taxa(self):
@@ -264,6 +277,16 @@ class DataHandler(GenericHandler):
                 self.charlabels[char_index] = char
                 char_index += 1
         return new_data.split("\n")
+    
+    def parse_range(self, siterange):
+        if ',' in siterange:
+            return [int(c) for c in siterange.split(',')]
+        elif '-' in siterange:
+            start, stop = siterange.split('-')
+            start, stop = int(start), int(stop)
+            return list(range(start, stop + 1))
+        else:
+            return [int(siterange)]
 
     def iter_lines(self):
         """
