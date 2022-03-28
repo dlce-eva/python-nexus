@@ -75,6 +75,8 @@ def test_remove(writer):
     writer.remove("French", "char2")
     assert 'French' not in writer.data['char2']
     assert 'French' in writer.taxa
+    writer.remove("French", "char1")
+    assert 'French' not in writer.taxa
 
 
 def test_remove_character(writer):
