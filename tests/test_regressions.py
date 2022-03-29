@@ -431,7 +431,6 @@ def test_TreeHandler_BeastTranslate(regression):
     assert list(nex.trees.taxa)[1] == "B"
 
 
-
 def test_TreeHandler_BeastTranslate_2(regression):
     """
     Test handling of BEAST Translate Block in Phlorest.
@@ -442,3 +441,26 @@ def test_TreeHandler_BeastTranslate_2(regression):
     nex.trees.detranslate()
     assert len(nex.trees.taxa) == 10
     assert list(nex.trees.taxa)[1] == "B"
+
+
+def test_Edictor(regression):
+    """
+    Test handling of EDICTOR Nexus files
+    """
+    nex = NexusReader(regression / 'edictor.nex')
+    assert 'data' in nex.blocks
+    assert 'characters' in nex.blocks
+    
+    assert nex.blocks['data'].nchar == 4
+    assert nex.blocks['data'].ntaxa == 3
+    # repr used to fail for characters because nchar/ntaxa 
+    assert repr(nex.blocks['data']), 'repr of data block failed'
+
+    assert nex.blocks['characters'].nchar == 4
+    assert nex.blocks['characters'].ntaxa == 0
+    assert repr(nex.blocks['characters']), 'repr of characters block failed'
+    
+    assert len(nex.data.charlabels) == 4
+    assert nex.data.nchar == 4
+    
+    assert nex.data.charlabels == nex.characters.charlabels

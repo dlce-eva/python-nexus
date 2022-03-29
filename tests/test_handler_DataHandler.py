@@ -326,3 +326,10 @@ def test_wrapped_data(examples):
     assert len([s for s in sites if s == r.data.format['gap']]) == 5
     if sys.version_info >= (3, 6):
         assert len([s for s in sites if s == r.data.format['missing']]) == 85
+
+
+def test_parse_range():
+    d = DataHandler()
+    assert d.parse_range("1-3") == [1, 2, 3]
+    assert d.parse_range("29") == [29]
+    assert d.parse_range("1,9") == [1, 9]
