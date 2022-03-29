@@ -1,6 +1,13 @@
 # Changes
 
 
+## v2.8.0
+
+- handle nexus files with empty characters block (e.g. edictor)
+- optionally preserve insertion order of characters with `NexusWriter`
+- support another taxa translation variant
+
+
 ## v2.7.0
 
 Better handling of detranslate for BEAST trees.
