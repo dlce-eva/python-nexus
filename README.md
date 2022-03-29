@@ -294,13 +294,15 @@ NexusWriter will interpolate missing entries (i.e. taxon2 in this case)
 
 ... when you're ready, you can generate the nexus using `make_nexus` or `write_to_file`:
 ```python    
->>> data = n.make_nexus(interleave=True, charblock=True)
->>> n.write_to_file(filename="output.nex", interleave=True, charblock=True)
+>>> data = n.make_nexus(interleave=True, charblock=True, preserve_order=False)
+>>> n.write_to_file("output.nex", interleave=True, charblock=True, preserve_order=False)
 ```
 
 ... you can make an interleaved nexus by setting `interleave` to True, and you can
 include a character block in the nexus (if you have character labels for example) 
-by setting charblock to True.
+by setting charblock to True. Furthermore you can specify whether the order of added
+taxa and characters should be preserved by setting `preserve_order` to True, otherwise they will
+be sorted alphanumerically.
 
 There is rudimentary support for handling trees e.g.:
 ```python

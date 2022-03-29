@@ -75,6 +75,8 @@ def test_remove(writer):
     writer.remove("French", "char2")
     assert 'French' not in writer.data['char2']
     assert 'French' in writer.taxa
+    writer.remove("French", "char1")
+    assert 'French' not in writer.taxa
 
 
 def test_remove_character(writer):
@@ -128,6 +130,12 @@ def test_nexus_charblock(writer):
         == 'STANDARD'
     assert re.search(r'FORMAT.*SYMBOLS\="(\d+)";', n).groups()[0] \
         == '123456'
+    assert re.search(r"English\s+25\s*\n\s*French", n)
+
+
+def test_nexus_preserve_order(writer):
+    n = writer.make_nexus(charblock=True, preserve_order=True)
+    assert re.search(r"French\s+14\s*\n\s*English", n)
 
 
 def test_nexus_interleave(writer):
@@ -242,3 +250,13 @@ def test_regression_format_string_has_datatype_first(writer):
     out = writer.make_nexus()
     assert "FORMAT DATATYPE=STANDARD" in out
     assert 'SYMBOLS="123456"' in out
+
+
+def test_nexus_comments(writer):
+    writer.add_comment('comment')
+    writer.add_collabels('label0')
+    writer.add_collabels(['label1', 'label2'])
+    n = writer.make_nexus()
+    assert re.search(r"\[comment\s*\]", n)
+    assert re.search(r"\[label0\s*\]", n)
+    assert re.search(r"\[label2\s*\]", n)
