@@ -285,4 +285,4 @@ class NexusWriter(FileWriterMixin):
         """
         from .reader import NexusReader
         return NexusReader.from_string(
-                self.make_nexus(interleave=False, charblock=True, preserve_order=False))
+            self.make_nexus(interleave=False, charblock=True, preserve_order=False))

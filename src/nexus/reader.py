@@ -79,12 +79,12 @@ class NexusReader(object):
 
         if self.blocks.get('characters') and not self.blocks.get('data'):
             self.blocks['data'] = self.blocks['characters']
-        
+
         # copy character labels to data block if data block doesn't have labels
         if self.blocks.get('characters') and self.blocks.get('data'):
             if self.blocks['characters'].charlabels and not self.blocks.get('data').charlabels:
                 self.blocks['data'].charlabels = self.blocks['characters'].charlabels
-        
+
         for block in self.blocks:
             setattr(self, block, self.blocks[block])
 

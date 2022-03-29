@@ -70,7 +70,7 @@ class DataHandler(GenericHandler):
                     pass
             elif self.is_mesquite_attribute(line):
                 self.attributes.append(line)
-                
+
             elif in_matrix:
                 line = self.remove_comments(line)
                 try:  # NORMALISE WHITESPACE
@@ -277,7 +277,7 @@ class DataHandler(GenericHandler):
                 self.charlabels[char_index] = char
                 char_index += 1
         return new_data.split("\n")
-    
+
     def parse_range(self, siterange):
         if ',' in siterange:
             return [int(c) for c in siterange.split(',')]
