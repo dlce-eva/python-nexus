@@ -538,3 +538,21 @@ def test_BEAST_format():
     trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
     assert trans == newtree, \
         "Unable to correctly detranslate a BEAST tree"
+
+
+def test_leading_BEAST_format():
+    translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
+    oldtree = "tree STATE_0 [&lnP=-8411959.874895355,posterior=-8411959.874895355] = [&R] ((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
+    newtree = "tree STATE_0 [&lnP=-8411959.874895355,posterior=-8411959.874895355] = [&R] ((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
+    trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+    assert trans == newtree, \
+        "Unable to correctly detranslate a BEAST tree"
+
+
+def test_preamble():
+    translatetable = {'1': 'Chris', '2': 'Bruce', '3': 'Tom'}
+    oldtree = "tree STATE_0=((1:[&rate=1.0]48.056,3:[&rate=1.0]48.056):[&rate=1.0]161.121,2:[&rate=1.0]209.177);"
+    newtree = "tree STATE_0=((Chris:[&rate=1.0]48.056,Tom:[&rate=1.0]48.056):[&rate=1.0]161.121,Bruce:[&rate=1.0]209.177);"
+    trans = TreeHandler()._detranslate_tree(oldtree, translatetable)
+    assert trans == newtree, \
+        "Unable to correctly detranslate a BEAST tree"

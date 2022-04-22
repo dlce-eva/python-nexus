@@ -178,6 +178,12 @@ class TreeHandler(GenericHandler):
 
         :return: String of detranslated tree
         """
+        try:
+            # only search in newick string
+            preamble, tree = tree.split(" = ", 1)
+        except ValueError:
+            preamble, tree = None, tree
+            
         i = 0
         for i, found in enumerate(self._findall_chunks(tree), start=1):
             if found['taxon'] in translatetable:
@@ -201,6 +207,8 @@ class TreeHandler(GenericHandler):
             raise TranslateTableException(
                 "Mismatch between translate table size (n={}) and expected taxa in trees "
                 "(n={})".format(len(translatetable), i))
+        if preamble:
+            tree = preamble + " = " + tree
         return tree
 
     def iter_lines(self):
