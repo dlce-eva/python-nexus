@@ -1,6 +1,6 @@
 # python-nexus
 
-A Generic nexus (.nex, .trees) reader/writer for python.
+A Generic phylogenetic nexus format (.nex, .trees) reader and writer for python.
 
 [![Build Status](https://github.com/dlce-eva/python-nexus/workflows/tests/badge.svg)](https://github.com/dlce-eva/python-nexus/actions?query=workflow%3Atests)
 [![codecov](https://codecov.io/gh/dlce-eva/python-nexus/branch/master/graph/badge.svg)](https://codecov.io/gh/dlce-eva/python-nexus)
@@ -11,7 +11,10 @@ A Generic nexus (.nex, .trees) reader/writer for python.
 ## Description
 
 python-nexus provides simple nexus file-format reading/writing tools, and a small
-collection of nexus manipulation scripts.
+collection of nexus manipulation scripts. 
+
+Please note that this library works with the phylogenetics data format (e.g. https://en.wikipedia.org/wiki/Nexus_file)
+and not the phyics data format (e.g. https://manual.nexusformat.org/).
 
 Note: Due to a name clash with another python package, this package must be **installed** as
 `pip install python-nexus` but **imported** as `import nexus`.
