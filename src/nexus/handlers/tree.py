@@ -1,5 +1,6 @@
 import re
 import typing
+import collections
 
 from clldutils.text import strip_brackets, split_text_with_context
 import newick
@@ -178,8 +179,9 @@ class TreeHandler(GenericHandler):
 
         :return: String of detranslated tree
         """
+        preamble, new = preamble_and_newick(tree)
         i = 0
-        for i, found in enumerate(self._findall_chunks(tree), start=1):
+        for i, found in enumerate(self._findall_chunks(new), start=1):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
                 if found['comment'] and found['branch']:
@@ -196,12 +198,12 @@ class TreeHandler(GenericHandler):
                     # taxon only
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
-                tree = tree.replace(found['match'], sub)
+                new = new.replace(found['match'], sub)
         if len(translatetable) and len(translatetable) != i:
             raise TranslateTableException(
                 "Mismatch between translate table size (n={}) and expected taxa in trees "
                 "(n={})".format(len(translatetable), i))
-        return tree
+        return preamble + new
 
     def iter_lines(self):
         for attr in self.attributes:
@@ -216,3 +218,22 @@ class TreeHandler(GenericHandler):
             yield ';'
         for tree in self.trees:
             yield "\t" + tree
+
+
+def preamble_and_newick(tree):
+    """
+    Find (and split at) the first non-bracketed "="
+    """
+    brackets = {'[': ']'}
+    end_brackets = {v: k for k, v in brackets.items()}
+    bracket_level = collections.defaultdict(int)
+    for i, c in enumerate(tree):
+        if c in brackets:
+            bracket_level[c] += 1
+        elif c in end_brackets:
+            bracket_level[end_brackets[c]] -= 1
+        elif c == '=':
+            if not bracket_level or (not any(bracket_level.values())):
+                return tree[:i] + '=', tree[i + 1:]
+    else:
+        raise ValueError('invalid tree line')
