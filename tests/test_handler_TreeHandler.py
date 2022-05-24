@@ -123,6 +123,24 @@ def test_detranslate(trees_translated, examples):
     assert other_tree_file.trees[0] == trees_translated.trees[0]
 
 
+def test_detranslate_without_translators(nex):
+    """
+    Test that running detranslate when there's no translate block doesn't
+    break the trees
+    """
+    nex = NexusReader.from_string("""
+    #NEXUS
+
+    begin trees;
+        tree = (A,(B,C));
+    end;
+    """)
+    assert nex.trees.translators == {1: 'A', 2: 'B', 3: 'C'}
+    assert nex.trees._been_detranslated
+    nex.trees.detranslate()
+    assert nex.trees.trees[0] == 'tree = (A,(B,C));'
+
+
 def test_treelabel():
     nex = NexusReader.from_string("""
     #NEXUS
