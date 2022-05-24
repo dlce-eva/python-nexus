@@ -115,14 +115,16 @@ class TreeHandler(GenericHandler):
             elif self.is_tree.search(line):
                 self.trees.append(Tree(line))
 
-        # if there is not translate block then get the list of taxa from the first tree.
+        # if there is no translate block then get the list of taxa
+        # from the first tree.
         if (not self.translators) and self.trees:
-            # remove comments first to avoid issues with comments like
-            # "var(median) = y"
-            onetree = self.remove_comments(self.trees[0])
-            taxa = re.findall(r"""[(),](\w+)[:),]""", onetree)
-            for taxon_id, t in enumerate(taxa, 1):
-                self.translators[taxon_id] = t
+            # Rather than using a stored Tree object in self.trees, we first
+            # strip the comments from the tree to make sure we have the most
+            # robust parsing available.
+            tree = Tree(self.remove_comments(self.trees[0]))
+            for i, taxon in enumerate(tree.newick_tree.get_leaf_names(), 1):
+                self.translators[i] = taxon
+            self._been_detranslated = True
 
     def __getitem__(self, index):
         return self.trees[index]
@@ -137,11 +139,10 @@ class TreeHandler(GenericHandler):
 
     def detranslate(self):
         """Detranslates all trees in the file"""
-        if self._been_detranslated:
-            return
-        for idx, tree in enumerate(self.trees):
-            self.trees[idx] = Tree(self._detranslate_tree(tree, self.translators))
-        self._been_detranslated = True
+        if not self._been_detranslated:
+            for idx, tree in enumerate(self.trees):
+                self.trees[idx] = Tree(self._detranslate_tree(tree, self.translators))
+            self._been_detranslated = True
 
     @staticmethod
     def _findall_chunks(tree):

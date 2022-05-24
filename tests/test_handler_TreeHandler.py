@@ -123,6 +123,24 @@ def test_detranslate(trees_translated, examples):
     assert other_tree_file.trees[0] == trees_translated.trees[0]
 
 
+def test_detranslate_without_translators(nex):
+    """
+    Test that running detranslate when there's no translate block doesn't
+    break the trees
+    """
+    nex = NexusReader.from_string("""
+    #NEXUS
+
+    begin trees;
+        tree = (A,(B,C));
+    end;
+    """)
+    assert nex.trees.translators == {1: 'A', 2: 'B', 3: 'C'}
+    assert nex.trees._been_detranslated
+    nex.trees.detranslate()
+    assert nex.trees.trees[0] == 'tree = (A,(B,C));'
+
+
 def test_treelabel():
     nex = NexusReader.from_string("""
     #NEXUS
@@ -278,12 +296,12 @@ def test_read_BEAST_format(trees_beast):
     assert 'F38' in set(n.name for n in trees_beast.trees[0].newick_tree.walk())
 
 
-def test_block_findb(trees_beast):
+def test_block_find_BEAST(trees_beast):
     # did we get a tree block?
     assert 'trees' in trees_beast.blocks
 
 
-def test_taxab(trees_beast):
+def test_taxa_BEAST(trees_beast):
     expected = [
         "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11",
         "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20",
@@ -295,18 +313,18 @@ def test_taxab(trees_beast):
         assert taxon in trees_beast.trees.taxa
 
 
-def test_treecountb(trees_beast):
+def test_treecount_BEAST(trees_beast):
     assert len(trees_beast.blocks['trees'].trees) == 1
     assert trees_beast.blocks['trees'].ntrees == 1
     assert len(trees_beast.trees.trees) == 1
     assert trees_beast.trees.ntrees == 1
 
 
-def test_flag_set(trees_beast):
+def test_flag_set_BEAST(trees_beast):
     assert trees_beast.trees.was_translated
 
 
-def test_parsing_sets_translatorsb(trees_beast):
+def test_parsing_sets_translators_BEAST(trees_beast):
     assert len(trees_beast.trees.translators) == 38
 
 
