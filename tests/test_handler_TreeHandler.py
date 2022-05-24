@@ -278,12 +278,12 @@ def test_read_BEAST_format(trees_beast):
     assert 'F38' in set(n.name for n in trees_beast.trees[0].newick_tree.walk())
 
 
-def test_block_findb(trees_beast):
+def test_block_find_BEAST(trees_beast):
     # did we get a tree block?
     assert 'trees' in trees_beast.blocks
 
 
-def test_taxab(trees_beast):
+def test_taxa_BEAST(trees_beast):
     expected = [
         "R1", "B2", "S3", "T4", "A5", "E6", "U7", "T8", "T9", "F10", "U11",
         "T12", "N13", "F14", "K15", "N16", "I17", "L18", "S19", "T20",
@@ -295,18 +295,18 @@ def test_taxab(trees_beast):
         assert taxon in trees_beast.trees.taxa
 
 
-def test_treecountb(trees_beast):
+def test_treecount_BEAST(trees_beast):
     assert len(trees_beast.blocks['trees'].trees) == 1
     assert trees_beast.blocks['trees'].ntrees == 1
     assert len(trees_beast.trees.trees) == 1
     assert trees_beast.trees.ntrees == 1
 
 
-def test_flag_set(trees_beast):
+def test_flag_set_BEAST(trees_beast):
     assert trees_beast.trees.was_translated
 
 
-def test_parsing_sets_translatorsb(trees_beast):
+def test_parsing_sets_translators_BEAST(trees_beast):
     assert len(trees_beast.trees.translators) == 38
 
 
