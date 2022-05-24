@@ -14,7 +14,6 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -36,7 +35,7 @@ setup(
         ],
     },
     platforms='any',
-    python_requires='>=3.5',
+    python_requires='>=3.7',
     install_requires=[
         'newick>=1.3.1',
         'clldutils>=3.10.0',
