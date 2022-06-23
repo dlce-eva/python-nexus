@@ -31,9 +31,7 @@ class GenericHandler(object):
         self.comments = []
 
         # save comments
-        for line in self.block:
-            if line.strip().startswith("[") and line.strip().endswith("]"):
-                self.comments.append(line)
+        self.comments = [l for l in self.block if l.strip().startswith("[")]
 
     def iter_lines(self):
         for i, line in enumerate(self.block):

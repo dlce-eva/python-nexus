@@ -8,4 +8,4 @@ from nexus.exceptions import NexusFormatException
 from nexus import tools
 
 __version__ = "2.8.1.dev0"
-__all__ = ["NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools"]
+__all__ = ("NexusReader", "NexusWriter", "NexusFormatException", "handlers", "tools")
