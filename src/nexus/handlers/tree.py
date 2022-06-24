@@ -65,11 +65,10 @@ class TreeHandler(GenericHandler):
     translate_regex_beast = re.compile(r"""
         ([,(])              # boundary
         ([A-Z0-9_\-\.]+)    # taxa-id
+        (\[.+?\])           # minimally match a comment chunk
+        :                   # NON-optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
-        :?                  # optional colon
-        (\[.+?\])           # minimally match an optional comment chunk
-        :?                  # optional colon
-        (\d+(\.\d+)?)       # optional branchlengths
+        (\d+(\.\d+))        # NON-optional branchlengths
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
@@ -151,8 +150,10 @@ class TreeHandler(GenericHandler):
         # check for beast tree or not -> decide which regex to use
         if '{' in tree and '[' in tree:  # sufficient?
             regex = TreeHandler.translate_regex_beast
+            groups = ['start', 'taxon', 'comment', 'comment2', 'branch']
         else:
             regex = TreeHandler.translate_regex
+            groups = ['start', 'taxon', 'comment', 'branch']
 
         matches = []
         index = 0
@@ -160,7 +161,7 @@ class TreeHandler(GenericHandler):
             match = regex.search(tree, index)
             if not match:
                 break
-            m = dict(zip(['start', 'taxon', 'comment', 'branch'], match.groups()))
+            m = dict(zip(groups, match.groups()))
             m['match'] = tree[match.start():match.end() + 1]
             m['end'] = tree[match.end()]
             matches.append(m)
@@ -185,10 +186,19 @@ class TreeHandler(GenericHandler):
         for i, found in enumerate(self._findall_chunks(new), start=1):
             if found['taxon'] in translatetable:
                 taxon = translatetable[found['taxon']]
-                if found['comment'] and found['branch']:
+                # beast tree
+                if found['comment'] and found['branch'] and 'comment2' in found:
+                    sub = "%s%s:%s%s" % \
+                        (taxon, 
+                        found['comment'],
+                        found['comment2'] if found['comment2'] else "",
+                        found['branch'])
+
+                elif found['comment'] and found['branch']:
                     # comment and branch
                     sub = "%s:%s%s" % \
                         (taxon, found['comment'], found['branch'])
+                    
                 elif found['comment']:
                     # comment only
                     sub = "%s%s" % (taxon, found['comment'])
@@ -200,6 +210,7 @@ class TreeHandler(GenericHandler):
                     sub = taxon
                 sub = "%s%s%s" % (found['start'], sub, found['end'])
                 new = new.replace(found['match'], sub)
+
         if len(translatetable) and len(translatetable) != i:
             raise TranslateTableException(
                 "Mismatch between translate table size (n={}) and expected taxa in trees "

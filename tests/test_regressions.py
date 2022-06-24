@@ -443,6 +443,19 @@ def test_TreeHandler_BeastTranslate_2(regression):
     assert list(nex.trees.taxa)[1] == "B"
 
 
+def test_TreeHandler_BeastTranslate_3(regression):
+    """
+    Test handling of BEAST Translate Block in Phlorest. Again.
+    """
+    nex = NexusReader(regression / 'tree_detranslate_chang.trees')
+    assert len(nex.trees.trees) == 1
+    original = nex.trees.trees[0]
+    # replace labels with numbers so we can directly compare
+    nex.trees.translators = {k: k for k in nex.trees.translators}
+    nex.trees.detranslate()
+    assert original == nex.trees.trees[0]
+
+
 def test_Edictor(regression):
     """
     Test handling of EDICTOR Nexus files
@@ -464,3 +477,7 @@ def test_Edictor(regression):
     assert nex.data.nchar == 4
     
     assert nex.data.charlabels == nex.characters.charlabels
+
+
+
+
