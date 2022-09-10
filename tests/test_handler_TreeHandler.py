@@ -29,7 +29,7 @@ def test_taxa(trees):
         'Chris', 'Bruce', 'Tom', 'Henry', 'Timothy', 'Mark', 'Simon',
         'Fred', 'Kevin', 'Roger', 'Michael', 'Andrew', 'David'
     ]
-    assert len(trees.trees.taxa) == len(expected)
+    assert len(trees.trees.taxa) == len(expected) == trees.trees.ntaxa
     for taxon in expected:
         assert taxon in trees.trees.taxa
 
