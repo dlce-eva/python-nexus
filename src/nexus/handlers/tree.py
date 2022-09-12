@@ -133,6 +133,10 @@ class TreeHandler(GenericHandler):
         return self.translators.values()
 
     @property
+    def ntaxa(self):
+        return len(self.translators.values())
+
+    @property
     def ntrees(self):
         return len(self.trees)
 
