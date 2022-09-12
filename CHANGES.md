@@ -1,6 +1,12 @@
 # Changes
 
 
+## v2.9.0
+
+- better detranslate support in tree handler
+- updated project scaffolding
+
+
 ## v2.8.0
 
 - handle nexus files with empty characters block (e.g. edictor)
