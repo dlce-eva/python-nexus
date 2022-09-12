@@ -192,17 +192,15 @@ class TreeHandler(GenericHandler):
                 taxon = translatetable[found['taxon']]
                 # beast tree
                 if found['comment'] and found['branch'] and 'comment2' in found:
-                    sub = "%s%s:%s%s" % \
-                        (taxon, 
+                    sub = "{}{}:{}{}".format(
+                        taxon,
                         found['comment'],
                         found['comment2'] if found['comment2'] else "",
                         found['branch'])
-
                 elif found['comment'] and found['branch']:
                     # comment and branch
                     sub = "%s:%s%s" % \
                         (taxon, found['comment'], found['branch'])
-                    
                 elif found['comment']:
                     # comment only
                     sub = "%s%s" % (taxon, found['comment'])
