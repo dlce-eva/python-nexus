@@ -65,7 +65,7 @@ class TaxaHandler(GenericHandler):
             taxa = [t for t in line.split(" ")]
 
         taxa = [t.replace(";", "").strip() for t in taxa]
-        
+
         # loop over taxa to remove the attributes and annotations
         for taxon in taxa:
             # remove initial comment
