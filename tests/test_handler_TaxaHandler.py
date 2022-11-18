@@ -2,6 +2,7 @@
 import pytest
 
 from nexus.reader import NexusReader
+from nexus.handlers.taxa import TaxaHandler
 from nexus.exceptions import NexusFormatException
 
 expected = ['John', 'Paul', 'George', 'Ringo']
@@ -71,3 +72,11 @@ def test_annotation_read():
 def test_annotation_write(nex2):
     nex2.taxa.annotations['John'] = '[&!color=#006fa6]'
     assert 'John[&!color=#006fa6]' in nex2.taxa.write()
+
+
+def test_complicated_name():
+    h = list(TaxaHandler()._parse_taxa('test[&!color=#000000,!name="taxon label"]'))
+    assert len(h) == 1
+    assert h[0][0] == 'test'
+    assert h[0][1] == '[&!color=#000000,!name="taxon label"]'
+    

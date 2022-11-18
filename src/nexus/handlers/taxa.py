@@ -38,6 +38,7 @@ class TaxaHandler(GenericHandler):
                 line = self.is_taxlabel_block.sub("", line)
 
             for taxon, annot in self._parse_taxa(line):
+                print(taxon, annot)
                 self.taxa.append(taxon)
                 if annot:
                     self.annotations[taxon] = annot
@@ -55,7 +56,18 @@ class TaxaHandler(GenericHandler):
         return len(self.taxa)
 
     def _parse_taxa(self, line):
-        taxa = [t.replace(";", "").strip() for t in line.split(" ")]
+        # if we have a comment then there should be only one taxa on this line e.g.
+        #    'test[&!color=#000000,!name="taxon label"]
+        # otherwise we have something like the maddison_et_al.nex:
+        #      TAXLABELS fish frog snake mouse;
+        if '[' in line:
+            taxa = [line]
+        else:
+            taxa = [t for t in line.split(" ")]
+
+        taxa = [t.replace(";", "").strip() for t in taxa]
+        
+        # loop over taxa to remove the attributes and annotations
         for taxon in taxa:
             # remove initial comment
             taxon = TAXON_PLACEHOLDER.sub('', taxon)
