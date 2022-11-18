@@ -38,7 +38,6 @@ class TaxaHandler(GenericHandler):
                 line = self.is_taxlabel_block.sub("", line)
 
             for taxon, annot in self._parse_taxa(line):
-                print(taxon, annot)
                 self.taxa.append(taxon)
                 if annot:
                     self.annotations[taxon] = annot
