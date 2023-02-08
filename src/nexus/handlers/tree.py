@@ -58,7 +58,7 @@ class TreeHandler(GenericHandler):
         ([A-Z0-9_\-\.]+)    # taxa-id
         :?                  # optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
-        (\d+(\.\d+)?)?      # optional branchlengths
+        (\-?\d+(\.\d+)?)?      # optional branchlengths
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
@@ -68,7 +68,7 @@ class TreeHandler(GenericHandler):
         (\[.+?\])           # minimally match a comment chunk
         :                   # NON-optional colon
         (\[.+?\])?          # minimally match an optional comment chunk
-        (\d+(\.\d+))        # NON-optional branchlengths
+        (\-?\d+(\.\d+))        # NON-optional branchlengths
         (?=[),])?           # end boundary
     """, re.IGNORECASE + re.VERBOSE + re.DOTALL)
 
