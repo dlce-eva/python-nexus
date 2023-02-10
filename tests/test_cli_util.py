@@ -8,7 +8,7 @@ from nexus.cli_util import list_of_ranges, get_reader
 
 
 def test_get_reader(monkeypatch):
-    monkeypatch.setattr('sys.stdin', io.StringIO('#NEXUS\n\nbegin trees;\ntree t = ();\nend;'))
+    monkeypatch.setattr('sys.stdin', io.StringIO('#NEXUS\n\nbegin trees;\ntree t = (,);\nend;'))
     with pytest.raises(ParserError):
         get_reader(argparse.Namespace(filename=None), required_blocks=['data'])
 
