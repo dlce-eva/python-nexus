@@ -9,6 +9,8 @@ from nexus.handlers.tree import TreeHandler, Tree
 def test_Tree():
     t = Tree('tree name = (A,B)C;')
     assert t == Tree.from_newick(t.newick_tree, name=t.name, rooted=t.rooted)
+    t = Tree('TREE name = (A,B)C;')
+    assert t.name == 'name'
 
 
 def test_block_find(trees):
