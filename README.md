@@ -1,5 +1,8 @@
 # python-nexus
 
+> [!WARNING]
+> This package is deprecated. Consider using [commonnexus](https://pypi.org/project/commonnexus) instead.
+
 A Generic phylogenetic nexus format (.nex, .trees) reader and writer for python.
 
 [![Build Status](https://github.com/dlce-eva/python-nexus/workflows/tests/badge.svg)](https://github.com/dlce-eva/python-nexus/actions?query=workflow%3Atests)
